@@ -1,0 +1,10 @@
+.toasts-container {
+  display: flex;
+  flex-direction: column-reverse;
+  row-gap: 1rem;
+  border-radius: 8px;
+  z-index: 9999;
+  position: fixed;
+  top: 16px;
+  right: 16px;
+}

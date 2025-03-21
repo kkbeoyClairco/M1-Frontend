@@ -1,0 +1,30 @@
+.folder-row {
+    position: relative;
+    padding-left: 1em;
+    background-color: whitesmoke;
+}
+
+.folder-row::before {
+    content: '';
+    position: absolute;
+    top: 0%;
+    left: 0;
+    bottom: 0%;
+    width: 1px;
+    background-color: #000000;
+}
+
+.folder-item {
+    position: relative;
+    padding-left: 1em;
+}
+
+.folder-item::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 1%;
+    width: 1em;
+    height: 1px;
+    background-color: #000000;
+}
