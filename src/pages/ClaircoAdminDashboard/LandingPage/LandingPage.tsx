@@ -2,7 +2,7 @@ import { iconConstant } from 'appConstants/claircoConstants';
 import PageHeading from 'components/ClaircoCustomerDashboard/Headings/PageHeading';
 import { TitleWidget } from 'components/ClaircoCustomerDashboard/Widgets/TitleWidget';
 import AlertsModal from 'components/ClaircoGeneral/Modals/AlertsModal';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import activeIcon from 'assets/icons/check.png';
 import alertIcon from 'assets/icons/caution.png';

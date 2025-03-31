@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
 import { ToastContext } from 'context/ToastContext';
 import { Row, Col, Card } from 'react-bootstrap';
 import { Table } from 'components'; // Assuming 'Table' is a valid component
@@ -30,12 +30,17 @@ const CustomerTable = () => {
     const [isLoading, setIsLoading] = useState(false);
     const toast = useContext(ToastContext);
     const { dispatch, appSelector } = useRedux();
+    const controllerRef = useRef<AbortController>();
     const navigate = useNavigate();
     const [customerTabledata, setCustomerTableData] = useState([]);
     const getCustomers = async () => {
         try {
             setIsLoading(true);
-            const res = await customer.all();
+            if (controllerRef.current) {
+                controllerRef.current.abort();
+            }
+            controllerRef.current = new AbortController();
+            const res = await customer.all(controllerRef.current.signal);
             if (res.data) {
                 const customers = res.data.map((customer: customerData) => ({
                     customerId: customer.id,
@@ -112,6 +117,9 @@ const CustomerTable = () => {
         } catch (error: any) {
             toast?.showToast('Error occure while fetching data ', 'error');
         }
+        return () => {
+            controllerRef.current?.abort();
+        };
     }, []);
     return (
         <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 ">

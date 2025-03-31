@@ -61,7 +61,7 @@ class APICore {
     /**
      * Fetches data from given url
      */
-    get = (url: string, params: any) => {
+    get = (url: string, params: any, signal?: AbortController['signal']) => {
         let response;
         if (params) {
             var queryString = params
@@ -69,9 +69,9 @@ class APICore {
                       .map((key) => key + '=' + params[key])
                       .join('&')
                 : '';
-            response = axios.get(`${url}?${queryString}`, params);
+            response = axios.get(`${url}?${queryString}`, { signal });
         } else {
-            response = axios.get(`${url}`, params);
+            response = axios.get(`${url}`, { signal });
         }
         return response;
     };

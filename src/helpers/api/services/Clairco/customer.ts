@@ -1,16 +1,18 @@
+import axios from 'axios';
 import { APICore } from '../../apiCore';
 const api = new APICore();
 
 // customer apis
 
 export const customer = {
-    all: async () => {
+    all: async (signal?: AbortController['signal']) => {
         const baseUrl = `/customers/all`;
-        return await api.get(baseUrl, null);
+        // return axios.get(baseUrl,"", { signal });
+        return await api.get(baseUrl, null, signal);
     },
-    byId: async (customerId: string) => {
+    byId: async (customerId: string, signal?: AbortController['signal']) => {
         const baseurl = `/customers/${customerId}`;
-        return await api.get(baseurl, null);
+        return await api.get(baseurl, null, signal);
     },
     create: async (params: any) => {
         const baseurl = `/customers/`;

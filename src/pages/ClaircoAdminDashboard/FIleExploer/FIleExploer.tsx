@@ -7,6 +7,10 @@ import BuildingModal from 'components/ClaircoModals/AddNew/BuildingModal';
 import FloorModal from 'components/ClaircoModals/AddNew/FloorModal';
 import DeviceCreation from 'components/ClaircoModals/AddNew/DeviceCreation';
 import { controlVrfVrcStateAPI } from 'helpers/api/services/Clairco/customerSide/vrf-vrf';
+import CustomerModal from 'components/ClaircoModals/AddNew/CustomerModal';
+import { Col, Row } from 'react-bootstrap';
+import Button from 'components/ClaircoButtons/Button1';
+import { ModalButton } from 'components/ClaircoButtons/ModalButton';
 
 const FIleExploer = () => {
     const [customers, setCustomers] = useState([]);
@@ -21,10 +25,16 @@ const FIleExploer = () => {
         name: '',
         id: '',
     });
-    const [modalState, setModalState] = useState<{ building: boolean; floor: boolean; device: boolean }>({
+    const [modalState, setModalState] = useState<{
+        building: boolean;
+        floor: boolean;
+        device: boolean;
+        customer: boolean;
+    }>({
         building: false,
         floor: false,
         device: false,
+        customer: false,
     });
     const [data, setData] = useState([]);
 
@@ -246,15 +256,18 @@ const FIleExploer = () => {
         try {
             setInfotoModal({ name: data.name ?? '', id: data?.id ?? '' });
             switch (type) {
+                case 'Cus': // Customer Addtion
+                    setModalState({ building: false, floor: false, device: false, customer: true });
+                    break;
                 case 'Customer': // Building Addtion
-                    setModalState({ building: true, floor: false, device: false });
+                    setModalState({ building: true, floor: false, device: false, customer: false });
                     break;
                 case 'Building': // Floor Addtion
-                    setModalState({ building: false, floor: true, device: false });
+                    setModalState({ building: false, floor: true, device: false, customer: false });
                     setInfotoModal((prev) => ({ ...prev, customerId: data.customerId }));
                     break;
                 case 'Floor': // Device Addtion
-                    setModalState({ building: false, floor: false, device: true });
+                    setModalState({ building: false, floor: false, device: true, customer: false });
                     setInfotoModal((prev) => ({
                         ...prev,
                         customerId: data.customerId,
@@ -263,6 +276,20 @@ const FIleExploer = () => {
                     }));
                     break;
             }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleAddNewCustomer = async (formData: any) => {
+        try {
+            // const formData = new FormData(e.target as HTMLFormElement);
+            // const payload: Record<string, any> = {};
+            // formData.forEach((value, key) => {
+            //     payload[key] = value;
+            // });
+            const res = await customer.create(formData);
+            console.log(res);
         } catch (error) {
             console.log(error);
         }
@@ -283,6 +310,7 @@ const FIleExploer = () => {
             switch (type) {
                 case 'Customer':
                     // handleBuildingAddition(payload.id, payload);
+                    console.log('Customer ', formData);
                     break;
                 case 'Building':
                     handleBuildingAddition(payload.id, payload);
@@ -301,6 +329,13 @@ const FIleExploer = () => {
 
     return (
         <Fragment>
+            {modalState.customer && (
+                <CustomerModal
+                    show={modalState.customer}
+                    onClose={() => setModalState((prev: any) => ({ ...prev, customer: !prev.customer }))}
+                    onSubmit={handleAddNewCustomer}
+                />
+            )}
             {modalState.building && (
                 <BuildingModal
                     show={modalState.building}
@@ -326,7 +361,12 @@ const FIleExploer = () => {
                     onClose={() => setModalState((prev: any) => ({ ...prev, device: !prev.device }))}
                 />
             )}
-            <div style={{ paddingLeft: '30px', padding: '20px', marginTop: '10px' }}>
+            <Row className="d-flex justify-content-end">
+                <Col xs={12} lg={4} className="d-flex justify-content-end mt-2">
+                    <ModalButton onClick={async () => handleAddition({}, 'Cus')} text="Add new Customer" />
+                </Col>
+            </Row>
+            <div style={{ paddingLeft: '30px', padding: '20px', marginTop: '0px' }}>
                 <FIleExploer1 dataInput={data} handleAPICalls={handleAPICalls} handleAddition={handleAddition} />
             </div>{' '}
         </Fragment>
