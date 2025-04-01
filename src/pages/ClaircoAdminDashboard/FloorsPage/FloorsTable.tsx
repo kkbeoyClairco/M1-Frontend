@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import { building, floor } from 'helpers/api/services/Clairco/customer';
 import { setLocale } from 'yup';
+import { convertUnixToIST } from 'utils/timeFunctions';
 
 type NewType = CellFormatter<DeviseTables>;
 
@@ -68,7 +69,7 @@ export const FloorsTable: React.FC<FloorsTablesProps> = ({ customerId, buildingI
             Header: 'Created on',
             accessor: 'createdAt',
             defaultCanSort: false,
-            Cell: ({ value }) => formatDateToLocalTime(value),
+            Cell: ({ value }) => convertUnixToIST(value),
         },
         // {
         //     Header: 'Last Updated',

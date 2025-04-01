@@ -15,6 +15,7 @@ import { selectTagType } from 'types/selectTagType';
 // import { setLabels } from 'react-chartjs-2/dist/utils';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import { building } from 'helpers/api/services/Clairco/customer';
+import { convertUnixToIST } from 'utils/timeFunctions';
 
 type NewType = CellFormatter<DeviseTables>;
 
@@ -61,7 +62,7 @@ export const BuildingsTable: React.FC<BuildingTablesProps> = ({ customerId, cust
             Header: 'Created on',
             accessor: 'createdAt',
             defaultCanSort: false,
-            Cell: ({ value }) => formatDateToLocalTime(value),
+            Cell: ({ value }) => convertUnixToIST(value),
         },
         // {
         //     Header: 'Last Updated',

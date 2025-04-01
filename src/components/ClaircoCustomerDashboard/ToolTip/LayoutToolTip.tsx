@@ -11,7 +11,7 @@ interface VrfDataProps {
         'Amb Temp': number;
         'Fan Speed': string;
         Mode: string;
-        'Epoch time': Number;
+        'Epoch time': number;
     };
 }
 interface AHUDataProps {

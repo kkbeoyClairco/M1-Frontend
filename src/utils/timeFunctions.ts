@@ -1,5 +1,27 @@
 import { addHours, compareAsc, format, parse } from 'date-fns';
 
+export function convertUnixToIST(epoch: number | Date | string | null | undefined): string {
+    try {
+        if (!epoch) return 'N/A';
+        let timestamp = typeof epoch === 'string' ? Date.parse(epoch) : Number(epoch);
+        // If the timestamp is in seconds, convert it to milliseconds
+        if (timestamp < 1e12) timestamp *= 1000;
+        const date = new Date(timestamp);
+        const newDate = date.toLocaleString('en-IN', {
+            // timeZone: 'Asia/Kolkata',
+            hour12: false,
+            year: '2-digit',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+        return newDate;
+    } catch (error) {
+        return 'N/A';
+    }
+}
+
 export const convertTimeToDates = (timestamp: any) => {
     try {
         const date = new Date(timestamp * 1000);
@@ -56,24 +78,13 @@ export function convertEpochToDate1(epoch: any) {
     return newDate;
 }
 
-// Returns Time in readable format irrespective of the unix (Works for both unix input in millisecond and second)
-// Return format: 26/08/24, 11:31
-export function convertUnixToIST(epoch: any) {
-    if (epoch < 1e12) epoch = epoch * 1000;
-    // const adjustedTimestamp = epoch * 1000;
-    const date = new Date(epoch);
-    const newDate = date.toLocaleString('en-IN', {
-        timeZone: 'Asia/Kolkata',
-        hour12: false,
-        year: '2-digit',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-    }); // Adjust the format as needed
-    // console.log('Date:', epoch, newDate);
-    return newDate;
-}
+/**
+ * Converts a Unix timestamp (in seconds or milliseconds) to a readable IST date-time format.
+ *
+ * @param {number | string | null | undefined} epoch - The Unix timestamp to convert. Can be in seconds, milliseconds, or a valid date string.
+ * @returns {string} The formatted date-time string in IST or 'N/A' if the input is invalid. Example :26/08/24, 11:31
+ */
+
 export const convertDateToEpoch = (dateString?: any) => {
     try {
         // console.log(dateString);
