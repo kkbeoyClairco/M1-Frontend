@@ -1,5 +1,5 @@
 import { Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Statistics from '../../../components/ClaircoStatistics/Statistics';
 import { DeviceTables } from 'pages/ClaircoAdminDashboard/DeviceListPage/DeviceTables';
 import { useEffect, useState } from 'react';
@@ -12,6 +12,8 @@ import activeIcon from 'assets/icons/check.png';
 import alertIcon from 'assets/icons/caution.png';
 import AlertsModal from 'components/ClaircoGeneral/Modals/AlertsModal';
 import { iconConstant } from 'appConstants/claircoConstants';
+import Breadcrumbs1 from 'components/ClaircoGeneral/Breadcrums/Breadcrumbs1';
+import { extractParamsForBreadCrumbs } from 'utils/params';
 type LocationState = {
     id: string;
     name: string;
@@ -26,7 +28,9 @@ const DeviceListPage = () => {
         customerId: '',
         floorId: '',
     });
+    const [breadcrumbArray, setBreadcrumbArray] = useState<string[]>([]);
     const location: Location = useLocation();
+    const params = useParams();
 
     const handleAlertsClick = () => {
         try {
@@ -37,15 +41,19 @@ const DeviceListPage = () => {
         }
     };
     useEffect(() => {
-        console.log('Location', location);
         const { id = '', name = '', floorId = '' } = location.state as LocationState;
         setCustomer((prev) => ({ ...prev, floorId }));
+        const res = extractParamsForBreadCrumbs(params);
+        setBreadcrumbArray(res);
     }, []);
 
     return (
         <>
             <AlertsModal modalControlFn={handleAlertsClick} modalState={alertModalState} />
-            <PageHeading title={'Devices'} />
+            {/* <PageHeading title={'Devices'} /> */}
+            <div className="mx-3">
+                <Breadcrumbs1 dataArray={breadcrumbArray} />
+            </div>
             {/* <Row style={{ marginLeft: '1.5em', marginRight: '0.5em' }}>
                 <Col lg={4}>
                     {' '}
@@ -59,7 +67,6 @@ const DeviceListPage = () => {
                     <TitleWidget icon={iconConstant.offline1} title={'Offline'} value={''} />
                 </Col>
             </Row> */}
-
             <Row style={{ marginLeft: '0.5em', marginRight: '10px' }}>
                 <DeviceTables floorId={customer?.floorId} />
             </Row>

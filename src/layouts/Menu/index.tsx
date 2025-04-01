@@ -14,7 +14,7 @@ type AppMenuProps = {
 
 const AppMenu = ({ menuItems, isCondensed }: AppMenuProps) => {
     let location = useLocation();
-    const [isPanasonicUser, setIsPanasonicUser] = useState(false);
+    // const [isPanasonicUser, setIsPanasonicUser] = useState(false);
 
     const menuRef = useRef<HTMLUListElement>(null);
 
@@ -59,14 +59,14 @@ const AppMenu = ({ menuItems, isCondensed }: AppMenuProps) => {
         activeMenu();
     }, [activeMenu]);
     useEffect(() => {
-        const user = isAdmin();
-        setIsPanasonicUser(!user);
+        // const user = isAdmin();
+        // setIsPanasonicUser(!user);
     }, []);
     return (
         <ul className="side-nav" ref={menuRef} id="main-side-menu">
             {/* {console.log('Menu items:', menuItems)} */}
             {(menuItems || []).map((item, index) => {
-                if (item.key === 'Control-Logs' && isPanasonicUser) return '';
+                // if (item.key === 'Control-Logs' && isPanasonicUser) return '';
                 return (
                     <React.Fragment key={index.toString()}>
                         {item.isTitle ? (

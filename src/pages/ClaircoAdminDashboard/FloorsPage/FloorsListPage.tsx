@@ -1,12 +1,14 @@
 import { Row, Col } from 'react-bootstrap';
 
 import { useEffect, useState } from 'react';
-import { useLocation, Location } from 'react-router-dom';
+import { useLocation, Location, useParams } from 'react-router-dom';
 
 import PageHeading from 'components/ClaircoCustomerDashboard/Headings/PageHeading';
 
 import AlertsModal from 'components/ClaircoGeneral/Modals/AlertsModal';
 import { FloorsTable } from './FloorsTable';
+import Breadcrumbs1 from 'components/ClaircoGeneral/Breadcrums/Breadcrumbs1';
+import { extractParamsForBreadCrumbs } from 'utils/params';
 type LocationState = {
     id?: string;
     name?: string;
@@ -29,6 +31,9 @@ const BuildingListPage = () => {
         customerId: '',
         customerName: '',
     });
+    const [breadcrumbArray, setBreadcrumbArray] = useState<string[]>([]);
+
+    const params = useParams();
     const location: Location = useLocation();
 
     const handleAlertsClick = () => {
@@ -42,14 +47,20 @@ const BuildingListPage = () => {
     useEffect(() => {
         const { buildingId = '', name = '', customerId = '', customerName = '' } = location?.state as LocationState;
         setBuilding((prev) => ({ ...prev, buildingId, customerName, customerId, buildingName: name }));
-    }, [location.state]);
+        const res = extractParamsForBreadCrumbs(params);
+        setBreadcrumbArray(res);
+    }, [location?.state, params]);
     useEffect(() => {
         console.log('State floor', building);
     }, [building]);
     return (
         <>
             <AlertsModal modalControlFn={handleAlertsClick} modalState={alertModalState} />
-            <PageHeading title={building?.buildingName ?? 'Floors'} />
+            {/* <PageHeading title={building?.buildingName ?? 'Floors'} /> */}
+
+            <div className="mx-3">
+                <Breadcrumbs1 dataArray={breadcrumbArray} />
+            </div>
             {/* <Row style={{ marginLeft: '1.5em', marginRight: '0.5em' }}>
                 <Col lg={4}>
                     {' '}

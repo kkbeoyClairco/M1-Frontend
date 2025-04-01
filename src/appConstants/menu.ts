@@ -16,7 +16,7 @@ export type MenuItemType = {
 const MENU_ITEMS: MenuItemType[] = [
     {
         key: 'Dashboard',
-        label: 'Dashboard',
+        label: 'Home',
         isTitle: false,
         icon: ' uil-home-alt',
         url: 'pages/admindashboard',

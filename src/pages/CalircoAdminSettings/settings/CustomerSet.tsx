@@ -272,21 +272,21 @@ const CustomerSettings1 = () => {
             createdAt: convertUnixToIST(building?.createdAt),
         }));
     useEffect(() => {
-        customer.all().then((cus: any) => {
-            if (cus?.data) {
-                const customers = formatCustomers(cus?.data);
-                setCustomers1(customers);
-                dispatch(setCustomers(customers));
-            }
-        });
+        // customer.all().then((cus: any) => {
+        //     if (cus?.data) {
+        //         const customers = formatCustomers(cus?.data);
+        //         setCustomers1(customers);
+        //         dispatch(setCustomers(customers));
+        //     }
+        // });
     }, []);
     useEffect(() => {
         building.all().then((buildings: any) => {
             // console.log('Buildings', buildings);
             setBuildings(formatBuildings(buildings?.data));
         });
-        getFloorAndZone();
-        dispatch(getAllBuildings());
+        // getFloorAndZone();
+        // dispatch(getAllBuildings());
 
         dispatch(getDeviceTypes());
     }, []);
