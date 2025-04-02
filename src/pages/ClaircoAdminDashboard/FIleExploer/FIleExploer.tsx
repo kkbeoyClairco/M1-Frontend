@@ -11,6 +11,7 @@ import CustomerModal from 'components/ClaircoModals/AddNew/CustomerModal';
 import { Col, Row } from 'react-bootstrap';
 import Button from 'components/ClaircoButtons/Button1';
 import { ModalButton } from 'components/ClaircoButtons/ModalButton';
+import { toast } from 'sonner';
 
 const FIleExploer = () => {
     const [customers, setCustomers] = useState([]);
@@ -59,7 +60,7 @@ const FIleExploer = () => {
         try {
             const res = await building.byCustomerId({ customerId });
             // const res=await
-            console.log('Data', res);
+            // console.log('Data', res);
             const extractedData = res.data.map((data: any) => {
                 return {
                     name: data.name,
@@ -199,7 +200,9 @@ const FIleExploer = () => {
         try {
             data.customerId = data.id;
             delete data.id;
-            const res = await building.create(data);
+
+            //API ERROR ALERT
+            const res = await building.createNew(customerId, data);
 
             const extractedData = {
                 name: res?.data?.name ?? '',
@@ -283,14 +286,11 @@ const FIleExploer = () => {
 
     const handleAddNewCustomer = async (formData: any) => {
         try {
-            // const formData = new FormData(e.target as HTMLFormElement);
-            // const payload: Record<string, any> = {};
-            // formData.forEach((value, key) => {
-            //     payload[key] = value;
-            // });
             const res = await customer.create(formData);
-            console.log(res);
+            // console.log(res);
+            toast.success('Customer has been created');
         } catch (error) {
+            toast.error('Customer has not been created');
             console.log(error);
         }
     };
@@ -368,7 +368,7 @@ const FIleExploer = () => {
             </Row>
             <div style={{ paddingLeft: '30px', padding: '20px', marginTop: '0px' }}>
                 <FIleExploer1 dataInput={data} handleAPICalls={handleAPICalls} handleAddition={handleAddition} />
-            </div>{' '}
+            </div>
         </Fragment>
     );
 };

@@ -163,7 +163,7 @@ const AHU_DevicePage = () => {
         }
     };
 
-    // Device Control modal
+    // // Device Control modal
     // const handleDeviceControlModal = async () => {
     //     try {
     //         // console.log('Clicked');
@@ -229,9 +229,6 @@ const AHU_DevicePage = () => {
     }, [btuData]);
     return (
         <>
-            {/* {controlModal && (
-                <ControlsModal state={controlModal} currentDeviceState={modalInfo} stateControlFn={setControlModal} />
-            )} */}
             <Row style={{ marginLeft: '10px' }}>
                 {' '}
                 <Col xs={12} md={6}>

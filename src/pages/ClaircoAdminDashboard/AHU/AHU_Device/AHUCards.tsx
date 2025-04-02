@@ -19,6 +19,9 @@ import { roundToOneDecimal } from 'utils/maths';
 import { convertUnixToIST } from 'utils/timeFunctions';
 import { TwoParameterWidget } from './TwoParameterWidget';
 import PlainWidgetWithUnitsIcon from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithUnitsIcon';
+import ControlsModal from './ControlsModal';
+import { isAdmin } from 'utils/storageFunctions';
+import AHUControlsModal from 'components/ClaircoControls/AHUControls/AHUControlsModal';
 const fanSpeedReverseMapping: { [key: number]: string } = {
     0: 'High',
     1: 'Medium',
@@ -136,6 +139,28 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
             console.log(error);
         }
     }, []);
+
+    // Device Control modal
+    const handleDeviceControlModal = async () => {
+        try {
+            // console.log('Clicked');
+            const userIsAdmin = isAdmin();
+
+            if (!userIsAdmin || !ahuData?.ahuName) return;
+
+            const obj = {
+                deviceName: ahuData?.ahuName,
+                status: isDeviceOn,
+                setTemp: realSetTemp,
+                thermoStatMode: realMode ?? '',
+                deviceId: ahuData.ahuId ?? '',
+            };
+            setModalInfo(obj);
+            setControlModal((currentState) => !currentState);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     useEffect(() => {
         getRealTimeAHU(ahuData?.ahuSensor);
         // getOccupancyAndIaqDevicesList(ahuData?.ahuId);
@@ -147,10 +172,18 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
     }, [btuData]);
     return (
         <Row className="mx-2">
+            {controlModal && (
+                <AHUControlsModal
+                    state={controlModal}
+                    currentDeviceState={modalInfo}
+                    stateControlFn={setControlModal}
+                />
+            )}
             <Row style={{ marginLeft: '10px' }}>
                 <Col xxl={3} md={6}>
                     <UnitSelectedWidgetWithControls
                         unitName={ahuData?.ahuName}
+                        iconFunction={handleDeviceControlModal}
                         location={locationData?.locationName ?? ''}
                         floor={locationData?.floorName ?? ''}
                         building={locationData?.buildingName ?? ''}

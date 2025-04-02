@@ -46,6 +46,10 @@ export const building = {
         const baseUrl = `/buildings/`;
         return await api.create(baseUrl, params);
     },
+    createNew: async (customerId: string, params: any) => {
+        const baseUrl = `customers/${customerId}/building`;
+        return await api.create(baseUrl, params);
+    },
     update: async (payload: any) => {
         const baseUrl = `/buildings/${payload.buildingId}`;
         return await api.update(baseUrl, payload);
