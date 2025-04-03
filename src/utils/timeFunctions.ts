@@ -10,6 +10,7 @@ import { addHours, compareAsc, format, parse } from 'date-fns';
 export function convertUnixToIST(epoch: number | Date | string | null | undefined): string {
     try {
         if (!epoch) return 'N/A';
+
         let timestamp = typeof epoch === 'string' ? Date.parse(epoch) : Number(epoch);
         // If the timestamp is in seconds, convert it to milliseconds
         if (timestamp < 1e12) timestamp *= 1000;

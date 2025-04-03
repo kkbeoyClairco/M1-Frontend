@@ -59,8 +59,8 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
         // console.log('BTU Realtime:');
 
         const res = await fetchBTURealTime(sensorName);
-        // console.log('Prent id', getDeviceId);
-        const lastUpdated = convertUnixToIST(res?.data?.[0]?.['Epoch time']?.$numberDecimal);
+        const lastUpdated = convertUnixToIST(Number(res?.data?.[0]?.['Epoch time']?.$numberDecimal));
+        console.log('Invalid data', typeof lastUpdated, res?.data?.[0]?.['Epoch time']?.$numberDecimal);
         const instEnergy = roundToOneDecimal(res?.data?.[0]?.data?.['Instantaneous Energy Rate']);
         const tempOne = roundToOneDecimal(res?.data?.[0]?.data?.Temp1);
         const tempTwo = roundToOneDecimal(res?.data?.[0]?.data?.Temp2);
@@ -95,7 +95,7 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
             const fanMode = res?.data?.[0]?.data?.FANMODE;
             const returnTemp = roundToOneDecimal(+res?.data?.[0]?.data?.RTEMP) / 10;
             const setTemp = roundToOneDecimal(res?.data?.[0]?.data?.STEMP) / 10;
-            const updatedTime = convertUnixToIST(res?.data?.[0]?.['Epoch time']?.['$numberDecimal']);
+            const updatedTime = convertUnixToIST(Number(res?.data?.[0]?.['Epoch time']?.['$numberDecimal']));
             const currentDeviceStatus = res?.data?.[0]?.data?.RELAY1_STATE;
             const thermoStat = res?.data?.[0]?.data?.THSTAT ?? 0;
 
