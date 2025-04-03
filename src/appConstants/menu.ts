@@ -46,14 +46,14 @@ const MENU_ITEMS: MenuItemType[] = [
         key: 'indoor',
         label: 'Indoor Units',
         isTitle: false,
-        icon: 'uil-exchange-alt',
+        icon: 'mdi mdi-border-inside',
         url: 'pages/indoor-devices',
     },
     {
         key: 'outdoor',
         label: 'Outdoor Units',
         isTitle: false,
-        icon: 'uil-exchange-alt',
+        icon: 'mdi mdi-border-outside',
         url: 'pages/outdoor-devices',
     },
 
