@@ -33,86 +33,40 @@ import { TwoParameterWidget } from './TwoParameterWidget';
 import { conforms, forEach } from 'lodash';
 import AHUCards from './AHUCards';
 
-interface LocationState {
-    sensorName?: string;
-    deviceName?: string;
-    btuName?: string;
-    id?: string;
-    floorId?: string;
-}
+// interface LocationState {
+//     sensorName?: string;
+//     deviceName?: string;
+//     btuName?: string;
+//     id?: string;
+//     floorId?: string;
+// }
 const AHU_DevicePage = () => {
-    const [IAQTableData, setIAQTableData] = useState([]);
-    const [occuTableData, setOccuTableData] = useState([]);
     const [locationData, setLocationData] = useState<any>();
     const [ahuData, setAhuData] = useState<any>();
     const [btuData, setBtuData] = useState<any>();
-    const [dptRealValue, setDptRealValue] = useState<any>();
 
     //   Refs
     const trendsGraphRef = useRef<HTMLDivElement>(null);
     const occupancyRef = useRef<HTMLDivElement>(null);
     const iaqRef = useRef<HTMLDivElement>(null);
-    // const sensorName = useRef<any>({});
-    // const deviceName = useRef<any>(null);
-    // Location
     const location = useLocation();
-    // const id = location.pathname.split('/').reverse()[0];
-    // const state = location.state as LocationState;
 
-    // const userIsAdmin = isAdmin();
     const { customerId } = getUserInfoFromSession();
-    // console.log('Location info:', customerId);
 
     // Click Handlers
-    const handleBTUClick = async () => {
-        if (trendsGraphRef && trendsGraphRef.current) {
-            const y = trendsGraphRef?.current.offsetTop;
-            window.scrollTo({ top: y - 60, left: 100, behavior: 'smooth' });
-        }
-    };
-    const handleOccupancyClick = async () => {
-        try {
-            if (occupancyRef && occupancyRef.current) {
-                const y = occupancyRef.current.offsetTop;
-                window.scrollTo({
-                    top: y - 60,
-                    left: 100,
-                    behavior: 'smooth',
-                });
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleHumidityClick = async () => {
-        try {
-            // console.log('Hum Clicked');
-            if (iaqRef && iaqRef.current) {
-                const y = iaqRef.current.offsetTop;
-                window.scrollTo({
-                    top: y - 60,
-                    left: 100,
-                    behavior: 'smooth',
-                });
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
     // Occupancy and IAQ Tables
-    const getOccupancyAndIaqDevicesList = useCallback(async (ahuId: any) => {
-        if (!ahuId) return;
-        // console.log('Occupancy List:');
+    // const getOccupancyAndIaqDevicesList = useCallback(async (ahuId: any) => {
+    //     if (!ahuId) return;
+    //     // console.log('Occupancy List:');
 
-        // const data = await fetchOccuAndIaqList(ahuId);
-        // const iaq = data?.data?.iaqDevices;
-        // const occupancy = data?.data?.occupancyDevices;
-        // // console.log('Data for table', data, occupancy);
-        // setIAQTableData(iaq);
-        // setOccuTableData(occupancy);
-    }, []);
+    //     // const data = await fetchOccuAndIaqList(ahuId);
+    //     // const iaq = data?.data?.iaqDevices;
+    //     // const occupancy = data?.data?.occupancyDevices;
+    //     // // console.log('Data for table', data, occupancy);
+    //     // setIAQTableData(iaq);
+    //     // setOccuTableData(occupancy);
+    // }, []);
 
     //Handlers
     // Device changing function
@@ -162,31 +116,6 @@ const AHU_DevicePage = () => {
             console.log(error);
         }
     };
-
-    // // Device Control modal
-    // const handleDeviceControlModal = async () => {
-    //     try {
-    //         // console.log('Clicked');
-    //         if (!userIsAdmin || !deviceName.current) return;
-
-    //         const obj = {
-    //             deviceName: deviceName.current,
-    //             status: isDeviceOn,
-    //             setTemp: realSetTemp,
-    //             thermoStatMode: realMode,
-    //             deviceId: id,
-    //         };
-    //         setModalInfo(obj);
-    //         setControlModal((currentState) => !currentState);
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // };
-    // useEffect(() => {
-    //     sensorName.current.ahu = state?.sensorName || '';
-    //     sensorName.current.btu = state?.btuName || '';
-    //     deviceName.current = state?.deviceName || '';
-    // }, [getBTURealTime, getRealTimeAHU, state]);
     useEffect(() => {
         //Scroll to top
         window.scrollTo(0, 0);
@@ -200,7 +129,6 @@ const AHU_DevicePage = () => {
         const btuSensor = searchParams.get('btuSensor');
         const ahuName = searchParams.get('ahuName');
         const ahuSensor = searchParams.get('ahuSensor');
-
         const ahuId = searchParams.get('ahuId');
         const floorId = searchParams.get('floorId');
         setLocationData({
@@ -218,15 +146,13 @@ const AHU_DevicePage = () => {
             ahuSensor,
         });
     }, []);
-    useEffect(() => {
-        // getRealTimeAHU(ahuData?.ahuSensor);
-        getOccupancyAndIaqDevicesList(ahuData?.ahuId);
-        // getAverageValues(ahuData?.ahuId);
-        // getDPTRealtime(ahuData?.ahuId);
-    }, [ahuData]);
-    useEffect(() => {
-        // getBTURealTime(btuData?.btuSensor);
-    }, [btuData]);
+    // useEffect(() => {
+    //     // getRealTimeAHU(ahuData?.ahuSensor);
+    //     // getOccupancyAndIaqDevicesList(ahuData?.ahuId);
+    //     // getAverageValues(ahuData?.ahuId);
+    //     // getDPTRealtime(ahuData?.ahuId);
+    // }, [ahuData, getOccupancyAndIaqDevicesList]);
+
     return (
         <>
             <Row style={{ marginLeft: '10px' }}>

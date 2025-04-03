@@ -42,21 +42,11 @@ interface DeviceState {
     DeviceID: string;
     Parameters: Record<string, string | number>;
 }
-// OVERHAUL Needed
 const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlFn, currentDeviceState }) => {
-    // const [deviceStatus, setDeviceStatus] = useState<boolean>(currentDeviceState?.status);
-    // const [thermostatMode, setThermostatMode] = useState<selectTagType[]>([
-    //     { label: currentDeviceState?.thermoStatMode ?? '', value: currentDeviceState?.thermoStatMode ?? '' },
-    // ]);
-    // const [setTemperature, setSetTemperature] = useState<number | string>(currentDeviceState?.setTemp);
-    // const [deviceId, setDeviceId] = useState<string>(currentDeviceState.deviceId);
-    // const [isSuccess, setIsSuccess] = useState<boolean>(false);
-    // const [error, setError] = useState<ValidationErrors>({});
-
     const [deviceStatus, setDeviceStatus] = useState<boolean>(false);
     const [thermostatMode, setThermostatMode] = useState<selectTagType[]>();
     const [setTemperature, setSetTemperature] = useState<number | string>();
-    const [deviceId, setDeviceId] = useState<string>();
+    // const [deviceId, setDeviceId] = useState<string>();
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [error, setError] = useState<ValidationErrors>({});
     const [isAPILoading, setIsAPILoading] = useState(false);
@@ -75,7 +65,6 @@ const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlF
     };
     const handleDeviceStatus = async () => {
         try {
-            // console.log('status changed');
             setDeviceStatus((currentState) => !currentState);
         } catch (error) {
             console.log(error);
@@ -164,7 +153,6 @@ const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlF
                 return;
             }
             const response = await ahuContolsApi(newState);
-            // console.log('New State:', newState);
             if (response?.data?.Response === 'Updated') {
                 setIsSuccess(true);
                 toast.success('Device state updated successfully.');
@@ -257,7 +245,6 @@ const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlF
                                             role="switch"
                                             id="aiModeinput"
                                             disabled={true}
-                                            // onChange={setAiModeOnOff}
                                             checked={false}
                                         />
                                         <label className="form-check-label" htmlFor="aiModeinput"></label>
@@ -303,7 +290,7 @@ const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlF
                                         type="number"
                                         className="form-control"
                                         id="set-temp"
-                                        placeholder={`Temp:${setTemperature}`}
+                                        placeholder={`${setTemperature ? setTemperature : ''}°C`}
                                         onChange={(e) => handleSetTempChanges(e)}
                                         // value={setTemperature}
                                     />{' '}

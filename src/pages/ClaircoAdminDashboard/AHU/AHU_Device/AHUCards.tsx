@@ -22,6 +22,7 @@ import PlainWidgetWithUnitsIcon from 'components/ClaircoCustomerDashboard/Widget
 import ControlsModal from './ControlsModal';
 import { isAdmin } from 'utils/storageFunctions';
 import AHUControlsModal from 'components/ClaircoControls/AHUControls/AHUControlsModal';
+import { toast } from 'sonner';
 const fanSpeedReverseMapping: { [key: number]: string } = {
     0: 'High',
     1: 'Medium',
@@ -51,44 +52,45 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
     const [thermostatStatus, setThermostatStatus] = useState(false);
     const [iEnergy, setIEnergy] = useState<any>();
     const [dptRealValue, setDptRealValue] = useState<any>();
-
+    const [isLoading, setIsLoading] = useState({ AHU: false, BTU: false });
     // Data Fetching and Manipulation
     // Real time BTU
     const getBTURealTime = useCallback(async (sensorName) => {
         if (!sensorName) return;
-        // console.log('BTU Realtime:');
+        try {
+            setIsLoading((curr) => ({ ...curr, BTU: true }));
+            const res = await fetchBTURealTime(sensorName);
+            const lastUpdated = convertUnixToIST(Number(res?.data?.[0]?.['Epoch time']?.$numberDecimal));
+            const instEnergy = roundToOneDecimal(res?.data?.[0]?.data?.['Instantaneous Energy Rate']);
+            const tempOne = roundToOneDecimal(res?.data?.[0]?.data?.Temp1);
+            const tempTwo = roundToOneDecimal(res?.data?.[0]?.data?.Temp2);
+            const netFlowRate = roundToOneDecimal(res?.data?.[0]?.data?.['Net Flow']);
+            const FlowRateInst = roundToOneDecimal(res?.data?.[0]?.data?.Flowrate);
+            const BTUValue = roundToOneDecimal(res?.data?.[0]?.data?.['Total Energy'] || 0);
 
-        const res = await fetchBTURealTime(sensorName);
-        const lastUpdated = convertUnixToIST(Number(res?.data?.[0]?.['Epoch time']?.$numberDecimal));
-        console.log('Invalid data', typeof lastUpdated, res?.data?.[0]?.['Epoch time']?.$numberDecimal);
-        const instEnergy = roundToOneDecimal(res?.data?.[0]?.data?.['Instantaneous Energy Rate']);
-        const tempOne = roundToOneDecimal(res?.data?.[0]?.data?.Temp1);
-        const tempTwo = roundToOneDecimal(res?.data?.[0]?.data?.Temp2);
-        const netFlowRate = roundToOneDecimal(res?.data?.[0]?.data?.['Net Flow']);
-        const FlowRateInst = roundToOneDecimal(res?.data?.[0]?.data?.Flowrate);
-        const BTUValue = roundToOneDecimal(res?.data?.[0]?.data?.['Total Energy'] || 0);
-
-        const tempDiff = roundToOneDecimal(tempTwo - tempOne) ?? '-';
-        // const lastUpdated = res?.data[0].data['Epoch time'].$numberDecimal;
-        // console.log('BTU last updated', lastUpdated);
-        setIEnergy(instEnergy);
-        setTemp1(tempOne);
-        setTemp2(tempTwo);
-        setNetFlow(netFlowRate);
-        setFlowRate(FlowRateInst);
-        setBTURealLastUpdated(lastUpdated);
-        setRealBTUValue(BTUValue);
-        setDeltaT(tempDiff);
-        // console.log('Res from :', lastUpdated, FlowRateInst, netFlowRate, tempTwo, tempOne, tempDiff, instEnergy);
+            const tempDiff = roundToOneDecimal(tempTwo - tempOne) ?? '-';
+            // const lastUpdated = res?.data[0].data['Epoch time'].$numberDecimal;
+            // console.log('BTU last updated', lastUpdated);
+            setIEnergy(instEnergy);
+            setTemp1(tempOne);
+            setTemp2(tempTwo);
+            setNetFlow(netFlowRate);
+            setFlowRate(FlowRateInst);
+            setBTURealLastUpdated(lastUpdated);
+            setRealBTUValue(BTUValue);
+            setDeltaT(tempDiff);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading((curr) => ({ ...curr, BTU: false }));
+        }
     }, []);
 
     // Real Time AHU
     const getRealTimeAHU = useCallback(async (sensorName: any) => {
         try {
-            // const getDeviceId = await fetchDeviceId(id);
-            // console.log('AHU real time sensor Name:', sensorName);
             if (!sensorName) return;
-
+            setIsLoading((curr) => ({ ...curr, AHU: true }));
             const res: any = await fetchAHURealTime(sensorName);
             const mode = res?.data?.[0]?.data?.MODE || 10;
             // console.log('AHU Real time:');
@@ -98,8 +100,6 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
             const updatedTime = convertUnixToIST(Number(res?.data?.[0]?.['Epoch time']?.['$numberDecimal']));
             const currentDeviceStatus = res?.data?.[0]?.data?.RELAY1_STATE;
             const thermoStat = res?.data?.[0]?.data?.THSTAT ?? 0;
-
-            // console.log('Res', res, fanMode, returnTemp, setTemp);
             setThermostatStatus(thermoStat);
             setRealFanSpeed(fanSpeedReverseMapping[+fanMode]);
             setIsDeviceOn(currentDeviceStatus ? true : false);
@@ -109,19 +109,19 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
             setRealLastUpdated(updatedTime);
         } catch (error) {
             console.log(error);
+        } finally {
+            setIsLoading((curr) => ({ ...curr, AHU: false }));
         }
     }, []);
 
     // Average Values
     const getAverageValues = useCallback(async (ahuId: any) => {
         if (!ahuId) return;
-        // console.log('Averages :');
 
         const averages = await fetchAverageValuesForAHU(ahuId);
         setAverageHumidity(roundToOneDecimal(averages?.data?.avgHumi));
         setAvgTemp(roundToOneDecimal(roundToOneDecimal(averages?.data?.avgRtemp)));
         setOccupantsSum(averages?.data?.occupancySum ? roundToOneDecimal(averages?.data?.occupancySum) : 'N/A');
-        // console.log('averages:', averages);
     }, []);
 
     //Real time DPT
@@ -146,7 +146,13 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
             // console.log('Clicked');
             const userIsAdmin = isAdmin();
 
-            if (!userIsAdmin || !ahuData?.ahuName) return;
+            if (!userIsAdmin || !ahuData?.ahuName || isLoading.AHU) {
+                console.log(isLoading);
+                toast.error(
+                    'We’re experiencing a temporary delay. Please try again in a short while. Thank you for your patience!'
+                );
+                return;
+            }
 
             const obj = {
                 deviceName: ahuData?.ahuName,
@@ -169,10 +175,10 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
     }, [ahuData, getAverageValues, getDPTRealtime, getRealTimeAHU]);
     useEffect(() => {
         getBTURealTime(btuData?.btuSensor);
-    }, [btuData]);
+    }, [btuData, getBTURealTime]);
     return (
         <Row className="mx-2">
-            {controlModal && (
+            {controlModal && !isLoading.AHU && (
                 <AHUControlsModal
                     state={controlModal}
                     currentDeviceState={modalInfo}

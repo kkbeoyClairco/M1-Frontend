@@ -1,6 +1,5 @@
 import { deviceTypeId, deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
-import { data } from 'pages/Sensiable-AdminDashboard/data';
 import React, { useCallback, useEffect, useState } from 'react';
 import Select from 'react-select';
 
@@ -9,7 +8,6 @@ export const DeviceSelectionComponent = ({ defaultSelection, customerId, floorId
 
     const handleDeviceSelection = async (e: any) => {
         try {
-            // console.log('device selection:', e);
             functionToExecute(e);
         } catch (error) {
             console.log(error);
@@ -19,10 +17,7 @@ export const DeviceSelectionComponent = ({ defaultSelection, customerId, floorId
     const getAHUData = useCallback(async () => {
         try {
             const deviceId = deviceTypesConstant['AHU'];
-            // deviceTypeId['AHU'];
-            // if (!customerId || !floorId) return;
-            const response = await fetchDevicesList(deviceId, customerId, floorId);
-            // console.log('Select', response);
+            const response = await fetchDevicesList(deviceId);
             const dataToPass = response?.data?.map((doc: any) => {
                 return {
                     label: doc?.name,
@@ -45,7 +40,7 @@ export const DeviceSelectionComponent = ({ defaultSelection, customerId, floorId
     }, []);
     useEffect(() => {
         getAHUData();
-    }, [customerId, floorId, getAHUData]);
+    }, []);
     return (
         <>
             <div style={{ marginTop: '20px' }}>
