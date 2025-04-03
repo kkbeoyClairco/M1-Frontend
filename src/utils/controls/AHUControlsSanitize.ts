@@ -18,7 +18,9 @@ export const sanitizeParameters = (parameters: Record<string, string | number>):
 
     Object.entries(parameters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-            sanitizedParameters[key] = value;
+            if (typeof value === 'string' || typeof value === 'number') {
+                sanitizedParameters[key] = value;
+            }
         }
     });
 

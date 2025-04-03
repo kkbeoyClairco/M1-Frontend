@@ -1,13 +1,16 @@
 import { ahuContolsApi } from 'helpers/api/services/Clairco/customerSide/ahu';
 import { controlVrfVrcStateAPI } from 'helpers/api/services/Clairco/customerSide/vrf-vrf';
-import { controlsInputValidation, setTemperatureValidation } from 'pages/ClaircoLogin/controlFormValidation';
-import { parse } from 'path';
+import {
+    controlsInputValidation,
+    setTemperatureValidation,
+} from 'components/ClaircoControls/AHUControls/controlFormValidation';
 import React, { Dispatch, MouseEventHandler, SetStateAction, useEffect, useState } from 'react';
 import { Button, Col, Modal, Row } from 'react-bootstrap';
 import Select, { ActionMeta } from 'react-select';
 import { toast } from 'sonner';
 import { selectTagType } from 'types/selectTagType';
 import { sanitizeParameters, sanitizeTemperature, sanitizeThermostatMode } from 'utils/controls/AHUControlsSanitize';
+import { isAdmin } from 'utils/storageFunctions';
 
 type AHUControlModalProps = {
     state?: boolean;
@@ -56,7 +59,7 @@ const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlF
     const [deviceId, setDeviceId] = useState<string>();
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [error, setError] = useState<ValidationErrors>({});
-
+    const [isAPILoading, setIsAPILoading] = useState(false);
     const handleThermostatChanges = async (e: any) => {
         try {
             const sanitizedMode = sanitizeThermostatMode(e.value);
@@ -104,13 +107,23 @@ const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlF
     };
     const handleSumbit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         try {
-            if (!e.nativeEvent.isTrusted || !currentDeviceState?.deviceId) {
+            if (!currentDeviceState?.deviceId) {
+                toast.error('Action Required: Please close the popup and try again to proceed.');
+                return;
+            }
+            if (!e.nativeEvent.isTrusted) {
                 toast.error(
                     'Alert: Potential malicious controls detected in the submitted form. To protect the system integrity, submission has been blocked. Please verify the source or contact support for further assistance.'
                 );
                 return;
             }
-            // IMPLEMENT VALIDATION
+            // Permission Check
+            const userPermission = isAdmin();
+            if (!userPermission) {
+                toast.error('Access Denied: You do not have the necessary permissions to perform this operation.');
+                return;
+            }
+            setIsAPILoading(true);
             let newState: DeviceState = {
                 Mode: 'Manual',
                 DeviceID: currentDeviceState?.deviceId ?? '',
@@ -137,26 +150,33 @@ const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlF
                     RELAY1_SET: 'OFF',
                     THSTAT: deviceStatus ? 'ON' : 'OFF',
                 };
-                // newState.Parameters['THSTAT'] = ;
             }
+            // Validation
+            controlsInputValidation
+                .validate(newState)
+                .then((res) => console.log('Validation Success', res))
+                .catch((error) => console.log('Validation error', error));
+            //Sanitization
             newState.Parameters = sanitizeParameters(newState.Parameters);
 
             if (!Object.keys(newState.Parameters).length) {
                 toast.info('No change detected.');
                 return;
             }
-            // const res = await ahuContolsApi(newState);
-            console.log('New State:', newState);
-            // if (res?.data?.Response === 'Updated') {
-            //     setIsSuccess(true);
-            //     toast.success('Device state updated successfully.');
-            //     closeModalWithTimer();
-            // } else {
-            //     toast.error('Failed to update device state. Please try again.');
-            // }
+            const response = await ahuContolsApi(newState);
+            // console.log('New State:', newState);
+            if (response?.data?.Response === 'Updated') {
+                setIsSuccess(true);
+                toast.success('Device state updated successfully.');
+                closeModalWithTimer();
+            } else {
+                toast.error('Failed to update device state. Please try again.');
+            }
         } catch (error) {
             console.error('Error submitting device controls:', error);
             toast.error('An unexpected error occurred. Please try again later.');
+        } finally {
+            setIsAPILoading(false);
         }
     };
     const handleModalClose = async () => {
@@ -271,7 +291,6 @@ const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlF
                     </Row>
                     {/* Set Temperature */}
                     <Row style={{ padding: '10px' }}>
-                        {' '}
                         <div className="form-group">
                             <Row className="w-100">
                                 <Col md={6}>
@@ -312,6 +331,11 @@ const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlF
                             </div>
                         )}
                     </Row>
+                    {isAPILoading && (
+                        <Row className="d-flex justify-content-center text-center">
+                            <p>Processing your command...</p>{' '}
+                        </Row>
+                    )}
                 </Modal.Body>
                 <Modal.Footer>
                     {' '}

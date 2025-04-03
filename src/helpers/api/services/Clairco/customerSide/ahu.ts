@@ -39,7 +39,7 @@ export const fetchAHUTrends = async (sensorName?: any, startTime?: any, endtime?
 export const ahuContolsApi = async (newState: any) => {
     try {
         // http://3.7.82.174:2000
-        const url = '/ahu/settings/';
+        const url = `${'contolsFlaskAPIModifyHere'}/ahu/settings/`;
         return api.create(url, newState);
     } catch (error) {
         return;
