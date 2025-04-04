@@ -1,45 +1,12 @@
-import LastUpdated from 'components/ClaircoCustomerDashboard/General/LastUpdated/LastUpdated';
 import PageHeading from 'components/ClaircoCustomerDashboard/Headings/PageHeading';
-import HeadbandWidget from 'components/ClaircoCustomerDashboard/Widgets/HeadbandWidget';
-import PlainWidget from 'components/ClaircoCustomerDashboard/Widgets/PlainWidget';
-import PlainWidgetWithTwoParameters from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithTwoParameters';
-import UnitSelectedWidget from 'components/ClaircoCustomerDashboard/Widgets/UnitSelectedWidget';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Card, Col, Row } from 'react-bootstrap';
-import IAQDevicesTable from './IAQDevicesTable';
-import OccupancyDevicesTable from './OccupancyDeviceTable';
-import TrendsChart from 'pages/ClaircoCustomerDashboard/AHU/AHU_Device/TrendsChart';
-import TimerIcon from 'components/ClaircoCustomerDashboard/Icons/TimerIcon';
-import Navigator from 'components/ClaircoCustomerDashboard/NavigatorComponent/Navigator';
-import PlainWidgetWithUnitsIcon from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithUnitsIcon';
-import {
-    fetchAHURealTime,
-    fetchAverageValuesForAHU,
-    fetchBTURealTime,
-    fetchOccuAndIaqList,
-    fetchRealtimeDPT,
-} from 'helpers/api/services/Clairco/customerSide/ahu';
-import { convertDateToEpoch, convertUnixToIST } from 'utils/timeFunctions';
-import { roundToOneDecimal } from 'utils/maths';
-import { AHUModeReverseMapping } from 'appConstants/DeviceMappingConstants';
-import UnitSelectedWidgetWithControls from 'components/ClaircoCustomerDashboard/Widgets/UnitSelectedWidgetWithControls';
-import ControlsModal from './ControlsModal';
+import React, { useEffect, useRef, useState } from 'react';
+import { Col, Row } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
-import { getDataFromSession, getUserDetailsFromSession, getUserInfoFromSession, isAdmin } from 'utils/storageFunctions';
-import { convertToBTU } from 'utils/unitConversion';
+import { getUserInfoFromSession } from 'utils/storageFunctions';
 import { DeviceSelectionComponent } from './DeviceSelectionComponent';
-import classNames from 'classnames';
-import { TwoParameterWidget } from './TwoParameterWidget';
-import { conforms, forEach } from 'lodash';
 import AHUCards from './AHUCards';
+import AHUTrendsChart from 'components/ClaircoTrends/AHU/TrendsChart';
 
-// interface LocationState {
-//     sensorName?: string;
-//     deviceName?: string;
-//     btuName?: string;
-//     id?: string;
-//     floorId?: string;
-// }
 const AHU_DevicePage = () => {
     const [locationData, setLocationData] = useState<any>();
     const [ahuData, setAhuData] = useState<any>();
@@ -52,21 +19,6 @@ const AHU_DevicePage = () => {
     const location = useLocation();
 
     const { customerId } = getUserInfoFromSession();
-
-    // Click Handlers
-
-    // Occupancy and IAQ Tables
-    // const getOccupancyAndIaqDevicesList = useCallback(async (ahuId: any) => {
-    //     if (!ahuId) return;
-    //     // console.log('Occupancy List:');
-
-    //     // const data = await fetchOccuAndIaqList(ahuId);
-    //     // const iaq = data?.data?.iaqDevices;
-    //     // const occupancy = data?.data?.occupancyDevices;
-    //     // // console.log('Data for table', data, occupancy);
-    //     // setIAQTableData(iaq);
-    //     // setOccuTableData(occupancy);
-    // }, []);
 
     //Handlers
     // Device changing function
@@ -172,7 +124,7 @@ const AHU_DevicePage = () => {
 
             <AHUCards ahuData={ahuData} btuData={btuData} locationData={locationData} />
             <Row ref={trendsGraphRef} style={{ marginLeft: '10px', padding: '10px', paddingLeft: '15px' }}>
-                <TrendsChart
+                <AHUTrendsChart
                     sensorNameAHU={ahuData?.ahuSensor ?? ''}
                     sensorNameBTU={btuData?.btuSensor ?? ''}
                     deviceId={ahuData?.ahuId ?? ''}

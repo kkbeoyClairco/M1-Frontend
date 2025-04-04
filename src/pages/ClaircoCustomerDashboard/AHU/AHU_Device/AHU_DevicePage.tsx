@@ -3,12 +3,9 @@ import PageHeading from 'components/ClaircoCustomerDashboard/Headings/PageHeadin
 import HeadbandWidget from 'components/ClaircoCustomerDashboard/Widgets/HeadbandWidget';
 import PlainWidget from 'components/ClaircoCustomerDashboard/Widgets/PlainWidget';
 import PlainWidgetWithTwoParameters from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithTwoParameters';
-import UnitSelectedWidget from 'components/ClaircoCustomerDashboard/Widgets/UnitSelectedWidget';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Card, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import IAQDevicesTable from './IAQDevicesTable';
 import OccupancyDevicesTable from './OccupancyDeviceTable';
-import TrendsChart from 'pages/ClaircoCustomerDashboard/AHU/AHU_Device/TrendsChart';
 import TimerIcon from 'components/ClaircoCustomerDashboard/Icons/TimerIcon';
 import Navigator from 'components/ClaircoCustomerDashboard/NavigatorComponent/Navigator';
 import PlainWidgetWithUnitsIcon from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithUnitsIcon';
@@ -19,18 +16,16 @@ import {
     fetchOccuAndIaqList,
     fetchRealtimeDPT,
 } from 'helpers/api/services/Clairco/customerSide/ahu';
-import { convertDateToEpoch, convertUnixToIST } from 'utils/timeFunctions';
+import { convertUnixToIST } from 'utils/timeFunctions';
 import { roundToOneDecimal } from 'utils/maths';
 import { AHUModeReverseMapping } from 'appConstants/DeviceMappingConstants';
 import UnitSelectedWidgetWithControls from 'components/ClaircoCustomerDashboard/Widgets/UnitSelectedWidgetWithControls';
-import ControlsModal from './ControlsModal';
 import { useLocation } from 'react-router-dom';
-import { getDataFromSession, getUserDetailsFromSession, getUserInfoFromSession, isAdmin } from 'utils/storageFunctions';
-import { convertToBTU } from 'utils/unitConversion';
+import { getUserInfoFromSession, isAdmin } from 'utils/storageFunctions';
 import { DeviceSelectionComponent } from './DeviceSelectionComponent';
-import classNames from 'classnames';
 import { TwoParameterWidget } from './TwoParameterWidget';
-import { conforms, forEach } from 'lodash';
+import AHUTrendsChart from 'components/ClaircoTrends/AHU/TrendsChart';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface LocationState {
     sensorName?: string;
@@ -514,7 +509,7 @@ const AHU_DevicePage = () => {
                 </Col>
             </Row>
             <Row ref={trendsGraphRef} style={{ marginLeft: '10px', padding: '10px', paddingLeft: '15px' }}>
-                <TrendsChart
+                <AHUTrendsChart
                     sensorNameAHU={ahuData?.ahuSensor ?? ''}
                     sensorNameBTU={btuData?.btuSensor ?? ''}
                     deviceId={ahuData?.ahuId ?? ''}
@@ -529,25 +524,5 @@ const AHU_DevicePage = () => {
         </>
     );
 };
-
-// <PlainWidgetWithUnitsIcon
-// description=""
-// title={
-//     <span>
-//         ΔT <br />
-//         {/* Energy Consumption */}
-//         <br />
-//         {/* Required */}
-//     </span>
-// }
-// value={[deltaT]}
-// lastUpdated={btuRealLastUpdated}
-// unit="°C"
-// extraParameters={
-//     <span>
-//         T1 = {temp1}°C <br></br>T2 = {temp2}°C
-//     </span>
-// }
-// />
 
 export default AHU_DevicePage;

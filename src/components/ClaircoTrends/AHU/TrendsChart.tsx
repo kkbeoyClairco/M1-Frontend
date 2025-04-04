@@ -2,29 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Card, Nav, Tab, Col, Row, ButtonGroup, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import ReactEcharts from 'echarts-for-react';
-
-import { coloursTable, oneHourInMilliseconds, propertyTable, unitTables } from 'appConstants/propertyTable';
-import {
-    getAggregateDataOfIndoorUnit,
-    getLiveDataOfIndoorUnit,
-} from 'helpers/api/services/Clairco/customerSide/vrf-vrf';
+import { coloursTable, oneHourInMilliseconds } from 'appConstants/propertyTable';
 import { convertDateToEpoch, convertUnixToIST } from 'utils/timeFunctions';
-import { colors } from 'react-select/dist/declarations/src/theme';
 import { fetchAHUTrends, fetchBTUTrendsData, fetchTrendsDPT } from 'helpers/api/services/Clairco/customerSide/ahu';
-import { start } from 'repl';
 import { roundToOneDecimal } from 'utils/maths';
-import { deviceModesReverseMapping } from 'appConstants/DeviceMappingConstants';
-const TrendsChart = ({
-    sensorNameAHU,
-    sensorNameBTU,
-    deviceId,
-}: // deviceAliasName,
-// deviceName,
-// tempFucnction,
-// fanSpeedFunction,
-// getLastUpdated,
-// setIsIndoorDeviceOn,
-any) => {
+import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
+const AHUTrendsChart = ({ sensorNameAHU, sensorNameBTU, deviceId }: any) => {
     const timeGrouingConstants: { [key: string]: string } = {
         a: '1',
         b: '6',
@@ -53,30 +36,18 @@ any) => {
         k: 'DPT',
     };
 
-    // const fanSpeedObeject: { [key: string]: number } = {
-    //     Auto: 0,
-    //     'Very Low': 1,
-    //     Low: 2,
-    //     Med: 3,
-    //     High: 4,
-    //     'Very High': 5,
-    // };
-
     const graphOptions: { [key: string]: string } = { a: 'live', b: 'aggregated' };
     const [graphState, setGraphState] = useState('live');
     const [timeGroup, setTimeGroup] = useState<any>(timeGrouingConstants.a);
     const [graphPara, setGraphPara] = useState(parameters.a);
     const [graphLineColour, setGraphLinecolour] = useState(coloursTable.a);
-    const [ambTemperature, setAmbientTemperature] = useState([]);
     const [setTemp, setSetTemp] = useState<any>([]);
     const [fanSpeedData, setFanSpeedData] = useState<any>([]);
     const [modesData, setModesData] = useState<any>([]);
     const [returnAirTempData, setReturnAirTempData] = useState<any>([]);
     const [btuXAxisCategory, setBtuXAxisCategory] = useState<any>([]);
     const [ahuXAxisCategory, setAhuXAxisCategory] = useState<any>([]);
-
-    const [updatedTime, setUpdatedaTime] = useState('');
-    const [autoFanTime, setAutoFanTime] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [flowRate, setFlowRate] = useState([]);
     const [netFlow, setNetFlow] = useState([]);
@@ -105,7 +76,6 @@ any) => {
             return [];
         }
     };
-    // Function switches X-Axis time array depending on BTU or AHU selected by user
     const getXaxisData = (graphPara: any) => {
         try {
             if ([parameters.a, parameters.b, parameters.c, parameters.d].includes(graphPara)) return ahuXAxisCategory;
@@ -144,15 +114,14 @@ any) => {
         [deviceId]
     );
 
-    // Function to get Live data
     const getLiveDataAPI = useCallback(
         async (timeDifference: any) => {
             try {
                 if (!sensorNameAHU || !sensorNameBTU) return;
+                setIsLoading(true);
                 const currentEpoch = convertDateToEpoch(new Date());
                 const startEpoch = currentEpoch - oneHourInMilliseconds * timeDifference;
-                //add the DEvice name, start time and end time
-                // console.log('Epoch time in one hour', startEpoch, timeGroup, convertUnixToIST(startEpoch));
+
                 const data = await fetchBTUTrendsData(
                     sensorNameBTU,
                     Math.floor(startEpoch / 1000),
@@ -171,7 +140,11 @@ any) => {
                 const temp2Array = data?.data.map((doc: any) => doc.data.Temp2);
                 const instantEnergyArray = data?.data.map((doc: any) => doc.data['Instantaneous Energy Rate']);
                 const totalEnergyArray = data?.data.map((doc: any) => doc.data['Total Energy']);
-                const xAxisData = data?.data.map((doc: any) => convertUnixToIST(doc['Epoch time']['$numberDecimal']));
+                const xAxisData = data?.data.map((doc: any) =>
+                    doc?.['Epoch time']?.['$numberDecimal']
+                        ? convertUnixToIST(Number(doc?.['Epoch time']?.['$numberDecimal']))
+                        : null
+                );
                 // AHU
                 const setTemperatures =
                     ahuData?.data?.reverse().map((doc: any) => roundToOneDecimal(doc.data.STEMP / 10)) || [];
@@ -180,7 +153,11 @@ any) => {
                 const returnAirTempArray =
                     ahuData?.data?.map((doc: any) => roundToOneDecimal(doc.data.RTEMP / 10)) || [];
                 const timeArray =
-                    ahuData?.data?.map((doc: any) => convertUnixToIST(doc['Epoch time'].$numberDecimal)) || [];
+                    ahuData?.data?.map((doc: any) =>
+                        doc?.['Epoch time'].$numberDecimal
+                            ? convertUnixToIST(Number(doc?.['Epoch time'].$numberDecimal))
+                            : null
+                    ) || [];
                 // console.log('AHU Data extracted:', fanSpeedArray);
                 // AHU
                 setSetTemp(setTemperatures);
@@ -198,19 +175,13 @@ any) => {
                 setBtuXAxisCategory(xAxisData);
             } catch (error) {
                 console.log(error);
+            } finally {
+                setIsLoading(false);
             }
         },
         [sensorNameBTU, sensorNameAHU]
     );
 
-    // Function to get Aggregate Data
-    // const getAggregateData = useCallback(async () => {
-    //     try {
-    //         // console.log('Aggregateapi');
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }, [graphState]);
     const changeGraphState = async (current: string) => {
         try {
             setGraphState(graphOptions[current]);
@@ -220,7 +191,6 @@ any) => {
     };
     const changeTimeGroup = async (timeGroupKey: string) => {
         try {
-            // console.log(timeGrouingConstants[timeGroupKey]);
             setTimeGroup(timeGrouingConstants[timeGroupKey]);
         } catch (error) {
             console.log(error);
@@ -236,7 +206,6 @@ any) => {
         }
     };
 
-    //Echarts Graph Option
     const option = {
         grid: {
             left: '10%', // Adjust the left margin
@@ -251,7 +220,6 @@ any) => {
                 textStyle: {
                     align: 'right',
                 },
-                // interval: 1,
                 margin: 30,
             },
         },
@@ -343,13 +311,7 @@ any) => {
                             const fanSpeedLabels = [null, 'High', 'Medium', 'Low', 'Auto'];
                             return fanSpeedLabels[value] || value;
                         } else if (graphPara === parameters.d) {
-                            const deviceStatusModes = [
-                                null,
-                                // 'Auto',
-                                'Cool',
-                                'Heat',
-                                'Ventilation',
-                            ];
+                            const deviceStatusModes = [null, 'Cool', 'Heat', 'Ventilation'];
                             return deviceStatusModes[value];
                         } else {
                             return `${value}`;
@@ -377,153 +339,149 @@ any) => {
     useEffect(() => {
         getLiveDataAPI(timeGroup);
         getDPTTrends(timeGroup);
-    }, [getLiveDataAPI, timeGroup]);
+    }, [getDPTTrends, getLiveDataAPI, timeGroup]);
 
     return (
-        <>
-            <Card>
-                <Card.Body>
-                    <Row>
-                        <Tab.Container defaultActiveKey="live">
-                            <div className="align-items-center d-sm-flex justify-content-sm-between mb-3">
-                                <div className="ChartHeading" style={{ width: '200px' }}>
-                                    <h4 className="header-title">Trends ({graphState})</h4>
-                                </div>
-                                <Row>
-                                    {' '}
-                                    <div style={{ width: '200px', textAlign: 'center' }}>
-                                        <h5> {graphPara}</h5>
-                                    </div>{' '}
-                                    <div style={{ width: '200px' }}>
-                                        {' '}
-                                        {/* <h6 style={{ textAlign: 'center' }}>{}</h6>{' '} */}
-                                    </div>{' '}
-                                    <div style={{ width: '300px', fontSize: '12px' }}>
-                                        {' '}
-                                        {/* <h6 style={{ fontSize: '10px' }}>Updated on {updatedTime}</h6>{' '} */}
-                                    </div>
-                                </Row>
-
-                                {/* Currently only live data is used, if aggregate is needed this can be used,otherwise useless */}
-                                <Nav as="ul" variant="pills" className="bg-nav-pills p-1 rounded">
-                                    {Object.keys([]).map((option) => {
-                                        return (
-                                            <Nav.Item as="li" key={option}>
-                                                {' '}
-                                                <Nav.Link
-                                                    style={{
-                                                        background:
-                                                            graphState == graphOptions[option] ? '#00695C' : '#008675',
-                                                        border: '0px',
-                                                        // height: '25px',
-                                                        // backgroundColor: 'red',
-                                                    }}
-                                                    as={Link}
-                                                    className="py-1"
-                                                    to="#"
-                                                    eventKey="live"
-                                                    // {graphOptions[key]}
-                                                    onClick={() => changeGraphState(option)}>
-                                                    {graphOptions[option]}
-                                                </Nav.Link>
-                                            </Nav.Item>
-                                        );
-                                    })}{' '}
-                                    {/* ); */}
-                                    {/* })} */}
-                                </Nav>
+        <Card className="shadow-lg rounded">
+            <Card.Body>
+                <Tab.Container defaultActiveKey="live">
+                    <div className="align-items-center d-sm-flex justify-content-sm-between mb-3">
+                        <div className="ChartHeading" style={{ width: '200px' }}>
+                            <h4 className="header-title">Trends ({graphState})</h4>
+                        </div>
+                        <Row>
+                            {' '}
+                            <div style={{ width: '200px', textAlign: 'center' }}>
+                                <h5> {graphPara}</h5>
+                            </div>{' '}
+                            <div style={{ width: '200px' }}>
+                                {' '}
+                                {/* <h6 style={{ textAlign: 'center' }}>{}</h6>{' '} */}
+                            </div>{' '}
+                            <div style={{ width: '300px', fontSize: '12px' }}>
+                                {' '}
+                                {/* <h6 style={{ fontSize: '10px' }}>Updated on {updatedTime}</h6>{' '} */}
                             </div>
+                        </Row>
 
-                            {/* Time Period Selection Area */}
-                            <Row>
-                                <Col md={3} xs={12}>
-                                    <ButtonGroup style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                        {Object.keys(timeGrouingConstants).map((key) => (
-                                            <Button
-                                                key={key}
-                                                // disabled={key !== 'a'}
-                                                // variant="primary"
-                                                // className="btn btn-outline-info"
-                                                active={key == timeGroup}
-                                                onClick={(e) => changeTimeGroup(key)}
+                        {/* Currently only live data is used, if aggregate is needed this can be used,otherwise useless */}
+                        <Nav as="ul" variant="pills" className="bg-nav-pills p-1 rounded">
+                            {Object.keys([]).map((option) => {
+                                return (
+                                    <Nav.Item as="li" key={option}>
+                                        {' '}
+                                        <Nav.Link
+                                            style={{
+                                                background: graphState == graphOptions[option] ? '#00695C' : '#008675',
+                                                border: '0px',
+                                                // height: '25px',
+                                                // backgroundColor: 'red',
+                                            }}
+                                            as={Link}
+                                            className="py-1"
+                                            to="#"
+                                            eventKey="live"
+                                            // {graphOptions[key]}
+                                            onClick={() => changeGraphState(option)}>
+                                            {graphOptions[option]}
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                );
+                            })}{' '}
+                            {/* ); */}
+                            {/* })} */}
+                        </Nav>
+                    </div>
+
+                    {/* Time Period Selection Area */}
+                    <Row>
+                        <Col md={3} xs={12}>
+                            <ButtonGroup style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                {Object.keys(timeGrouingConstants).map((key) => (
+                                    <Button
+                                        key={key}
+                                        // disabled={key !== 'a'}
+                                        // variant="primary"
+                                        // className="btn btn-outline-info"
+                                        active={key == timeGroup}
+                                        onClick={(e) => changeTimeGroup(key)}
+                                        style={{
+                                            background: timeGroup == timeGrouingConstants[key] ? '#00695C' : '#008675',
+                                            border: '0px',
+                                            // flex: '1 1 auto',
+
+                                            // backgroundColor: 'red',
+                                        }}>
+                                        {timeGrouingConstants[key]} hr
+                                    </Button>
+                                ))}
+                            </ButtonGroup>
+                            {/* Parameter selection area */}
+                            <div className="flex-container">
+                                <div className="parameter-container" style={{ paddingTop: '20px' }}>
+                                    {' '}
+                                    {Object.keys(parameters).map((parameter) => {
+                                        return (
+                                            <div
                                                 style={{
-                                                    background:
-                                                        timeGroup == timeGrouingConstants[key] ? '#00695C' : '#008675',
-                                                    border: '0px',
-                                                    // flex: '1 1 auto',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    padding: '6px',
+                                                    paddingLeft: '20px',
+                                                }}
+                                                onClick={() => changeGraphParamer(parameter)}
+                                                key={parameter}>
+                                                {' '}
+                                                <div
+                                                    style={{
+                                                        background: coloursTable[parameter],
+                                                        height: '10px',
+                                                        width: '10px',
+                                                        borderRadius: '5px',
+                                                        marginRight: '10px',
+                                                    }}></div>
+                                                <div
+                                                    className="form-check"
+                                                    style={{
+                                                        paddingLeft: '20px',
+                                                        paddingTop: '10px',
+                                                        paddingBottom: '0px',
+                                                        justifyContent: 'center',
+                                                    }}>
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="flexRadioDefault"
+                                                        id={parameter}
+                                                        // onClick={() => changeGraphParamer(parameter)}
+                                                        checked={graphPara == parameters[parameter]}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="flexRadioDefault1">
+                                                        {parameters[parameter]}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>{' '}
+                            </div>
+                        </Col>
 
-                                                    // backgroundColor: 'red',
-                                                }}>
-                                                {timeGrouingConstants[key]} hr
-                                            </Button>
-                                        ))}
-                                    </ButtonGroup>
-                                    {/* Parameter selection area */}
-                                    <div className="flex-container">
-                                        <div className="parameter-container" style={{ paddingTop: '20px' }}>
-                                            {' '}
-                                            {Object.keys(parameters).map((parameter) => {
-                                                return (
-                                                    <div
-                                                        style={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            padding: '6px',
-                                                            paddingLeft: '20px',
-                                                        }}
-                                                        onClick={() => changeGraphParamer(parameter)}
-                                                        key={parameter}>
-                                                        {' '}
-                                                        <div
-                                                            style={{
-                                                                background: coloursTable[parameter],
-                                                                height: '10px',
-                                                                width: '10px',
-                                                                borderRadius: '5px',
-                                                                marginRight: '10px',
-                                                            }}></div>
-                                                        <div
-                                                            className="form-check"
-                                                            style={{
-                                                                paddingLeft: '20px',
-                                                                paddingTop: '10px',
-                                                                paddingBottom: '0px',
-                                                                justifyContent: 'center',
-                                                            }}>
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="radio"
-                                                                name="flexRadioDefault"
-                                                                id={parameter}
-                                                                // onClick={() => changeGraphParamer(parameter)}
-                                                                checked={graphPara == parameters[parameter]}
-                                                            />
-                                                            <label
-                                                                className="form-check-label"
-                                                                htmlFor="flexRadioDefault1">
-                                                                {parameters[parameter]}
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>{' '}
-                                    </div>
-                                </Col>
-
-                                <Col md={9} className="chart-container">
-                                    <ReactEcharts
-                                        option={option}
-                                        style={{ height: '90vh', width: '100%', overflow: 'clip' }}
-                                    />
-                                </Col>
-                            </Row>
-                        </Tab.Container>
+                        <Col md={9} className="chart-container">
+                            {!isLoading ? (
+                                <ReactEcharts
+                                    option={option}
+                                    style={{ height: '90vh', width: '100%', overflow: 'clip' }}
+                                />
+                            ) : (
+                                <TableSkelton />
+                            )}
+                        </Col>
                     </Row>
-                </Card.Body>
-            </Card>
-        </>
+                </Tab.Container>
+            </Card.Body>
+        </Card>
     );
 };
 
-export default TrendsChart;
+export default AHUTrendsChart;
