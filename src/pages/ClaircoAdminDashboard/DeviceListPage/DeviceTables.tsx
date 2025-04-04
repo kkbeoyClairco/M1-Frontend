@@ -4,7 +4,7 @@ import { DeviseTables } from '../BuildingsPage/types';
 import { Column } from 'react-table';
 import { formatDateToLocalTime } from '../../../helpers/utils';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRedux } from 'hooks';
 import { getAllBuildings, getDeviceTypes } from 'redux/actions';
 import { useSSR } from 'react-i18next';
@@ -14,7 +14,8 @@ import { customer } from 'pages/Sensiable-Dashboard/OccupancyTrends/data';
 import { selectTagType } from 'types/selectTagType';
 import { setLabels } from 'react-chartjs-2/dist/utils';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
-
+import { columnConfig } from './columnConfig';
+import { deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 type NewType = CellFormatter<DeviseTables>;
 
 type DeviceTablesProps = {
@@ -28,16 +29,17 @@ export const DeviceTables: React.FC<DeviceTablesProps> = ({ deviceTypeId, floorI
     const [tableData, setTableData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isEmpty, setIsEmpty] = useState(false);
-    const [deviceTypeList, setDeviceTypeList] = useState([]);
+    const [deviceTypeList, setDeviceTypeList] = useState<{ label: string; value: string }[]>([]);
     const [selectedDeviceType, setSelectedDeviceType] = useState<selectTagType>({ label: '', value: '' });
     const navigate = useNavigate();
     const { dispatch, appSelector } = useRedux();
 
     const handleNavigation = (data: any) => {
-        // console.log(data);
-        const { name = '', type = '' } = data;
+        console.log(data);
+        const { name = '', deviceType = '' } = data;
+        console.log('deviceType', deviceType);
 
-        switch (type) {
+        switch (deviceType) {
             case 'IAQ':
                 // navigate(`/admin/pages/iaq/device?name=${name}&deviceType=6690ef7fdeb2b486e92011aa`);
                 break;
@@ -45,48 +47,31 @@ export const DeviceTables: React.FC<DeviceTablesProps> = ({ deviceTypeId, floorI
                 break;
             case 'VRV':
                 break;
+            case '66d015995b0bbb913bf9936d':
         }
     };
 
-    const ActionColumn = ({ row }: any) => {
-        return (
-            <div className="action-icon">
-                <div>
-                    <i
-                        className="mdi mdi-eye me-3"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => handleNavigation(row.original)}></i>
-                </div>
-            </div>
-        );
-    };
+    // const columns: ReadonlyArray<Column> = [
+    //     { Header: 'Device', accessor: 'name', defaultCanSort: false },
+    //     // { Header: 'Type', accessor: 'type', defaultCanSort: false },
+    //     { Header: 'Location', accessor: 'buildingId.location', defaultCanSort: false },
+    //     { Header: 'Building', accessor: 'buildingId.name', defaultCanSort: false },
+    //     { Header: 'Floor', accessor: 'floorId.name', defaultCanSort: false },
 
-    const columns: ReadonlyArray<Column> = [
-        { Header: 'Device', accessor: 'name', defaultCanSort: false },
-        // { Header: 'Type', accessor: 'type', defaultCanSort: false },
-        { Header: 'Location', accessor: 'buildingId.location', defaultCanSort: false },
-        { Header: 'Building', accessor: 'buildingId.name', defaultCanSort: false },
-        { Header: 'Floor', accessor: 'floorId.name', defaultCanSort: false },
-        {
-            Header: 'Created on',
-            accessor: 'createdAt',
-            defaultCanSort: false,
-            Cell: ({ value }) => formatDateToLocalTime(value),
-        },
-        {
-            Header: 'Last Updated',
-            accessor: 'updatedAt',
-            defaultCanSort: false,
-            Cell: ({ value }) => formatDateToLocalTime(value),
-        },
-        // { Header: 'Status', accessor: 'status', defaultCanSort: false },
-        // {
-        //     Header: 'Action',
-        //     accessor: 'action',
-        //     defaultCanSort: false,
-        //     Cell: ActionColumn,
-        // },
-    ];
+    //     {
+    //         Header: 'Last Updated',
+    //         accessor: 'updatedAt',
+    //         defaultCanSort: false,
+    //         Cell: ({ value }) => formatDateToLocalTime(value),
+    //     },
+    //     { Header: 'Status', accessor: 'status', defaultCanSort: false },
+    //     {
+    //         Header: 'Action',
+    //         accessor: 'action',
+    //         defaultCanSort: false,
+    //         Cell: ActionColumn,
+    //     },
+    // ];
     const sizePerPageList = [
         {
             text: '10',
@@ -101,15 +86,17 @@ export const DeviceTables: React.FC<DeviceTablesProps> = ({ deviceTypeId, floorI
             value: 50,
         },
     ];
-    const fetchDeviceTypes = async () => {
+    const fetchDeviceTypes = useCallback(async () => {
         try {
-            const res = await getDeviceTypeList();
-            const deviceTypesToSelect = res?.data?.map((doc: { id: string; deviceTypeName: string }) => ({
-                label: doc?.deviceTypeName,
-                value: doc.id,
+            // const res = await getDeviceTypeList();
+            const deviceTypes = deviceTypesConstant;
+            const deviceTypesToSelect = Object.values(deviceTypes)?.map((value: string) => ({
+                label: value,
+                value: value,
             }));
+            console.log('Device Tpes', deviceTypesToSelect);
             setDeviceTypeList(deviceTypesToSelect);
-            const defaultSelection = { label: res?.data?.[0].deviceTypeName, value: res?.data?.[0]?.id };
+            const defaultSelection = { label: deviceTypesToSelect?.[0].label, value: deviceTypesToSelect?.[0].value };
             //  deviceTypesToSelect;
             if (!floorId) return;
 
@@ -121,12 +108,13 @@ export const DeviceTables: React.FC<DeviceTablesProps> = ({ deviceTypeId, floorI
             setDeviceTypeList([]);
             console.log(error);
         }
-    };
+    }, [floorId]);
 
     const handleDeviceTypeSelection = (newValue: SingleValue<selectTagType>, actionMeta: ActionMeta<selectTagType>) => {
         try {
             setIsLoading(true);
             const { label = '', value = '' } = newValue || {};
+
             setSelectedDeviceType({ label, value });
             if (value && floorId) fetchDeviceList(label, floorId);
 
@@ -135,17 +123,15 @@ export const DeviceTables: React.FC<DeviceTablesProps> = ({ deviceTypeId, floorI
             console.log(error);
         }
     };
-    const fetchDeviceList = async (deviceTypeId: string, floorId: string) => {
-        // console.log('Device List', res);
+    const fetchDeviceList = async (deviceType: string, floorId: string) => {
         try {
             setIsEmpty(false);
             setIsLoading(true);
-
-            const res = await getDevices(deviceTypeId, floorId);
-
-            setTableData(res?.data ? res?.data : []);
+            // const deviceTypeString = deviceTypesConstant[deviceType];
+            const res = await getDevices(deviceType, floorId);
+            const response = res?.data?.map((data: object) => ({ ...data, deviceType }));
+            setTableData(response ? response : []);
             if (res?.data && res?.data?.length < 1) setIsEmpty(true);
-            // else setIsEmpty(false);
             setIsLoading(false);
         } catch (error) {
             console.log(error);
@@ -155,10 +141,7 @@ export const DeviceTables: React.FC<DeviceTablesProps> = ({ deviceTypeId, floorI
     };
     useEffect(() => {
         if (floorId) fetchDeviceTypes();
-    }, [floorId]);
-    // useEffect(() => {
-    //     // fetchDeviceTypes();
-    // }, [floorId]);
+    }, [fetchDeviceTypes, floorId]);
 
     return (
         // <Row style={{ marginLeft: '0px' }}>
@@ -189,7 +172,7 @@ export const DeviceTables: React.FC<DeviceTablesProps> = ({ deviceTypeId, floorI
                         <h4>No {selectedDeviceType?.label ?? ''} Device installed here</h4>
                     ) : (
                         <Table
-                            columns={columns}
+                            columns={columnConfig(selectedDeviceType?.label ?? '') ?? []}
                             data={tableData ?? []}
                             pageSize={10}
                             sizePerPageList={sizePerPageList}

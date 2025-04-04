@@ -35,15 +35,15 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
-    const { isAdmin, id } = getUserIdFromSession();
-    // console.log('Session storage:', isAdmin, id);
+    // const { isAdmin, id } = getUserIdFromSession();
+    // // console.log('Session storage:', isAdmin, id);
 
-    const data = getUserDetailsFromSession();
-    const { dispatch, appSelector } = useRedux();
+    // const data = getUserDetailsFromSession();
+    // const { dispatch, appSelector } = useRedux();
 
-    const {
-        activeFloor: { floorId },
-    } = appSelector((state: any) => state.HomePageReducer);
+    // const {
+    //     activeFloor: { floorId },
+    // } = appSelector((state: any) => state.HomePageReducer);
 
     const getAHUData = async () => {
         try {

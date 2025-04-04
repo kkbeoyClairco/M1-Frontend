@@ -37,7 +37,6 @@ const OutdoorTable = ({ setTotalDevices }: any) => {
     const navigate = useNavigate();
     //Function to navigate to devise specific page
     const handleNavigation = (data: any) => {
-        console.log('data', data);
         const { buildingId = {}, floorId = {}, id = '' } = data || {};
         const name = data?.name || '';
         const buildingName = buildingId?.name ? buildingId?.name : '';

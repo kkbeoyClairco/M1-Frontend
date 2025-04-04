@@ -61,7 +61,6 @@ const AHU_DevicePage = () => {
             searchParam.set('ahuSensor', sensorName);
             searchParam.set('ahuId', deviceData?.value);
             searchParam.set('floorId', floorId);
-            // console.log(searchParam.toString());
 
             window.history.pushState({}, '', `/customer/vrv-vrf/0#/customer/ahu/${searchParam.toString()}`);
         } catch (error) {
