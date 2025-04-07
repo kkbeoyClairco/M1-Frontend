@@ -23,12 +23,20 @@ const SideBarContent = ({ hideUserProfile, isCondensed }: SideBarContentProps) =
                     </Link>
                 </div>
             )} */}
-            {!isCondensed && <img src={Wave} alt="logo" className="nav-wave " height={!isCondensed ? '45' : '0'} />}
+            {!isCondensed && (
+                <img src={Wave} alt="logo" className="nav-wave" loading="lazy" height={!isCondensed ? '45' : '0'} />
+            )}
             {!isCondensed && (
                 <div className="nav-logo">
                     {/* <span className="logo text-center logo-dark "> */}
 
-                    <img src={ClaircoLogo} alt="logo" className=" " height={!isCondensed ? '180' : '45'} />
+                    <img
+                        src={ClaircoLogo}
+                        alt="logo"
+                        className=" "
+                        loading="lazy"
+                        height={!isCondensed ? '180' : '45'}
+                    />
                     {/* </span> */}
                 </div>
             )}

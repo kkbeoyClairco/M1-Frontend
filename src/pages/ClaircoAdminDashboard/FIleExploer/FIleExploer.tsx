@@ -12,6 +12,7 @@ import { Col, Row } from 'react-bootstrap';
 import Button from 'components/ClaircoButtons/Button1';
 import { ModalButton } from 'components/ClaircoButtons/ModalButton';
 import { toast } from 'sonner';
+import FIleExploerVirtualized from 'components/ClaircoFIleExploer/FIleExploerVirtualized';
 
 const FIleExploer = () => {
     const [customers, setCustomers] = useState([]);
@@ -368,6 +369,11 @@ const FIleExploer = () => {
             </Row>
             <div style={{ paddingLeft: '30px', padding: '20px', marginTop: '0px' }}>
                 <FIleExploer1 dataInput={data} handleAPICalls={handleAPICalls} handleAddition={handleAddition} />
+                {/* <FIleExploerVirtualized
+                    dataInput={data}
+                    handleAPICalls={handleAPICalls}
+                    handleAddition={handleAddition}
+                /> */}
             </div>
         </Fragment>
     );

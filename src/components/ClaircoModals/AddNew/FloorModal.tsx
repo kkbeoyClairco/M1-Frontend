@@ -51,7 +51,7 @@ const FloorModal: React.FC<FloorModalProps> = (props) => {
         <Modal
             {...props}
             aria-labelledby="contained-modal-title-vcenter"
-            className="modal-center"
+            className="modal-center text-dark"
             centered
             onHide={props.onClose}>
             <Modal.Header className="text-white" style={{ backgroundColor: '#008675', borderColor: '#008675' }}>

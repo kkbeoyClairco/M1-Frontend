@@ -193,151 +193,149 @@ const AHUControlsModal: React.FC<AHUControlModalProps> = ({ state, stateControlF
         setSetTemperature(currentDeviceState?.setTemp);
     }, [currentDeviceState]);
     return (
-        <div>
-            <Modal show={state} onHide={handleModalClose} animation={true}>
-                <Modal.Header>
-                    <Modal.Title style={{ marginInline: 'auto' }}>{currentDeviceState.deviceName}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {/* On/Off Section */}
-                    <Row style={{ padding: '10px' }}>
-                        {' '}
-                        <div className="form-group" style={{ display: 'flex', gap: '15px' }}>
-                            <Row style={{ width: '100%' }}>
-                                <Col md={6}>
-                                    <label htmlFor="register-device-control">Device On/Off:</label>
-                                </Col>
-
-                                <Col md={4} style={{ display: 'flex', justifyContent: 'start' }}>
-                                    {' '}
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            role="switch"
-                                            id="flexSwitchCheckDefault"
-                                            onChange={handleDeviceStatus}
-                                            checked={deviceStatus}
-                                        />
-                                        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
-                                            {deviceStatus ? 'ON' : 'OFF'}
-                                        </label>
-                                    </div>
-                                </Col>
-                            </Row>{' '}
-                        </div>
-                    </Row>
-                    {/* AI Mode Selection */}
-                    <Row style={{ padding: '10px' }}>
-                        {' '}
-                        <div className="form-group" style={{ display: 'flex', gap: '15px' }}>
-                            <Row style={{ width: '100%' }}>
-                                <Col md={6}>
-                                    <label htmlFor="aiModeinput">AI Mode:</label>
-                                </Col>
-
-                                <Col md={4} style={{ display: 'flex', justifyContent: 'start' }}>
-                                    {' '}
-                                    <div className="form-check form-switch">
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            role="switch"
-                                            id="aiModeinput"
-                                            disabled={true}
-                                            checked={false}
-                                        />
-                                        <label className="form-check-label" htmlFor="aiModeinput"></label>
-                                    </div>
-                                </Col>
-                            </Row>{' '}
-                        </div>
-                    </Row>
-                    {/* Operation Modes */}
-                    <Row style={{ padding: '10px' }}>
-                        <div className="form-group">
-                            <Row className="w-100">
-                                <Col md={6}>
-                                    {' '}
-                                    <label htmlFor="device-control">Thermostat Mode :</label>
-                                </Col>
-                                <Col md={6}>
-                                    <Select
-                                        name={'ThermostatMode'}
-                                        placeholder="Select Thermostat mode"
-                                        className="react-select"
-                                        classNamePrefix="react-select"
-                                        options={thermostatOptions as any}
-                                        onChange={handleThermostatChanges}
-                                        value={Object.keys(thermostatMode ?? {}).length < 1 ? null : thermostatMode}
-                                    />
-                                    {error.thermostat && <div className="text-danger">{error.thermostat}</div>}
-                                </Col>
-                            </Row>
-                        </div>
-                    </Row>
-                    {/* Set Temperature */}
-                    <Row style={{ padding: '10px' }}>
-                        <div className="form-group">
-                            <Row className="w-100">
-                                <Col md={6}>
-                                    <label htmlFor="exampleFormControlInput1">Set Temperature:</label>
-                                </Col>
-                                <Col md={6} className="mx-0 px-2">
-                                    <input
-                                        // disabled={aiMode || !deviceOn}
-                                        style={{ width: '100%' }}
-                                        type="number"
-                                        className="form-control"
-                                        id="set-temp"
-                                        placeholder={`${setTemperature ? setTemperature : ''}°C`}
-                                        onChange={(e) => handleSetTempChanges(e)}
-                                        // value={setTemperature}
-                                    />{' '}
-                                    {error.setTemp && <div className="text-danger">{error.setTemp}</div>}
-                                </Col>
-                                <Col md={4}></Col>
-                            </Row>
-                        </div>
-                    </Row>
-                    <Row>
-                        {' '}
-                        {isSuccess && (
-                            <div
-                                style={{
-                                    background: '#8AFF8A',
-                                    color: 'black',
-                                    fontSize: 'smaller',
-                                    borderRadius: '3px',
-                                }}>
-                                {' '}
-                                <p>
-                                    Instructions have been registered. Changes will be reflected within approximately 2
-                                    minutes.
-                                </p>
-                            </div>
-                        )}
-                    </Row>
-                    {isAPILoading && (
-                        <Row className="d-flex justify-content-center text-center">
-                            <p>Processing your command...</p>{' '}
-                        </Row>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
+        <Modal show={state} onHide={handleModalClose} animation={true} className="text-dark">
+            <Modal.Header>
+                <Modal.Title style={{ marginInline: 'auto' }}>{currentDeviceState.deviceName}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {/* On/Off Section */}
+                <Row style={{ padding: '10px' }}>
                     {' '}
-                    <Button variant="primary" onClick={handleSumbit} style={{ background: '#008675' }}>
-                        Update
-                    </Button>
-                    <Button variant="secondary" onClick={handleModalClose}>
-                        Close
-                    </Button>
-                    {/* <Button variant="primary" onClick={handleClose}>
+                    <div className="form-group" style={{ display: 'flex', gap: '15px' }}>
+                        <Row style={{ width: '100%' }}>
+                            <Col md={6}>
+                                <label htmlFor="register-device-control">Device On/Off:</label>
+                            </Col>
+
+                            <Col md={4} style={{ display: 'flex', justifyContent: 'start' }}>
+                                {' '}
+                                <div className="form-check form-switch">
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        role="switch"
+                                        id="flexSwitchCheckDefault"
+                                        onChange={handleDeviceStatus}
+                                        checked={deviceStatus}
+                                    />
+                                    <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+                                        {deviceStatus ? 'ON' : 'OFF'}
+                                    </label>
+                                </div>
+                            </Col>
+                        </Row>{' '}
+                    </div>
+                </Row>
+                {/* AI Mode Selection */}
+                <Row style={{ padding: '10px' }}>
+                    {' '}
+                    <div className="form-group" style={{ display: 'flex', gap: '15px' }}>
+                        <Row style={{ width: '100%' }}>
+                            <Col md={6}>
+                                <label htmlFor="aiModeinput">AI Mode:</label>
+                            </Col>
+
+                            <Col md={4} style={{ display: 'flex', justifyContent: 'start' }}>
+                                {' '}
+                                <div className="form-check form-switch">
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        role="switch"
+                                        id="aiModeinput"
+                                        disabled={true}
+                                        checked={false}
+                                    />
+                                    <label className="form-check-label" htmlFor="aiModeinput"></label>
+                                </div>
+                            </Col>
+                        </Row>{' '}
+                    </div>
+                </Row>
+                {/* Operation Modes */}
+                <Row style={{ padding: '10px' }}>
+                    <div className="form-group">
+                        <Row className="w-100">
+                            <Col md={6}>
+                                {' '}
+                                <label htmlFor="device-control">Thermostat Mode :</label>
+                            </Col>
+                            <Col md={6}>
+                                <Select
+                                    name={'ThermostatMode'}
+                                    placeholder="Select Thermostat mode"
+                                    className="react-select"
+                                    classNamePrefix="react-select"
+                                    options={thermostatOptions as any}
+                                    onChange={handleThermostatChanges}
+                                    value={Object.keys(thermostatMode ?? {}).length < 1 ? null : thermostatMode}
+                                />
+                                {error.thermostat && <div className="text-danger">{error.thermostat}</div>}
+                            </Col>
+                        </Row>
+                    </div>
+                </Row>
+                {/* Set Temperature */}
+                <Row style={{ padding: '10px' }}>
+                    <div className="form-group">
+                        <Row className="w-100">
+                            <Col md={6}>
+                                <label htmlFor="exampleFormControlInput1">Set Temperature:</label>
+                            </Col>
+                            <Col md={6} className="mx-0 px-2">
+                                <input
+                                    // disabled={aiMode || !deviceOn}
+                                    style={{ width: '100%' }}
+                                    type="number"
+                                    className="form-control"
+                                    id="set-temp"
+                                    placeholder={`${setTemperature ? setTemperature : ''}°C`}
+                                    onChange={(e) => handleSetTempChanges(e)}
+                                    // value={setTemperature}
+                                />{' '}
+                                {error.setTemp && <div className="text-danger">{error.setTemp}</div>}
+                            </Col>
+                            <Col md={4}></Col>
+                        </Row>
+                    </div>
+                </Row>
+                <Row>
+                    {' '}
+                    {isSuccess && (
+                        <div
+                            style={{
+                                background: '#8AFF8A',
+                                color: 'black',
+                                fontSize: 'smaller',
+                                borderRadius: '3px',
+                            }}>
+                            {' '}
+                            <p>
+                                Instructions have been registered. Changes will be reflected within approximately 2
+                                minutes.
+                            </p>
+                        </div>
+                    )}
+                </Row>
+                {isAPILoading && (
+                    <Row className="d-flex justify-content-center text-center">
+                        <p>Processing your command...</p>{' '}
+                    </Row>
+                )}
+            </Modal.Body>
+            <Modal.Footer>
+                {' '}
+                <Button variant="primary" onClick={handleSumbit} style={{ background: '#008675' }}>
+                    Update
+                </Button>
+                <Button variant="secondary" onClick={handleModalClose}>
+                    Close
+                </Button>
+                {/* <Button variant="primary" onClick={handleClose}>
             Save Changes
         </Button> */}
-                </Modal.Footer>
-            </Modal>
-        </div>
+            </Modal.Footer>
+        </Modal>
     );
 };
 

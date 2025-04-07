@@ -36,7 +36,7 @@ const BuildingModal: React.FC<BuildingModalProps> = (props) => {
         <Modal
             {...props}
             aria-labelledby="contained-modal-title-vcenter"
-            className="modal-center"
+            className="modal-center text-dark"
             centered
             onHide={props.onClose}>
             <Modal.Header
