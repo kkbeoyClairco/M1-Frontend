@@ -368,12 +368,12 @@ const FIleExploer = () => {
                 </Col>
             </Row>
             <div style={{ paddingLeft: '30px', padding: '20px', marginTop: '0px' }}>
-                <FIleExploer1 dataInput={data} handleAPICalls={handleAPICalls} handleAddition={handleAddition} />
-                {/* <FIleExploerVirtualized
+                {/* <FIleExploer1 dataInput={data} handleAPICalls={handleAPICalls} handleAddition={handleAddition} /> */}
+                <FIleExploerVirtualized
                     dataInput={data}
                     handleAPICalls={handleAPICalls}
                     handleAddition={handleAddition}
-                /> */}
+                />
             </div>
         </Fragment>
     );

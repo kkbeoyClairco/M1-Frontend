@@ -5,12 +5,16 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import { configureStore } from 'redux/store';
 import { ToastContextProvider } from 'context/ToastContext';
+import { ErrorBoundary } from 'react-error-boundary';
 
+import ErrorPage from 'pages/error/ErrorPage';
 ReactDOM.render(
     <Provider store={configureStore({})}>
-        <ToastContextProvider>
-            <App />
-        </ToastContextProvider>
+        <ErrorBoundary FallbackComponent={ErrorPage}>
+            <ToastContextProvider>
+                <App />
+            </ToastContextProvider>
+        </ErrorBoundary>
     </Provider>,
     document.getElementById('root')
 );

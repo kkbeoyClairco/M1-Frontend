@@ -137,10 +137,13 @@ const FolderIterator: React.FC<FolderIteratorType> = ({
     );
 };
 
+// THIS COMPONENT UNDER DEVELOPMENT. PLEASE DO NOT USE THIS IN PRODUCTION
 const FIleExploerVirtualized = ({ dataInput, handleAPICalls, handleAddition }: any) => {
     const [data, setData] = useState(dataInput);
     const [isExpandedList, setIsExpandedList] = useState<{ [key: string]: boolean }>({});
     const handleFolderExpansion = (data: any | number, type: string) => {
+        console.log('Type');
+        type = 'Customer';
         try {
             if (!isExpandedList[data?.id ?? '']) handleAPICalls(type, data);
             setIsExpandedList((prev) => ({ ...prev, [data?.id]: !prev[data?.id] }));
@@ -184,10 +187,8 @@ const FIleExploerVirtualized = ({ dataInput, handleAPICalls, handleAddition }: a
                     ...style,
                     paddingLeft: `${row.level * 20}px`, // Indentation for nesting
                 }}>
-                <div
-                // onClick={() => row.isParent && toggleNode(row.id)}
-                >
-                    {row.isParent && (isExpandedList[row.id] ? '▼' : '▶')} {row.name}
+                <div onClick={() => handleFolderExpansion({ id: row.id }, '')}>
+                    {isExpandedList[row.id] ? '▼' : '▶'} {row.name}
                 </div>
             </div>
         );

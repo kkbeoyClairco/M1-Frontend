@@ -39,7 +39,7 @@ function* homePageLoading({ payload: { userId }, type }: HomePageData): SagaIter
         // Fetching Floors List
         const floorsRes: { data: any } = yield call(fetchListOfFloors, buildingsList?.[0]?.id, userId);
         const { data: floorData } = floorsRes;
-        const { id: floorId = '', name: floorName = '', layout: layout = '' } = floorData?.[0];
+        const { id: floorId = '', name: floorName = '', layout = '' } = floorData?.[0];
         const activeDevices = floorData?.[0]?.deviceTypeId ?? [];
         // console.log('Home Page inital call:', activeDevices, floorsRes);
 

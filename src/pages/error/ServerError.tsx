@@ -14,9 +14,7 @@ const ServerError = () => {
                                 {/* logo */}
                                 <Card.Header className="pt-4 pb-4 text-center bg-primary">
                                     <Link to="/">
-                                        <span>
-                                            <img src={Logo} alt="" height="18" />
-                                        </span>
+                                        <span>{/* <img src={Logo} alt="" height="18" /> */}</span>
                                     </Link>
                                 </Card.Header>
 
@@ -45,7 +43,7 @@ const ServerError = () => {
             </div>
 
             <footer className="footer footer-alt">
-                2018 - {new Date().getFullYear()} © Sensiable - Coderthemes.com
+                2018 - {new Date().getFullYear()} ALIFEROUS TECHNOLOGIES PVT LTD | CLAIRCO.IN | ALL RIGHTS RESERVED
             </footer>
         </>
     );

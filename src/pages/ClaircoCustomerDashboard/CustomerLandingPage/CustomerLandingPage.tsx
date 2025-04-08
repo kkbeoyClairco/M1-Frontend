@@ -63,11 +63,11 @@ const CustomerLandingPage = () => {
         const data = getUserDetailsFromSession();
         dispatch(fetchBuildingsRequest(customerId));
         setCustomer({ customerId, customerName: data?.name });
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
         getTotalOccupantsCount();
-    }, [activeFloor]);
+    }, [activeFloor, getTotalOccupantsCount]);
     return (
         <div>
             {isOccupancyTrendOpen && (
