@@ -15,8 +15,8 @@ import {
 } from 'helpers/api/services/Clairco/customerSide/ahu';
 // import {} from 'helpers/api/services/Clairco/customerSide/ahu';
 import { Col, Row } from 'react-bootstrap';
-import { roundToOneDecimal } from 'utils/maths';
-import { convertUnixToIST } from 'utils/timeFunctions';
+import { roundToDecimal, roundToOneDecimal } from 'utils/maths';
+import { convertUnixToIST, convertUnixToLocalTime } from 'utils/timeFunctions';
 import { TwoParameterWidget } from './TwoParameterWidget';
 import PlainWidgetWithUnitsIcon from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithUnitsIcon';
 import ControlsModal from './ControlsModal';
@@ -60,7 +60,7 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
         try {
             setIsLoading((curr) => ({ ...curr, BTU: true }));
             const res = await fetchBTURealTime(sensorName);
-            const lastUpdated = convertUnixToIST(Number(res?.data?.[0]?.['Epoch time']?.$numberDecimal));
+            const lastUpdated = convertUnixToLocalTime(Number(res?.data?.[0]?.['Epoch time']?.$numberDecimal));
             const instEnergy = roundToOneDecimal(res?.data?.[0]?.data?.['Instantaneous Energy Rate']);
             const tempOne = roundToOneDecimal(res?.data?.[0]?.data?.Temp1);
             const tempTwo = roundToOneDecimal(res?.data?.[0]?.data?.Temp2);
@@ -95,9 +95,13 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
             const mode = res?.data?.[0]?.data?.MODE || 10;
             // console.log('AHU Real time:');
             const fanMode = res?.data?.[0]?.data?.FANMODE;
-            const returnTemp = roundToOneDecimal(+res?.data?.[0]?.data?.RTEMP) / 10;
-            const setTemp = roundToOneDecimal(res?.data?.[0]?.data?.STEMP) / 10;
-            const updatedTime = convertUnixToIST(Number(res?.data?.[0]?.['Epoch time']?.['$numberDecimal']));
+            const returnTemp = res?.data?.[0]?.data?.RTEMP
+                ? roundToDecimal(Number(res?.data?.[0]?.data?.RTEMP) / 10)
+                : 'N/A';
+            const setTemp = res?.data?.[0]?.data?.STEMP
+                ? roundToDecimal(Number(res?.data?.[0]?.data?.STEMP) / 10)
+                : 'N/A';
+            const updatedTime = convertUnixToLocalTime(Number(res?.data?.[0]?.['Epoch time']?.['$numberDecimal']));
             const currentDeviceStatus = res?.data?.[0]?.data?.RELAY1_STATE;
             const thermoStat = res?.data?.[0]?.data?.THSTAT ?? 0;
             setThermostatStatus(thermoStat);
@@ -119,9 +123,9 @@ const AHUCards = ({ ahuData, locationData, btuData }: any) => {
         if (!ahuId) return;
 
         const averages = await fetchAverageValuesForAHU(ahuId);
-        setAverageHumidity(roundToOneDecimal(averages?.data?.avgHumi));
-        setAvgTemp(roundToOneDecimal(roundToOneDecimal(averages?.data?.avgRtemp)));
-        setOccupantsSum(averages?.data?.occupancySum ? roundToOneDecimal(averages?.data?.occupancySum) : 'N/A');
+        setAverageHumidity(averages?.data?.avgHumi ? roundToOneDecimal(averages?.data?.avgHumi) : 'N/A');
+        setAvgTemp(averages?.data?.avgRtemp ? roundToDecimal(averages?.data?.avgRtemp) : 'N/A');
+        setOccupantsSum(averages?.data?.occupancySum ? roundToDecimal(averages?.data?.occupancySum) : 'N/A');
     }, []);
 
     //Real time DPT

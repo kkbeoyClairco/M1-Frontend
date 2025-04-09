@@ -30,6 +30,29 @@ export function convertUnixToIST(epoch: number | Date | string | null | undefine
     }
 }
 
+export const convertUnixToLocalTime = (
+    unixTime: number,
+    locale: string = 'en-IN',
+    options: Intl.DateTimeFormatOptions = {
+        hour12: false,
+        year: '2-digit',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+    }
+) => {
+    try {
+        if (!unixTime || typeof unixTime !== 'number' || isNaN(unixTime))
+            throw new Error('Invalid input: Unix time must be a valid number.');
+        // If the timestamp is in seconds, convert it to milliseconds
+        let timestamp = unixTime < 1e12 ? unixTime * 1000 : unixTime;
+        const date = new Date(timestamp);
+        return date.toLocaleString(locale, options);
+    } catch (error) {
+        return 'N/A';
+    }
+};
 // export const convertTimeToDates = (timestamp: any) => {
 //     try {
 //         const date = new Date(timestamp * 1000);
