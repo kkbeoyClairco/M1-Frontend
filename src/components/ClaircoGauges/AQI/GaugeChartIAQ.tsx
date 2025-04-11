@@ -3,6 +3,7 @@ import ReactEcharts from 'echarts-for-react';
 import { Card } from 'react-bootstrap';
 import * as echarts from 'echarts';
 import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
+import { getAQILabels, getIAQColor } from 'utils/AQI/colorUtils';
 type EChartsOption = echarts.EChartsOption;
 interface GaugeChartProps {
     property?: string;
@@ -12,34 +13,6 @@ interface GaugeChartProps {
     infoClickFn?: (e: React.MouseEvent<HTMLDivElement>, state: string) => void;
 }
 const GaugeChartIAQ: React.FC<GaugeChartProps> = ({ property, value, deviceName, lastUpdated, infoClickFn }) => {
-    // let option: EChartsOption;
-    // console.log('Value', value);
-    // value = 6;
-    // const [aqi, setFanSpeed] = useState(0);
-    // const latestData = data && data.length > 0 ? data[data.length - 1] : null;
-    // const aqiValue = roundToOneDecimal(latestData?.AQI);
-    const getIAQColor = (value: number) => {
-        if (value >= 0 && value <= 50) return '#59e759';
-        if (value > 50 && value <= 100) return '#4ea4f8';
-        if (value > 100 && value <= 200) return '#f2f262';
-        if (value > 200 && value <= 300) return '#f5b43e';
-        if (value > 300 && value <= 400) return '#FF4500';
-        if (value > 400 && value <= 500) return '#8B0000';
-        else if (value > 500) return '#8B0000';
-        else return '#A9A9A9';
-    };
-    const getAQILabels = (value: any) => {
-        if (value > 0 && value <= 50) return 'Good';
-        else if (value > 50 && value <= 100) return 'Moderate';
-        else if (value > 100 && value <= 200) return 'Unhealthy ';
-        else if (value > 200 && value <= 300) return 'Unhealthy ';
-        else if (value > 300 && value <= 400) return 'Very Unhealthy';
-        else if (value > 400 && value <= 500) return 'Hazardous';
-        else if (value > 500) return 'Hazardous';
-
-        return '';
-    };
-
     const option = {
         tooltip: {
             formatter: '{a} : {c}',

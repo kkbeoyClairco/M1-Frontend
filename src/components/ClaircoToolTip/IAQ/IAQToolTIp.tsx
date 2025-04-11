@@ -37,7 +37,7 @@ export const IAQToolTip = ({ show, positionValues, toolTipData, currentState }: 
     useEffect(() => {
         // console.log('Tool tip data Changed:', show, positionValues);
     }, [show]);
-    if (!positionValues) return console.log('No position values'), null;
+    if (!positionValues) return null;
     return (
         <div
             style={{

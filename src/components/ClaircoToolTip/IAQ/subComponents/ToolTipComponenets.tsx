@@ -125,8 +125,8 @@ export const PMToolTip = () => {
         Moderate: ['13 to 35', '55 to 154 '],
         Poor: ['36 to 55', '155 to 254'],
         Unhealthy: ['56 to 150', '255 to 354'],
-        Severe: ['151 or 250', '355 to 424'],
-        Hazardous: ['250 or more', '425 or more '],
+        Severe: ['151 to 250', '355 to 424'],
+        Hazardous: ['251 or more', '425 or more '],
     };
     return (
         <>
