@@ -5,6 +5,7 @@ import { ApexOptions } from 'apexcharts';
 import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
 import ReactECharts from 'echarts-for-react';
 import { roundToZeroDecimal } from 'utils/maths';
+import { getPM10Color, getPM25Color } from 'utils/AQI/colorUtils';
 
 const PMChart = ({ data, lastUpdated, infoClickFn }: any) => {
     // const latestData = data && data.length > 0 ? data[data.length - 1] : null;
@@ -21,54 +22,6 @@ const PMChart = ({ data, lastUpdated, infoClickFn }: any) => {
             : [0, 0];
     // console.log('Data:', data, Data);
     // Data = [85, 925];
-
-    const getPM10Color = (value: number) => {
-        if (value >= 0 && value <= 54) return '#59e759';
-        else if (value >= 55 && value <= 154) return '#4ea4f8';
-        else if (value >= 155 && value <= 254) return '#f2f262';
-        else if (value >= 255 && value <= 354) return '#f5b43e';
-        else if (value >= 355 && value <= 424) return '#FF4500';
-        else if (value >= 424) return '#8B0000';
-        else return '#A9A9A9';
-    };
-
-    const getPM25Color = (value: number) => {
-        if (value >= 0 && value <= 12) return '#59e759';
-        else if (value >= 13 && value <= 35) return '#4ea4f8';
-        else if (value >= 36 && value <= 55) return '#f2f262';
-        else if (value >= 56 && value <= 150) return '#f5b43e';
-        else if (value >= 151 && value <= 250) return '#FF4500';
-        else if (value >= 251) return '#8B0000';
-        else return '#A9A9A9';
-    };
-    const getPM10Labels = (value: number) => {
-        if (value >= 0 && value <= 54) return 'Good';
-        else if (value >= 55 && value <= 154) return 'Moderate';
-        else if (value >= 155 && value <= 254) return 'Unhealthy';
-        else if (value >= 255 && value <= 354) return 'Very Unhealthy';
-        else if (value >= 355 && value <= 424) return 'Very Unhealthy';
-        else if (value >= 424) return 'Hazardous';
-        else return '';
-    };
-
-    const getPM25Labels = (value: number) => {
-        if (value >= 0 && value <= 12) return 'Good';
-        else if (value >= 13 && value <= 35) return 'Moderate';
-        else if (value >= 36 && value <= 55) return 'Unhealthy';
-        else if (value >= 56 && value <= 150) return 'Very Unhealthy';
-        else if (value >= 151 && value <= 250) return 'Very Unhealthy';
-        else if (value >= 251) return 'Hazardous';
-        else return '';
-    };
-    const getPM1Color = (value: number) => {
-        if (value >= 0 && value <= 12) return '#00FF00';
-        else if (value >= 13 && value <= 35) return '#1E90FF';
-        else if (value >= 36 && value <= 55) return '#FFFF00';
-        else if (value >= 56 && value <= 150) return '#FFA500';
-        else if (value >= 151 && value <= 250) return '#FF4500';
-        else if (value >= 251) return '#8B0000';
-        else return '#A9A9A9';
-    };
 
     const series = [
         {

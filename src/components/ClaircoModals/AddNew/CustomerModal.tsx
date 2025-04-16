@@ -10,7 +10,8 @@ import { FormInput } from 'components';
 type CustomerModalProps = {
     show: boolean;
     onClose: () => void;
-    onSubmit: (data: any, type: string) => void;
+    // onSubmit: (data: any, type: string) => void;
+    handleAddition: (data: any) => void;
 };
 
 const CustomerModal: React.FC<CustomerModalProps> = (props) => {
@@ -31,15 +32,14 @@ const CustomerModal: React.FC<CustomerModalProps> = (props) => {
 
     // const { handleSubmit } = methods;
 
-    const onSubmit = (event: any) => {
+    const onSubmitHandler = (event: any) => {
         const formData = new FormData(event.target as HTMLFormElement);
-
         if (selectedFile) {
             formData.append('file', selectedFile);
         }
 
         event.preventDefault();
-        props.onSubmit(formData, 'customer');
+        props.handleAddition(formData);
         props.onClose();
     };
 
@@ -54,7 +54,7 @@ const CustomerModal: React.FC<CustomerModalProps> = (props) => {
                 <Modal.Title id="contained-modal-title-vcenter">Add Customer</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <form onSubmit={onSubmit}>
+                <form onSubmit={onSubmitHandler}>
                     <Form.Group className="mb-1">
                         <Form.Label>Customer Name</Form.Label>
                         <FormInput

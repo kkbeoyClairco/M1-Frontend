@@ -10,6 +10,8 @@ export const getIcons = (type: string) => {
                 return iconConstant.buildingBlack;
             case 'Floor':
                 return iconConstant.floorPlan ?? '';
+            case 'DeviceType':
+                return iconConstant.sensor;
             case 'Device':
                 return 'https://res.cloudinary.com/dlulq6hny/image/upload/v1740987619/technology_geqtsl.png';
             case 'Addition':

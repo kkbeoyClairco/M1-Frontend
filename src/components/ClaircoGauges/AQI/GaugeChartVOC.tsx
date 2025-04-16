@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ReactEcharts from 'echarts-for-react';
 import { Row, Col, Card } from 'react-bootstrap';
-import { propertyTable, unitTables, coloursTable } from 'appConstants/propertyTable';
-
+import { getVocColor, getVoCLabel } from 'utils/AQI/colorUtils';
 import * as echarts from 'echarts';
-import { conforms } from 'lodash';
-import { string } from 'yup';
+
 import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
 type EChartsOption = echarts.EChartsOption;
 interface GaugeChartProps {
@@ -18,22 +16,7 @@ interface GaugeChartProps {
 const GaugeChartVOC: React.FC<GaugeChartProps> = ({ property, value, deviceName, lastUpdated, infoClickFn }) => {
     // console.log('VOC Val', value);
     // Function to determine color based on VOC value
-    const getVocColor = (value: number) => {
-        if (value > 0 && value <= 40) return '#59e759';
-        else if (value > 40 && value <= 100) return '#4ea4f8';
-        // else if (value <= 40 && value <= 100) return 'Poor';
-        else if (value >= 101 && value <= 300) return '#f2f262';
-        else if (value >= 301 && value <= 1000) return '#FF4500';
-        else return '#A9A9A9';
-    };
-    const getVoCLabel = (value: number) => {
-        if (value > 0 && value <= 40) return 'Good';
-        else if (value > 40 && value <= 100) return 'Moderate';
-        // else if (value <= 40 && value <= 100) return 'Poor';
-        else if (value >= 101 && value <= 300) return 'Poor';
-        else if (value >= 301 && value <= 1000) return 'Unhealthy';
-        else return '';
-    };
+
     const min = 0;
     const max = 500;
 
@@ -203,8 +186,6 @@ const GaugeChartVOC: React.FC<GaugeChartProps> = ({ property, value, deviceName,
                     }}>
                     <h6 style={{ fontSize: '10px', fontWeight: '600' }}>Updated on {lastUpdated} </h6>
                 </div>
-                {/* //     </Card.Body> */}
-                {/* </Card.Body> */}
             </Card.Body>
         </Card>
     );

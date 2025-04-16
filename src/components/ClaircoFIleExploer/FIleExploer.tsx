@@ -137,6 +137,7 @@ const FolderIterator: React.FC<FolderIteratorType> = ({
 const FIleExploer = ({ dataInput, handleAPICalls, handleAddition }: any) => {
     const [data, setData] = useState(dataInput);
     const [isExpandedList, setIsExpandedList] = useState<{ [key: string]: boolean }>({});
+
     const handleFolderExpansion = (data: any | number, type: string) => {
         try {
             if (!isExpandedList[data?.id ?? '']) handleAPICalls(type, data);

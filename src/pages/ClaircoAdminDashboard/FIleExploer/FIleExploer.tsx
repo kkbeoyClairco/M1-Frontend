@@ -13,6 +13,17 @@ import Button from 'components/ClaircoButtons/Button1';
 import { ModalButton } from 'components/ClaircoButtons/ModalButton';
 import { toast } from 'sonner';
 import FIleExploerVirtualized from 'components/ClaircoFIleExploer/FIleExploerVirtualized';
+import { sample } from './text';
+import { getDevices } from 'helpers/api/services/Clairco/adminSide/devices';
+import { deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
+interface Customer {
+    id: string;
+    name: string;
+    isFolder: boolean;
+    type: string;
+    isExpanded: boolean;
+    children: Customer[]; // Assuming children follow the same structure
+}
 
 const FIleExploer = () => {
     const [customers, setCustomers] = useState([]);
@@ -55,6 +66,20 @@ const FIleExploer = () => {
         });
     };
 
+    // const updateDevicesData = (node: any, id: string, inputData: any[]) => {
+    //     return node.map((node: any) => {
+    //         if (node.id === id) {
+    //             const childrens = node.children?.filter((child: any) =>
+    //                 inputData?.every((input: any) => input.id !== child.id)
+    //             );
+    //             return { ...node, children: [...(childrens ?? []), ...(inputData ?? {})] };
+    //         } else if (node.children) {
+    //             return { ...node, children: updateData(node.children, id, inputData) };
+    //         }
+    //         return node;
+    //     });
+    // };
+
     // // API Call Functions
     // Fetch Building Data For a Customer Id
     const fetchBuildingData = async (customerId: string) => {
@@ -80,10 +105,61 @@ const FIleExploer = () => {
     };
 
     // Fetch Building Data with buildingId and Customer Id
+
+    //Add DeviceType as CHILDRENS
     const fetchFloorsData = async (customerId: string, buildingId: string) => {
         try {
             const res = await floor.byCustomerId(customerId, buildingId);
+
             const extractedData = res.data.map((data: any) => {
+                // Define the children dynamically based on the array in res.data
+                const children = [];
+                //DUMMY data
+                children.push({
+                    name: 'AHU',
+                    id: 17447108687003,
+                    type: 'DeviceType',
+                    isFolder: true,
+                    floorId: data.id,
+                    customerId: data.customerId ?? '',
+                    buildingId: data.buildingId ?? '',
+                });
+                if (data.deviceTypes?.includes('AHU')) {
+                    children.push({
+                        name: 'AHU',
+                        id: 17447108687003,
+                        type: 'DeviceType',
+                        isFolder: true,
+                        floorId: data.id,
+                        customerId: data.customerId ?? '',
+                        buildingId: data.buildingId ?? '',
+                    });
+                }
+
+                if (data.deviceTypes?.includes('IAQ')) {
+                    children.push({
+                        name: 'IAQ',
+                        id: 17447108687002,
+                        type: 'DeviceType',
+                        isFolder: true,
+                        floorId: data.id,
+                        customerId: data.customerId ?? '',
+                        buildingId: data.buildingId ?? '',
+                    });
+                }
+
+                if (data.deviceTypes?.includes('OCCUPANCY')) {
+                    children.push({
+                        name: 'OCCUPANCY',
+                        id: 17447108687001,
+                        type: 'DeviceType',
+                        isFolder: true,
+                        floorId: data.id,
+                        customerId: data.customerId ?? '',
+                        buildingId: data.buildingId ?? '',
+                    });
+                }
+
                 return {
                     name: data.name,
                     isFolder: true,
@@ -92,8 +168,10 @@ const FIleExploer = () => {
                     customerId: data.customerId ?? '',
                     buildingId: data.buildingId ?? '',
                     isExpanded: false,
+                    children,
                 };
             });
+
             setData((prev) => updateData(prev, buildingId, extractedData));
 
             // console.log('Floor res', res);
@@ -102,63 +180,107 @@ const FIleExploer = () => {
         }
     };
 
-    // Fetch Building Data For a Floor Id
-    const fetchDevicesWithFloorId = async (floorId: string) => {
+    const getIAQDevices = async (floorId: string) => {
         try {
-            // console.log('Floorid', floorId);
-            // const res = await device.floorDevices(floorId);
-            //  Sample dummy data. API is absent
-            const sample = [
-                {
-                    _id: '66a0d87915f3cb65438d5636',
-                    name: 'IAQ24007',
-                    customerId: {
-                        _id: '6698e2d415023def020a7c45',
-                        name: 'Capitaland',
-                        createdAt: '2024-07-18T09:39:32.229Z',
-                        updatedAt: '2024-07-18T09:39:32.229Z',
-                    },
-                    buildingId: '66a08b435f335657c02ea9c3',
-                    floorId: {
-                        _id: '66a092c9fb72eeb7c358f408',
-                        name: 'Reception North ',
-                        customerId: '6698e2d415023def020a7c45',
-                        buildingId: '66a08b435f335657c02ea9c3',
-                        layout: null,
-                        createdAt: '2024-07-24T05:36:09.105Z',
-                        updatedAt: '2024-07-24T05:36:09.105Z',
-                    },
-                    createdAt: '2024-07-24T10:33:29.205Z',
-                    updatedAt: '2024-07-24T10:33:29.205Z',
-                    deviceType: '6690ef7fdeb2b486e92011aa',
-                    data: {
-                        id: '66a0d87915f3cb65438d5636',
-                        name: 'IAQ24007',
-                        indoor: null,
-                        iaq: null,
-                        occupancy_number: null,
-                        epochTime: null,
-                    },
-                },
-            ];
-
-            const extractedData = sample.map((data: any) => {
+            const deviceType = deviceTypesConstant.IAQ;
+            const res = await getDevices(deviceType, floorId);
+            const extractedData = res?.data?.map((data: any) => {
                 return {
-                    name: data.name,
+                    name: data?.name ?? '',
                     isFolder: false,
                     type: 'Device',
                     id: data.id,
-                    customerId: data.customerId?._id ?? '',
-                    buildingId: data.buildingId?._id ?? '',
-                    isExpanded: false,
+                    customerId: data?.customerId?.id ?? '',
+                    buildingId: data?.buildingId?.id ?? '',
+                    isExpanded: true,
                 };
             });
-            setData((prev) => updateData(prev, floorId, extractedData));
-            // console.log('Res', sample);
+            return extractedData;
+        } catch (error) {
+            return [];
+        }
+    };
+    const getAHUDevices = async (floorId: string) => {
+        try {
+            const deviceType = deviceTypesConstant.AHU;
+            const res = await getDevices(deviceType, floorId);
+            const extractedData = res?.data?.map((data: any) => {
+                return {
+                    name: data?.name ?? '',
+                    isFolder: false,
+                    type: 'Device',
+                    id: data.id,
+                    customerId: data?.customerId?.id ?? '',
+                    buildingId: data?.buildingId?.id ?? '',
+                    isExpanded: true,
+                };
+            });
+            return extractedData;
+        } catch (error) {
+            return [];
+        }
+    };
+    const getOccupancyDevices = async (floorId: string) => {
+        try {
+            const deviceType = deviceTypesConstant.OCCUPANCY;
+            const res = await getDevices(deviceType, floorId);
+            const extractedData = res?.data?.map((data: any) => {
+                return {
+                    name: data?.name ?? '',
+                    isFolder: false,
+                    type: 'Device',
+                    id: data.id,
+                    customerId: data?.customerId?.id ?? '',
+                    buildingId: data?.buildingId?.id ?? '',
+                    isExpanded: true,
+                };
+            });
+            return extractedData;
+        } catch (error) {
+            return [];
+        }
+    };
+    // Fetch Building Data For a Floor Id
+    const fetchDevicesWithFloorId = async (floorId: string, id: string, type: string) => {
+        try {
+            let data: any = [];
+            // console.log('Type', type);
+            if (type === 'IAQ') {
+                data = await getIAQDevices(floorId);
+            }
+            if (type === 'AHU') {
+                data = await getAHUDevices(floorId);
+                console.log('AHU API CALL', data);
+            }
+            if (type === 'OCCUPANCY') {
+                data = await getOccupancyDevices(floorId);
+                console.log('OCCUPANY API Call', data);
+            }
+            // if(type==="IAQ") console.log("IAQ API Call")
+
+            setData((prev) => updateData(prev, id, data));
         } catch (error) {
             console.log(error);
         }
     };
+    // const fetchDeviceTypesWithFloorIdAndDeviceType = async () => {
+    //     try {
+    //         const extractedData = sample.map((data: any) => {
+    //             return {
+    //                 name: data.name,
+    //                 isFolder: false,
+    //                 type: 'Device',
+    //                 id: data.id,
+    //                 customerId: data.customerId?._id ?? '',
+    //                 buildingId: data.buildingId?._id ?? '',
+    //                 isExpanded: false,
+    //             };
+    //         });
+    //         setData((prev) => updateData(prev, floorId, extractedData));
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
     // API fetching Customers list- CALLED ON INIAL PAGE LOAD
     const fetchCustomers = async () => {
         const customers = await customer.all();
@@ -179,6 +301,7 @@ const FIleExploer = () => {
 
     // API Router Function
     const handleAPICalls = (type: string, data: any) => {
+        // console.log('Device TYpe:', type, data);
         try {
             switch (type) {
                 case 'Customer': // Fetchs building data for a Customer
@@ -188,7 +311,10 @@ const FIleExploer = () => {
                     fetchFloorsData(data?.customerId, data?.id);
                     break;
                 case 'Floor': ///Fetch Device Data for a Floor
-                    fetchDevicesWithFloorId(data?.id);
+                    // fetchDevicesWithFloorId(data?.id);
+                    break;
+                case 'DeviceType': ///Fetch Device Data for a Floor
+                    fetchDevicesWithFloorId(data?.floorId, data?.id, data.name ?? '');
                     break;
             }
         } catch (error) {
@@ -246,9 +372,10 @@ const FIleExploer = () => {
     //  Function handling Device addition
     const handleDeviceCreation = async (type: string, payload: any) => {
         try {
+            console.log('Device Addition', type, payload);
             payload.customerId = infoToModal.customerId;
             payload.buildingId = infoToModal.buildingId;
-            const res = await device.create(payload);
+            // const res = await device.create(payload);
             //NEEDS TO BE UPDATED WITH NODE ADDITION TO THE TREE
         } catch (error) {
             console.log(error);
@@ -279,6 +406,10 @@ const FIleExploer = () => {
                         floorId: data?.id ?? '',
                     }));
                     break;
+                case 'DeviceType':
+                    toast.warning(
+                        'This functionality has not been implemented yet. Please proceed with device addition and select the device type from there.'
+                    );
             }
         } catch (error) {
             console.log(error);
@@ -288,8 +419,26 @@ const FIleExploer = () => {
     const handleAddNewCustomer = async (formData: any) => {
         try {
             const res = await customer.create(formData);
-            // console.log(res);
-            toast.success('Customer has been created');
+            if (res.status === 201) {
+                toast.success('Customer has been created');
+                // isFolder: true,
+                // type: 'Floor',
+                // id: res.data.id ?? '',
+                // customerId: data?.customerId ?? '',
+                // buildingId: buildingId ?? '',
+                // floorId: res.data?.id,
+                // isExpanded: false,
+
+                const newCustomer: Customer = {
+                    id: res?.data?.id ?? '',
+                    name: res?.data?.name ?? '',
+                    isFolder: true,
+                    type: 'Customer',
+                    isExpanded: false,
+                    children: [],
+                };
+                // setData((prev:) => [...prev, newCustomer]);
+            } else throw new Error('Customer Creation Failed');
         } catch (error) {
             toast.error('Customer has not been created');
             console.log(error);
@@ -311,7 +460,7 @@ const FIleExploer = () => {
             switch (type) {
                 case 'Customer':
                     // handleBuildingAddition(payload.id, payload);
-                    console.log('Customer ', formData);
+                    // console.log('Customer ', formData);
                     break;
                 case 'Building':
                     handleBuildingAddition(payload.id, payload);
@@ -327,14 +476,13 @@ const FIleExploer = () => {
     useEffect(() => {
         fetchCustomers();
     }, []);
-
     return (
         <Fragment>
             {modalState.customer && (
                 <CustomerModal
                     show={modalState.customer}
                     onClose={() => setModalState((prev: any) => ({ ...prev, customer: !prev.customer }))}
-                    onSubmit={handleAddNewCustomer}
+                    handleAddition={handleAddNewCustomer}
                 />
             )}
             {modalState.building && (
@@ -368,12 +516,13 @@ const FIleExploer = () => {
                 </Col>
             </Row>
             <div style={{ paddingLeft: '30px', padding: '20px', marginTop: '0px' }}>
-                {/* <FIleExploer1 dataInput={data} handleAPICalls={handleAPICalls} handleAddition={handleAddition} /> */}
-                <FIleExploerVirtualized
+                <FIleExploer1 dataInput={data} handleAPICalls={handleAPICalls} handleAddition={handleAddition} />
+                {/* Virtualized WIP Component */}
+                {/* <FIleExploerVirtualized
                     dataInput={data}
                     handleAPICalls={handleAPICalls}
                     handleAddition={handleAddition}
-                />
+                /> */}
             </div>
         </Fragment>
     );

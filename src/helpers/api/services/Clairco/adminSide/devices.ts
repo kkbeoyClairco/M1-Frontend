@@ -1,12 +1,12 @@
 import { APICore } from 'helpers/api/apiCore';
 const api = new APICore();
-export const getDevices = async (deviceTypeId: string, floorId?: string) => {
+export const getDevices = async (deviceType: string, floorId?: string) => {
     try {
         // let url = `/devices/by-filter`;
         let url = `/devices/all?`;
         const searchParams = new URLSearchParams();
-        if (deviceTypeId) {
-            searchParams.append('deviceType', deviceTypeId);
+        if (deviceType) {
+            searchParams.append('deviceType', deviceType);
         }
         if (floorId) {
             searchParams.append('floorId', floorId);

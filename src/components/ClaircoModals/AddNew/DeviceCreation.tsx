@@ -82,7 +82,7 @@ const DeviceCreation = (props: any) => {
             // console.log('Device Data', deviceData);
             props.onSubmit('Device', deviceData);
             // const res = await device.createInBulk(deviceData);
-            toast?.showToast('device created successfully', 'success');
+            // toast?.showToast('device created successfully', 'success');
         } catch (error: any) {
             if (error instanceof SyntaxError) {
                 toast?.showToast('invalid json syntax in calibration values or limits or parameters', 'error');
@@ -130,38 +130,6 @@ const DeviceCreation = (props: any) => {
     useEffect(() => {
         dispatch(getDeviceTypes());
     }, []);
-    // useEffect(() => {
-    //     setBuildingsList(() => []);
-    //     setFloorsList(() => []);
-    //     setZonesList(() => []);
-    //     setBuldingSelected('');
-    //     setSelectedFloor([]);
-    //     setZoneSelected([]);
-    //     if (buildings.length > 1) {
-    //         const filteredBuildings = buildings.filter((building: any) => building?.customerId === customerIdSelected);
-    //         setBuildingsList(transformArray(filteredBuildings));
-    //     }
-    // }, [buildings, customerIdSelected]);
-
-    // useEffect(() => {
-    //     setFloorsList([]);
-    //     setZonesList([]);
-    //     setSelectedFloor([]);
-    //     setZoneSelected([]);
-    //     if (floors.length > 1) {
-    //         const filteredFloors = floors.filter((floor: any) => floor?.buildingId === buldingSelected);
-    //         setFloorsList(transformArray(filteredFloors));
-    //     }
-    // }, [floors, buldingSelected]);
-    // useEffect(() => {
-    //     setZonesList([]);
-    //     setZoneSelected([]);
-    //     if (zones.length > 1) {
-    //         const filteredZones = zones.filter((zone: any) => zone?.floorId === selectedFloor);
-    //         // console.log('zones selected', transformArray(filteredZones));
-    //         setZonesList(transformArray(filteredZones));
-    //     }
-    // }, [selectedFloor]);
     return (
         <Modal
             {...props}
