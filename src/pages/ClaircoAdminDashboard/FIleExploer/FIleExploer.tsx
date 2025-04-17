@@ -16,6 +16,7 @@ import FIleExploerVirtualized from 'components/ClaircoFIleExploer/FIleExploerVir
 import { sample } from './text';
 import { getDevices } from 'helpers/api/services/Clairco/adminSide/devices';
 import { deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
+import DeviceCreation2 from 'components/ClaircoModals/AddNew/DeviceCreationComponents/DeviceCreation2';
 interface Customer {
     id: string;
     name: string;
@@ -289,7 +290,6 @@ const FIleExploer = () => {
                 name: data.name,
                 isFolder: true,
                 type: 'Customer',
-
                 id: data.id,
                 isExpanded: false,
                 children: [],
@@ -398,10 +398,12 @@ const FIleExploer = () => {
                     setInfotoModal((prev) => ({ ...prev, customerId: data.customerId }));
                     break;
                 case 'Floor': // Device Addtion
+                    console.log('Device data', data);
                     setModalState({ building: false, floor: false, device: true, customer: false });
                     setInfotoModal((prev) => ({
                         ...prev,
                         customerId: data.customerId,
+
                         buildingId: data.buildingId,
                         floorId: data?.id ?? '',
                     }));
@@ -421,14 +423,6 @@ const FIleExploer = () => {
             const res = await customer.create(formData);
             if (res.status === 201) {
                 toast.success('Customer has been created');
-                // isFolder: true,
-                // type: 'Floor',
-                // id: res.data.id ?? '',
-                // customerId: data?.customerId ?? '',
-                // buildingId: buildingId ?? '',
-                // floorId: res.data?.id,
-                // isExpanded: false,
-
                 const newCustomer: Customer = {
                     id: res?.data?.id ?? '',
                     name: res?.data?.name ?? '',
@@ -503,7 +497,7 @@ const FIleExploer = () => {
                 />
             )}
             {modalState.device && (
-                <DeviceCreation
+                <DeviceCreation2
                     show={modalState.device}
                     data={infoToModal}
                     onSubmit={handleDeviceCreation}

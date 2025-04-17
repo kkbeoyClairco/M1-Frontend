@@ -11,6 +11,15 @@ import { setSelectedFloor } from 'redux/homePage/actions';
 import { conforms, floor } from 'lodash';
 import { getDeviceTypes } from 'redux/actions';
 import { getZonesListAttachedToFloor } from 'helpers/api/services/Clairco/adminSide/zones';
+import { BTUModule } from './BTUModule';
+import { OccupancyModule } from './OccupancyModule';
+import { AHUModule } from './AHUModule';
+import { OutdoorModule } from './OutdoorModule';
+import { IndoorModule } from './IndoorModule';
+import { IAQModule } from './IAQModule';
+import { SwitchesModule } from './SwitchesModule';
+import { DptModule } from './DptModule';
+import { EnergymeterModule } from './EnergymeterModule';
 
 const transformArray = (array: any) => {
     const transformedArray = array?.map((item: any) => {
@@ -68,7 +77,7 @@ const alterForm = (item: any) => {
     );
 };
 
-const DeviceCreation = (props: any) => {
+const DeviceCreation2 = (props: any) => {
     const [customerIdSelected, setCustomerIdSelected] = useState<any>();
     const [buldingSelected, setBuldingSelected] = useState<any>();
     const [selectedFloor, setSelectedFloor] = useState<any>();
@@ -159,6 +168,9 @@ const DeviceCreation = (props: any) => {
         const floorId = props?.data?.floorId ?? '';
         if (floorId) getZones(floorId);
     }, [getZones, props]);
+    useEffect(() => {
+        console.log(deviceType);
+    }, [deviceType]);
     return (
         <Modal
             {...props}
@@ -191,76 +203,80 @@ const DeviceCreation = (props: any) => {
                                 }}
                             />
                         </Col>
-                        {deviceType &&
+                        {/* {deviceType &&
                             (Object.keys(deviceCreationformConfig).includes(deviceType) ? (
-                                <>
-                                    <Form.Label>Customer</Form.Label>
-                                    <Select
-                                        name="customerId"
-                                        placeholder="Select customer"
-                                        className="react-select mb-2"
-                                        classNamePrefix="react-select"
-                                        options={customersList}
-                                        onChange={(e: any) => setCustomerIdSelected(e.value)}
-                                        value={
-                                            props.data.customerId
-                                                ? { label: 'Selected', value: props.data.customerId }
-                                                : null
-                                        }
-                                        isDisabled={props.data.customerId ? true : false}
-                                    />
-                                    <Form.Label>Building</Form.Label>
-                                    <Select
-                                        name="buildingId"
-                                        placeholder="Select building"
-                                        className="react-select mb-2"
-                                        classNamePrefix="react-select"
-                                        options={buildingsList}
-                                        onChange={(e: any) => setBuldingSelected(e.value)}
-                                        value={
-                                            props.data.buildingId
-                                                ? { label: 'Selected', value: props.data.buildingId }
-                                                : null
-                                        }
-                                        isDisabled={props.data.buildingId ? true : false}
-                                    />
-                                    <Form.Label>Floor</Form.Label>
-                                    <Select
-                                        name="floorId"
-                                        placeholder="Select floor"
-                                        className="react-select mb-2"
-                                        classNamePrefix="react-select"
-                                        options={floorsList}
-                                        onChange={(e: any) => setSelectedFloor(e?.value)}
-                                        value={
-                                            props.data.floorId ? { label: 'Selected', value: props.data.floorId } : null
-                                        }
-                                        isDisabled={props.data.floorId ? true : false}
-                                    />
-                                    <Form.Label>Zone</Form.Label>
-                                    <Select
-                                        name="zoneId"
-                                        placeholder="Select zone "
-                                        className="react-select mb-2"
-                                        classNamePrefix="react-select"
-                                        options={zonesList}
-                                        onChange={handleZoneSelection}
-                                    />
-                                    {deviceCreationformConfig[deviceType as keyof typeof deviceCreationformConfig].map(
-                                        (item) => alterForm(item)
-                                    )}
-                                    <Col className="d-flex justify-content-end mt-3">
-                                        <Button
-                                            type="submit"
-                                            className="ms-2"
-                                            style={{ backgroundColor: '#008675', borderColor: '#008675' }}>
-                                            SUBMIT
-                                        </Button>
-                                    </Col>
-                                </>
-                            ) : (
+                                <> */}
+                        <Form.Label>Customer</Form.Label>
+                        <Select
+                            name="customerId"
+                            placeholder="Select customer"
+                            className="react-select mb-2"
+                            classNamePrefix="react-select"
+                            options={customersList}
+                            onChange={(e: any) => setCustomerIdSelected(e.value)}
+                            value={props.data.customerId ? { label: 'Selected', value: props.data.customerId } : null}
+                            isDisabled={props.data.customerId ? true : false}
+                        />
+                        <Form.Label>Building</Form.Label>
+                        <Select
+                            name="buildingId"
+                            placeholder="Select building"
+                            className="react-select mb-2"
+                            classNamePrefix="react-select"
+                            options={buildingsList}
+                            onChange={(e: any) => setBuldingSelected(e.value)}
+                            value={props.data.buildingId ? { label: 'Selected', value: props.data.buildingId } : null}
+                            isDisabled={props.data.buildingId ? true : false}
+                        />
+                        <Form.Label>Floor</Form.Label>
+                        <Select
+                            name="floorId"
+                            placeholder="Select floor"
+                            className="react-select mb-2"
+                            classNamePrefix="react-select"
+                            options={floorsList}
+                            onChange={(e: any) => setSelectedFloor(e?.value)}
+                            value={props.data.floorId ? { label: 'Selected', value: props.data.floorId } : null}
+                            isDisabled={props.data.floorId ? true : false}
+                        />
+                        <Form.Label>Zone</Form.Label>
+                        <Select
+                            name="zoneId"
+                            placeholder="Select zone "
+                            className="react-select mb-2"
+                            classNamePrefix="react-select"
+                            options={zonesList}
+                            onChange={handleZoneSelection}
+                        />
+                        {/* {deviceCreationformConfig[deviceType as keyof typeof deviceCreationformConfig].map(
+                                        (item: any) => alterForm(item)
+                                    )} */}
+                        {deviceType === 'btu' ? <BTUModule /> : null}
+                        {deviceType === 'occupancy' ? <OccupancyModule /> : null}
+                        {deviceType === 'ahu' ? <AHUModule /> : null}
+                        {deviceType === 'vrv/vrfoutdoor' ? <OutdoorModule /> : null}
+                        {deviceType === 'energymeter' ? <EnergymeterModule /> : null}
+                        {deviceType === 'dpt' ? <DptModule /> : null}
+                        {deviceType === 'switches' ? <SwitchesModule /> : null}
+                        {deviceType === 'iaq' ? <IAQModule /> : null}
+                        {deviceType === 'vrv/vrf' ? <IndoorModule /> : null}
+                        {/* {deviceType === 'gateway' ? <BTUModule /> : null}
+                        {deviceType === 'pir' ? <BTUModule /> : null} */}
+
+                        <Col className="d-flex justify-content-end mt-3">
+                            {deviceType && (
+                                <Button
+                                    type="submit"
+                                    className="ms-2"
+                                    style={{ backgroundColor: '#008675', borderColor: '#008675' }}>
+                                    SUBMIT
+                                </Button>
+                            )}{' '}
+                        </Col>
+                        {/* </> */}
+                        {/* ) : (
                                 <>Form is not created for this device type. </>
-                            ))}
+                            ))} */}
                     </Form>
                 </Row>
             </Modal.Body>
@@ -268,4 +284,4 @@ const DeviceCreation = (props: any) => {
     );
 };
 
-export default DeviceCreation;
+export default DeviceCreation2;
