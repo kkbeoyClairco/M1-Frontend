@@ -373,8 +373,8 @@ const FIleExploer = () => {
     const handleDeviceCreation = async (type: string, payload: any) => {
         try {
             console.log('Device Addition', type, payload);
-            payload.customerId = infoToModal.customerId;
-            payload.buildingId = infoToModal.buildingId;
+            // payload.customerId = infoToModal.customerId;
+            // payload.buildingId = infoToModal.buildingId;
             // const res = await device.create(payload);
             //NEEDS TO BE UPDATED WITH NODE ADDITION TO THE TREE
         } catch (error) {

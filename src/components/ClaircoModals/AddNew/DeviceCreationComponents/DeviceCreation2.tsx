@@ -3,7 +3,6 @@ import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import Select, { ActionMeta } from 'react-select';
 import { useRedux } from 'hooks';
 import { ToastContext } from 'context/ToastContext';
-import { deviceCreationformConfig } from './deviceCreationformConfig';
 import { FormInput } from 'components/form';
 import { device } from 'helpers/api/services/Clairco/device';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +19,8 @@ import { IAQModule } from './IAQModule';
 import { SwitchesModule } from './SwitchesModule';
 import { DptModule } from './DptModule';
 import { EnergymeterModule } from './EnergymeterModule';
+import BuildingSelection from 'components/ClaircoCustomerDashboard/Widgets/LandingPageWidgets/BuildingSelection';
+import { customer } from 'helpers/api/services/Clairco/customer';
 
 const transformArray = (array: any) => {
     const transformedArray = array?.map((item: any) => {
@@ -40,45 +41,9 @@ const transformToArray = (item: any) => {
     if (!item) return item;
     return item.replace(/\s+/g, '').split(',').filter(Boolean);
 };
-const alterForm = (item: any) => {
-    return (
-        <Fragment key={item.label}>
-            <Col style={{ marginTop: '20px' }}>
-                <Form.Label>{item.label}</Form.Label>
-                {item.type === 'select' && (
-                    <Select
-                        name={item.value}
-                        placeholder={'Select ' + item.label}
-                        className="react-select mb-2"
-                        classNamePrefix="react-select"
-                        options={[]}
-                    />
-                )}
-                {item.type === 'input' && (
-                    <FormInput
-                        placeholder={'Enter ' + item.label}
-                        type="text"
-                        name={item.value}
-                        containerClass={'mb-1'}
-                        key="text"
-                    />
-                )}
-
-                {(item.type === 'object' || item.type === 'list') && (
-                    <Form.Control
-                        as="textarea"
-                        placeholder={'Enter ' + item.label + ' in this proper format'}
-                        name={item.value}
-                        style={{ width: '100%', height: '8em' }}
-                    />
-                )}
-            </Col>
-        </Fragment>
-    );
-};
 
 const DeviceCreation2 = (props: any) => {
-    const [customerIdSelected, setCustomerIdSelected] = useState<any>();
+    const [customerSelected, setCustomerSelected] = useState<any>();
     const [buldingSelected, setBuldingSelected] = useState<any>();
     const [selectedFloor, setSelectedFloor] = useState<any>();
     const [zoneSelected, setZoneSelected] = useState<any>();
@@ -93,7 +58,7 @@ const DeviceCreation2 = (props: any) => {
         zones: state.Zone.zones ?? [],
         deviceNameToId: state.Device.deviceNameToId ?? [],
     }));
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [deviceType, setDeviceType] = useState<string | null>(null);
 
@@ -126,10 +91,12 @@ const DeviceCreation2 = (props: any) => {
                         break;
                 }
             });
-            // console.log('Device Data', deviceData);
+            deviceData['floorId'] = selectedFloor;
+            deviceData['customerId'] = customerSelected?.value;
+            deviceData['builddingId'] = buldingSelected;
+            if (zoneSelected?.value) deviceData['zoneId'] = zoneSelected.value ?? '';
+
             props.onSubmit('Device', deviceData);
-            // const res = await device.createInBulk(deviceData);
-            // toast?.showToast('device created successfully', 'success');
         } catch (error: any) {
             if (error instanceof SyntaxError) {
                 toast?.showToast('invalid json syntax in calibration values or limits or parameters', 'error');
@@ -143,7 +110,6 @@ const DeviceCreation2 = (props: any) => {
     // Selection Handlers
     const handleZoneSelection = async (newValue: any, actionMeta: ActionMeta<any>) => {
         try {
-            console.log(newValue);
             setZoneSelected(newValue);
         } catch (error) {
             console.log(error);
@@ -161,16 +127,49 @@ const DeviceCreation2 = (props: any) => {
             console.log(error);
         }
     }, []);
+    const getCustomerDetails = async (customerId: string) => {
+        try {
+            const res = await customer.byId(customerId);
+            const customerDetails = { label: res.data?.name, value: res.data.id };
+            setCustomerSelected(customerDetails);
+            console.log('customer details', customerDetails);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const getBuildingDetails = async (customerId: string, buildingId: string) => {
+        try {
+            const res = await customer.getBuildingDetailsWithId(customerId, buildingId);
+            console.log('Building details', res);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const getFloorDetails = async (customerId: string, buildingId: string, floorId: string) => {
+        try {
+            const res = await customer.getFloorDetailsWithId(customerId, buildingId, floorId);
+            console.log('floor details', res);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     useEffect(() => {
         dispatch(getDeviceTypes());
     }, [dispatch]);
     useEffect(() => {
         const floorId = props?.data?.floorId ?? '';
+        const customerId = props?.data?.customerId ?? '';
+        const buildingId = props?.data?.buildingId ?? '';
+
         if (floorId) getZones(floorId);
+        if (customerId) getCustomerDetails(customerId);
+        if (customerId && buildingId) getBuildingDetails(customerId, buildingId);
+        if (customerId && buildingId && floorId) getFloorDetails(customerId, buildingId, floorId);
+        // setCustomerSelected({customerId});
+        setBuldingSelected(buildingId);
     }, [getZones, props]);
-    useEffect(() => {
-        console.log(deviceType);
-    }, [deviceType]);
+
+    // console.log(props?.data);
     return (
         <Modal
             {...props}
@@ -208,14 +207,17 @@ const DeviceCreation2 = (props: any) => {
                                 <> */}
                         <Form.Label>Customer</Form.Label>
                         <Select
+                            // defaultInputValue={}
+
                             name="customerId"
                             placeholder="Select customer"
                             className="react-select mb-2"
                             classNamePrefix="react-select"
-                            options={customersList}
-                            onChange={(e: any) => setCustomerIdSelected(e.value)}
-                            value={props.data.customerId ? { label: 'Selected', value: props.data.customerId } : null}
-                            isDisabled={props.data.customerId ? true : false}
+                            options={[]}
+                            onChange={(e: any) => setCustomerSelected(e)}
+                            value={props.data.customerId ? customerSelected : null}
+                            isDisabled={true}
+                            isClearable={false}
                         />
                         <Form.Label>Building</Form.Label>
                         <Select
@@ -236,8 +238,8 @@ const DeviceCreation2 = (props: any) => {
                             classNamePrefix="react-select"
                             options={floorsList}
                             onChange={(e: any) => setSelectedFloor(e?.value)}
-                            value={props.data.floorId ? { label: 'Selected', value: props.data.floorId } : null}
-                            isDisabled={props.data.floorId ? true : false}
+                            value={props?.data?.floorId ? { label: 'Selected', value: props.data.floorId } : null}
+                            isDisabled={props?.data?.floorId ? true : false}
                         />
                         <Form.Label>Zone</Form.Label>
                         <Select

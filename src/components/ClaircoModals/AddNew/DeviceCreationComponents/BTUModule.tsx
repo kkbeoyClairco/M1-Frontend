@@ -3,25 +3,14 @@ import React, { Fragment } from 'react';
 import { Col, Form } from 'react-bootstrap';
 import Select, { ActionMeta } from 'react-select';
 
-export const BTUModule = ({}: any) => {
+export const BTUModule = () => {
     return (
         <Fragment key={Date.now()}>
             <Col style={{ marginTop: '20px' }}>
                 <Form.Label>{'Name'}</Form.Label>
-
                 <FormInput placeholder={'Enter Name '} type="text" name={'name'} containerClass={'mb-1'} key="text" />
-
-                {/* {(item.type === 'object' || item.type === 'list') && (
-                    <Form.Control
-                        as="textarea"
-                        placeholder={'Enter ' + item.label + ' in this proper format'}
-                        name={item.value}
-                        style={{ width: '100%', height: '8em' }}
-                    />
-                )} */}
             </Col>
             <Col style={{ marginTop: '20px' }}>
-                {' '}
                 <Form.Label>{'Alias'}</Form.Label>
                 <FormInput placeholder={'Enter Alias '} type="text" name={'alias'} containerClass={'mb-1'} key="text" />
             </Col>
