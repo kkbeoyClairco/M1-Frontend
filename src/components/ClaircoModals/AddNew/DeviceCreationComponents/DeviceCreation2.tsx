@@ -21,6 +21,7 @@ import { DptModule } from './DptModule';
 import { EnergymeterModule } from './EnergymeterModule';
 import BuildingSelection from 'components/ClaircoCustomerDashboard/Widgets/LandingPageWidgets/BuildingSelection';
 import { customer } from 'helpers/api/services/Clairco/customer';
+import CommonSelections from './CommonSelections';
 
 const transformArray = (array: any) => {
     const transformedArray = array?.map((item: any) => {
@@ -47,15 +48,22 @@ const DeviceCreation2 = (props: any) => {
     const [buldingSelected, setBuldingSelected] = useState<any>();
     const [selectedFloor, setSelectedFloor] = useState<any>();
     const [zoneSelected, setZoneSelected] = useState<any>();
-    const [buildingsList, setBuildingsList] = useState<any>();
-    const [floorsList, setFloorsList] = useState<any>();
+
     const [zonesList, setZonesList] = useState<any>();
+    const [newData, setNewData] = useState({
+        btu: {},
+        occupancy: {},
+        ahu: {},
+        vrfOutdoor: {},
+        vrfIndoor: {},
+        energyMeter: {},
+        dpt: {},
+        switch: {},
+        iaq: {},
+    });
+
     const { appSelector, dispatch } = useRedux();
     const { deviceNameToId } = appSelector((state) => ({
-        // customers: state.Customer?.customers ?? [],
-        // buildings: state.Building.buildings ?? [],
-        // floors: state.Floor.floors ?? [],
-        // zones: state.Zone.zones ?? [],
         deviceNameToId: state.Device.deviceNameToId ?? [],
     }));
     // const navigate = useNavigate();
@@ -65,6 +73,15 @@ const DeviceCreation2 = (props: any) => {
     const toast = useContext(ToastContext);
     const deviceTypeList = Array.from(deviceNameToId, ([key, value]) => ({ label: key, value: value }));
     // const customersList = customers.map((customer: any) => ({ label: customer?.name, value: customer?.customerId }));
+
+    const handleChildInputChanges = (key: string, value: any) => {
+        try {
+            // console.log('New value', key, value);
+            setNewData((prev) => ({ ...prev, [key]: value }));
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -96,7 +113,7 @@ const DeviceCreation2 = (props: any) => {
             deviceData['buildingId'] = buldingSelected.value ?? '';
             if (zoneSelected?.value) deviceData['zoneId'] = zoneSelected.value ?? '';
 
-            props.onSubmit('Device', deviceData);
+            // props.onSubmit('Device', deviceData);
         } catch (error: any) {
             if (error instanceof SyntaxError) {
                 toast?.showToast('invalid json syntax in calibration values or limits or parameters', 'error');
@@ -127,17 +144,16 @@ const DeviceCreation2 = (props: any) => {
             console.log(error);
         }
     }, []);
-    const getCustomerDetails = async (customerId: string) => {
+    const getCustomerDetails = useCallback(async (customerId: string) => {
         try {
             const res = await customer.byId(customerId);
             const customerDetails = { label: res.data?.name, value: res.data.id };
             setCustomerSelected(customerDetails);
-            console.log('customer details', customerDetails);
         } catch (error) {
             console.log(error);
         }
-    };
-    const getBuildingDetails = async (customerId: string, buildingId: string) => {
+    }, []);
+    const getBuildingDetails = useCallback(async (customerId: string, buildingId: string) => {
         try {
             const res = await customer.getBuildingDetailsWithId(customerId, buildingId);
             const building = { label: res?.data?.name, value: res?.data?.id };
@@ -145,8 +161,8 @@ const DeviceCreation2 = (props: any) => {
         } catch (error) {
             console.log(error);
         }
-    };
-    const getFloorDetails = async (customerId: string, buildingId: string, floorId: string) => {
+    }, []);
+    const getFloorDetails = useCallback(async (customerId: string, buildingId: string, floorId: string) => {
         try {
             const res = await customer.getFloorDetailsWithId(customerId, buildingId, floorId);
             const floor = { label: res?.data?.name, value: res?.data?.id };
@@ -154,7 +170,7 @@ const DeviceCreation2 = (props: any) => {
         } catch (error) {
             console.log(error);
         }
-    };
+    }, []);
     useEffect(() => {
         dispatch(getDeviceTypes());
     }, [dispatch]);
@@ -169,9 +185,13 @@ const DeviceCreation2 = (props: any) => {
         if (customerId && buildingId && floorId) getFloorDetails(customerId, buildingId, floorId);
         // setCustomerSelected({customerId});
         setBuldingSelected(buildingId);
-    }, [getZones, props.data]);
+    }, [getBuildingDetails, getCustomerDetails, getFloorDetails, getZones, props?.data]);
 
     // console.log(props?.data);
+
+    // useEffect(() => {
+    //     // console.log('BTU', newData);
+    // }, [newData]);
     return (
         <Modal
             {...props}
@@ -189,69 +209,19 @@ const DeviceCreation2 = (props: any) => {
             <Modal.Body>
                 <Row style={{ marginLeft: '1em', marginTop: '0em', marginRight: '1em' }}>
                     <Row className="d-flex justify-content-end"></Row>
-                    <Form onSubmit={handleSubmit}>
-                        <Col style={{ marginTop: '15px' }}>
-                            <Form.Label>Select Device Type</Form.Label>
-                            <Select
-                                name="deviceType"
-                                placeholder="Select Device Type"
-                                className="react-select mb-2"
-                                classNamePrefix="react-select"
-                                options={deviceTypeList}
-                                onChange={(e: any) => {
-                                    const label = e.label?.toLowerCase().replace(/\s+/g, '');
-                                    setDeviceType(label);
-                                }}
-                            />
-                        </Col>
-
-                        <Form.Label>Customer</Form.Label>
-                        <Select
-                            // defaultInputValue={}
-
-                            name="customerId"
-                            placeholder="Select customer"
-                            className="react-select mb-2"
-                            classNamePrefix="react-select"
-                            options={[]}
-                            onChange={(e: any) => setCustomerSelected(e)}
-                            value={props.data.customerId ? customerSelected : null}
-                            isDisabled={true}
-                            isClearable={false}
-                        />
-                        <Form.Label>Building</Form.Label>
-                        <Select
-                            name="buildingId"
-                            placeholder="Select building"
-                            className="react-select mb-2"
-                            classNamePrefix="react-select"
-                            options={buildingsList}
-                            onChange={(e: any) => setBuldingSelected(e.value)}
-                            value={props.data.buildingId ? buldingSelected : null}
-                            isDisabled={props.data.buildingId ? true : false}
-                        />
-                        <Form.Label>Floor</Form.Label>
-                        <Select
-                            name="floorId"
-                            placeholder="Select floor"
-                            className="react-select mb-2"
-                            classNamePrefix="react-select"
-                            options={floorsList}
-                            onChange={(e: any) => setSelectedFloor(e?.value)}
-                            value={props?.data?.floorId ? selectedFloor : null}
-                            isDisabled={props?.data?.floorId ? true : false}
-                        />
-                        <Form.Label>Zone</Form.Label>
-                        <Select
-                            name="zoneId"
-                            placeholder="Select zone "
-                            className="react-select mb-2"
-                            classNamePrefix="react-select"
-                            options={zonesList}
-                            onChange={handleZoneSelection}
-                        />
-
-                        {deviceType === 'btu' ? <BTUModule /> : null}
+                    <CommonSelections
+                        buldingSelected={buldingSelected}
+                        customerSelected={customerSelected}
+                        deviceTypeList={deviceTypeList}
+                        handleZoneSelection={handleZoneSelection}
+                        selectedFloor={selectedFloor}
+                        setDeviceType={setDeviceType}
+                        zonesList={zonesList}
+                    />
+                    <Form>
+                        {deviceType === 'btu' ? (
+                            <BTUModule data={newData.btu} onChange={(value) => handleChildInputChanges('btu', value)} />
+                        ) : null}
                         {deviceType === 'occupancy' ? <OccupancyModule /> : null}
                         {deviceType === 'ahu' ? <AHUModule /> : null}
                         {deviceType === 'vrv/vrfoutdoor' ? <OutdoorModule /> : null}
@@ -265,7 +235,8 @@ const DeviceCreation2 = (props: any) => {
 
                         <Col className="d-flex justify-content-end mt-3">
                             <Button
-                                type="submit"
+                                onClick={props.onClose}
+                                type="button"
                                 className="ms-2 btn-secondary"
                                 // style={{ backgroundColor: '#008675', borderColor: '#008675' }}
                             >
@@ -273,7 +244,8 @@ const DeviceCreation2 = (props: any) => {
                             </Button>{' '}
                             {deviceType && (
                                 <Button
-                                    type="submit"
+                                    type="button"
+                                    onClick={handleSubmit}
                                     className="ms-2"
                                     style={{ backgroundColor: '#008675', borderColor: '#008675' }}>
                                     Submit
