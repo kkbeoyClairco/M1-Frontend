@@ -31,15 +31,17 @@ export const device = {
         const baseUrl = `/deviceType/all`;
         return await api.get(baseUrl, null);
     },
-    create: async (params: any) => {
-        const baseUrl = `/devices/`;
-        return await api.create(baseUrl, params);
+    create: async (params: any, deviceType: string) => {
+        const baseUrl = `/devices?`;
+        const searchParams = new URLSearchParams();
+        searchParams.append('deviceType', deviceType);
+        if (deviceType) return await api.create(baseUrl + searchParams.toString(), params);
     },
-    createInBulk: async (payload: any) => {
-        let { deviceTypeId, ...devices } = payload;
-        const baseUrl = `/devices/bulkInsert/${payload.deviceTypeId}`;
-        return await api.create(baseUrl, devices);
-    },
+    // createInBulk: async (payload: any) => {
+    //     let { deviceTypeId, ...devices } = payload;
+    //     const baseUrl = `/devices/bulkInsert/${payload.deviceTypeId}`;
+    //     return await api.create(baseUrl, devices);
+    // },
     update: async (params: any) => {
         const baseUrl = `/devices/`;
         return await api.update(baseUrl, params);

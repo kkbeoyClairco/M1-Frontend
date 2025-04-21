@@ -15,7 +15,6 @@ export const BTUModule = () => {
                 <FormInput placeholder={'Enter Alias '} type="text" name={'alias'} containerClass={'mb-1'} key="text" />
             </Col>
             <Col style={{ marginTop: '20px' }}>
-                {' '}
                 <Form.Label>{'GateWay Id'}</Form.Label>
                 <FormInput
                     placeholder={'Enter GateWay Id '}

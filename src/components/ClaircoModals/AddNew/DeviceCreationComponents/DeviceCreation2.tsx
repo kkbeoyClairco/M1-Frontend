@@ -51,11 +51,11 @@ const DeviceCreation2 = (props: any) => {
     const [floorsList, setFloorsList] = useState<any>();
     const [zonesList, setZonesList] = useState<any>();
     const { appSelector, dispatch } = useRedux();
-    const { customers, buildings, floors, zones, deviceNameToId } = appSelector((state) => ({
-        customers: state.Customer?.customers ?? [],
-        buildings: state.Building.buildings ?? [],
-        floors: state.Floor.floors ?? [],
-        zones: state.Zone.zones ?? [],
+    const { deviceNameToId } = appSelector((state) => ({
+        // customers: state.Customer?.customers ?? [],
+        // buildings: state.Building.buildings ?? [],
+        // floors: state.Floor.floors ?? [],
+        // zones: state.Zone.zones ?? [],
         deviceNameToId: state.Device.deviceNameToId ?? [],
     }));
     // const navigate = useNavigate();
@@ -64,7 +64,7 @@ const DeviceCreation2 = (props: any) => {
 
     const toast = useContext(ToastContext);
     const deviceTypeList = Array.from(deviceNameToId, ([key, value]) => ({ label: key, value: value }));
-    const customersList = customers.map((customer: any) => ({ label: customer?.name, value: customer?.customerId }));
+    // const customersList = customers.map((customer: any) => ({ label: customer?.name, value: customer?.customerId }));
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -91,9 +91,9 @@ const DeviceCreation2 = (props: any) => {
                         break;
                 }
             });
-            deviceData['floorId'] = selectedFloor;
-            deviceData['customerId'] = customerSelected?.value;
-            deviceData['builddingId'] = buldingSelected;
+            deviceData['floorId'] = selectedFloor?.value ?? '';
+            deviceData['customerId'] = customerSelected?.value ?? '';
+            deviceData['buildingId'] = buldingSelected.value ?? '';
             if (zoneSelected?.value) deviceData['zoneId'] = zoneSelected.value ?? '';
 
             props.onSubmit('Device', deviceData);
@@ -140,7 +140,8 @@ const DeviceCreation2 = (props: any) => {
     const getBuildingDetails = async (customerId: string, buildingId: string) => {
         try {
             const res = await customer.getBuildingDetailsWithId(customerId, buildingId);
-            console.log('Building details', res);
+            const building = { label: res?.data?.name, value: res?.data?.id };
+            setBuldingSelected(building);
         } catch (error) {
             console.log(error);
         }
@@ -148,7 +149,8 @@ const DeviceCreation2 = (props: any) => {
     const getFloorDetails = async (customerId: string, buildingId: string, floorId: string) => {
         try {
             const res = await customer.getFloorDetailsWithId(customerId, buildingId, floorId);
-            console.log('floor details', res);
+            const floor = { label: res?.data?.name, value: res?.data?.id };
+            setSelectedFloor(floor);
         } catch (error) {
             console.log(error);
         }
@@ -167,7 +169,7 @@ const DeviceCreation2 = (props: any) => {
         if (customerId && buildingId && floorId) getFloorDetails(customerId, buildingId, floorId);
         // setCustomerSelected({customerId});
         setBuldingSelected(buildingId);
-    }, [getZones, props]);
+    }, [getZones, props.data]);
 
     // console.log(props?.data);
     return (
@@ -202,9 +204,7 @@ const DeviceCreation2 = (props: any) => {
                                 }}
                             />
                         </Col>
-                        {/* {deviceType &&
-                            (Object.keys(deviceCreationformConfig).includes(deviceType) ? (
-                                <> */}
+
                         <Form.Label>Customer</Form.Label>
                         <Select
                             // defaultInputValue={}
@@ -227,7 +227,7 @@ const DeviceCreation2 = (props: any) => {
                             classNamePrefix="react-select"
                             options={buildingsList}
                             onChange={(e: any) => setBuldingSelected(e.value)}
-                            value={props.data.buildingId ? { label: 'Selected', value: props.data.buildingId } : null}
+                            value={props.data.buildingId ? buldingSelected : null}
                             isDisabled={props.data.buildingId ? true : false}
                         />
                         <Form.Label>Floor</Form.Label>
@@ -238,7 +238,7 @@ const DeviceCreation2 = (props: any) => {
                             classNamePrefix="react-select"
                             options={floorsList}
                             onChange={(e: any) => setSelectedFloor(e?.value)}
-                            value={props?.data?.floorId ? { label: 'Selected', value: props.data.floorId } : null}
+                            value={props?.data?.floorId ? selectedFloor : null}
                             isDisabled={props?.data?.floorId ? true : false}
                         />
                         <Form.Label>Zone</Form.Label>
@@ -250,9 +250,7 @@ const DeviceCreation2 = (props: any) => {
                             options={zonesList}
                             onChange={handleZoneSelection}
                         />
-                        {/* {deviceCreationformConfig[deviceType as keyof typeof deviceCreationformConfig].map(
-                                        (item: any) => alterForm(item)
-                                    )} */}
+
                         {deviceType === 'btu' ? <BTUModule /> : null}
                         {deviceType === 'occupancy' ? <OccupancyModule /> : null}
                         {deviceType === 'ahu' ? <AHUModule /> : null}
@@ -261,24 +259,27 @@ const DeviceCreation2 = (props: any) => {
                         {deviceType === 'dpt' ? <DptModule /> : null}
                         {deviceType === 'switches' ? <SwitchesModule /> : null}
                         {deviceType === 'iaq' ? <IAQModule /> : null}
-                        {deviceType === 'vrv/vrf' ? <IndoorModule /> : null}
+                        {deviceType === 'vrv/vrfindoor' ? <IndoorModule /> : null}
                         {/* {deviceType === 'gateway' ? <BTUModule /> : null}
                         {deviceType === 'pir' ? <BTUModule /> : null} */}
 
                         <Col className="d-flex justify-content-end mt-3">
+                            <Button
+                                type="submit"
+                                className="ms-2 btn-secondary"
+                                // style={{ backgroundColor: '#008675', borderColor: '#008675' }}
+                            >
+                                Close
+                            </Button>{' '}
                             {deviceType && (
                                 <Button
                                     type="submit"
                                     className="ms-2"
                                     style={{ backgroundColor: '#008675', borderColor: '#008675' }}>
-                                    SUBMIT
+                                    Submit
                                 </Button>
                             )}{' '}
                         </Col>
-                        {/* </> */}
-                        {/* ) : (
-                                <>Form is not created for this device type. </>
-                            ))} */}
                     </Form>
                 </Row>
             </Modal.Body>

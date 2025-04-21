@@ -23,11 +23,11 @@ export const customer = {
         return await api.updatePatch(baseurl, params);
     },
     getBuildingDetailsWithId: async (customerId: string, buildingId: string) => {
-        const baseurl = `/customers/${customerId}/building/${buildingId}`;
+        const baseurl = `/customers/${customerId}/buildings/${buildingId}`;
         return await api.get(baseurl, null);
     },
     getFloorDetailsWithId: async (customerId: string, buildingId: string, floorId: string) => {
-        const baseurl = `/customers/${customerId}/building/${buildingId}/floors/${floorId}`;
+        const baseurl = `/customers/${customerId}/buildings/${buildingId}/floors/${floorId}`;
         return await api.get(baseurl, null);
     },
     delete: async (params: any) => {
