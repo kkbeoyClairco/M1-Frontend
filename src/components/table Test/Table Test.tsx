@@ -12,7 +12,7 @@ import {
     FilterValue,
 } from 'react-table';
 import classNames from 'classnames';
-import { Pagination, PageSize } from './Pagination';
+import { PaginationTest, PageSize } from './Pagination';
 
 export type CellFormatter<T extends Object = {}> = {
     row: Row<T>;
@@ -86,9 +86,13 @@ type TableProps<TableValues> = {
     searchBoxClass?: string;
     tableClass?: string;
     theadClass?: string;
+    onPageChange: any;
+    currentPage?: number;
+    totalPages?: number;
+    onPageSizeChange: any;
 };
 
-const Table = <TableValues extends object = {}>(props: TableProps<TableValues>) => {
+const TableTest = <TableValues extends object = {}>(props: TableProps<TableValues>) => {
     const isSearchable = props['isSearchable'] || false;
     const isSortable = props['isSortable'] || false;
     const pagination = props['pagination'] || false;
@@ -238,9 +242,22 @@ const Table = <TableValues extends object = {}>(props: TableProps<TableValues>) 
                 </table>
             </div>
 
-            {pagination && <Pagination tableProps={dataTable} sizePerPageList={sizePerPageList} />}
+            {pagination && (
+                <PaginationTest
+                    onPageChange={props.onPageChange}
+                    tableProps={dataTable}
+                    sizePerPageList={sizePerPageList}
+                    currentPage={props.currentPage}
+                    totalPages={props.totalPages}
+                    onPageSizeChange={props.onPageSizeChange}
+
+                    //         state={
+                    //             pageIndex:2
+                    // }
+                />
+            )}
         </>
     );
 };
 
-export { Table };
+export { TableTest };

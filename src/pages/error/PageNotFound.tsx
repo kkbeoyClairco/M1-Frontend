@@ -5,8 +5,8 @@ import Logo from 'assets/images/logo.png';
 const ErrorPageNotFound = () => {
     return (
         <>
-            <div className="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5">
-                <div className="container">
+            <div className="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5 ">
+                <div className="container ">
                     <Row className="justify-content-center">
                         <Col md={8} lg={6} xl={5} xxl={4}>
                             <Card>

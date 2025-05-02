@@ -10,6 +10,15 @@ export const customer = {
         // return axios.get(baseUrl,"", { signal });
         return await api.get(baseUrl, null, signal);
     },
+    allTest: async (pageIndex: number, pageSize: number, signal?: AbortController['signal']) => {
+        const baseUrl = `/customers/all?`;
+        const searchParams = new URLSearchParams();
+        searchParams.append('pageSize', pageSize.toString());
+        searchParams.append('pageIndex', pageIndex.toString());
+
+        // return axios.get(baseUrl,"", { signal });
+        return await api.get(baseUrl + searchParams.toString(), null, signal);
+    },
     byId: async (customerId: string, signal?: AbortController['signal']) => {
         const baseurl = `/customers/${customerId}`;
         return await api.get(baseurl, null, signal);

@@ -9,10 +9,17 @@ interface ErrorPageProps {
 const ErrorPage: React.FC<ErrorPageProps> = ({ error, resetErrorBoundary }) => {
     console.log('Erroe:', error);
     return (
-        <Container className="text-center mt-5">
-            <Row className="justify-content-center">
+        <Container className="text-center vh-100 d-flex justify-content-center align-items-center">
+            <Row className="justify-content-center align-items-center">
                 <Col md={8}>
-                    <h1 className="display-4 text-danger">Oops! Something Went Wrong</h1>
+                    <img
+                        className="shadow-lg rounded-lg"
+                        src="https://res.cloudinary.com/dlulq6hny/image/upload/v1737020598/Untitled-design-17_anhxuz.png"
+                        alt="logo"
+                        width={150}
+                        height={150}
+                    />
+                    <h1 className="display-4 text-black">Oops! Something Went Wrong</h1>
                     <p className="lead text-muted">
                         We're sorry, but an unexpected error has occurred. Please try refreshing the page or go back to
                         the home page.

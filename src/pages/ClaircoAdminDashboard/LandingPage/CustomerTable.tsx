@@ -1,4 +1,4 @@
-import { useContext, useRef } from 'react';
+import { useCallback, useContext, useMemo, useRef } from 'react';
 import { ToastContext } from 'context/ToastContext';
 import { Row, Col, Card } from 'react-bootstrap';
 import { Table } from 'components'; // Assuming 'Table' is a valid component
@@ -9,6 +9,10 @@ import { setCustomers, getAllBuildings, getDevices, getDeviceTypes } from 'redux
 import { useRedux } from 'hooks';
 import { convertUnixToIST } from 'utils/timeFunctions';
 import SkeltonLoader from 'components/ClaircoCustomer/Skeltons/SkeltonLoader';
+import { TableTest } from 'components/table Test';
+import { useCalendar } from 'pages/apps/Calendar/hooks';
+import TableSkelton2 from 'components/ClaircoCustomer/Skeltons/TableSkelton2';
+import { error } from 'console';
 // export type CustomerTables = {
 //     customerName: string;
 //     numberOfDevices: number;
@@ -28,36 +32,80 @@ type customerData = {
 };
 const CustomerTable = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const toast = useContext(ToastContext);
-    const { dispatch, appSelector } = useRedux();
+    const [pageIndex, setPageIndex] = useState(0);
+    const [selectedPageSize, setSelectedPageSize] = useState(10);
+    const [totalPages, setTotalPages] = useState(0);
+
     const controllerRef = useRef<AbortController>();
     const navigate = useNavigate();
     const [customerTabledata, setCustomerTableData] = useState([]);
-    const getCustomers = async () => {
-        try {
-            setIsLoading(true);
-            if (controllerRef.current) {
-                controllerRef.current.abort();
-            }
-            controllerRef.current = new AbortController();
-            const res = await customer.all(controllerRef.current.signal);
-            if (res.data) {
-                const customers = res.data.map((customer: customerData) => ({
-                    customerId: customer.id,
-                    customerName: customer.name,
-                    timeCreated: customer?.createdAt ? convertUnixToIST(customer?.createdAt) : 'N/A',
-                    action: customer.action,
-                }));
-                dispatch(setCustomers(res?.data));
-                setCustomerTableData(customers);
-            }
-            setIsLoading(false);
-        } catch (error) {
-            setIsLoading(false);
-            console.log('Error', error);
-        }
-    };
+    // const getCustomers = async () => {
+    //     try {
+    //         setIsLoading(true);
+    //         if (controllerRef.current) {
+    //             controllerRef.current.abort();
+    //         }
+    //         controllerRef.current = new AbortController();
+    //         const res = await customer.all(controllerRef.current.signal);
+    //         if (res.data) {
+    //             const customers = res.data.map((customer: customerData) => ({
+    //                 customerId: customer.id,
+    //                 customerName: customer.name,
+    //                 timeCreated: customer?.createdAt ? convertUnixToIST(customer?.createdAt) : 'N/A',
+    //                 action: customer.action,
+    //             }));
+    //             dispatch(setCustomers(res?.data));
+    //             setCustomerTableData(customers);
+    //         }
+    //         setIsLoading(false);
+    //     } catch (error) {
+    //         setIsLoading(false);
+    //         console.log('Error', error);
+    //     }
+    // };
 
+    const getCustomersPaginated = useCallback(
+        async (newIndex: number) => {
+            try {
+                setIsLoading(true);
+                if (controllerRef.current) {
+                    controllerRef.current.abort();
+                }
+                controllerRef.current = new AbortController();
+                const res = await customer.allTest(newIndex, 25, controllerRef.current.signal);
+                if (res.data) {
+                    const customers = res.data.map((customer: customerData) => ({
+                        customerId: customer.id,
+                        customerName: customer.name,
+                        timeCreated: customer?.createdAt ? convertUnixToIST(customer?.createdAt) : 'N/A',
+                        action: customer.action,
+                    }));
+                    //Wrong calculation. Take the total document count from api. Once the api is ready
+                    setTotalPages(
+                        5
+                        // calculateTotalPage(customers?.length, selectedPageSize)
+                    );
+                    setCustomerTableData(customers);
+                }
+                setIsLoading(false);
+            } catch (error) {
+                setIsLoading(false);
+                console.log('Error', error);
+            }
+        },
+        [selectedPageSize]
+    );
+
+    const calculateTotalPage = useMemo(() => {
+        return (totalDocument: number, pageSize: number) => {
+            try {
+                if (!totalDocument || !pageSize) return 0;
+                return Math.ceil(totalDocument / pageSize);
+            } catch (error) {
+                return 0;
+            }
+        };
+    }, []);
     const handleNavigation = (data: any) => {
         const { customerId = '', customerName = '' } = data;
         console.log('customerId', customerId, customerName);
@@ -82,7 +130,11 @@ const CustomerTable = () => {
         );
     };
     const columns = [
-        { Header: 'Customer Name', accessor: 'customerName', defaultCanSort: true },
+        {
+            Header: 'Customer Name',
+            accessor: 'customerName',
+            defaultCanSort: true,
+        },
         // { Header: 'Logo', accessor: 'logo', defaultCanSort: false },
         // { Header: 'Number of Devices', accessor: 'numberOfDevices', defaultCanSort: false },
         // { Header: 'Number of Users', accessor: 'numberOfUsers', defaultCanSort: false },
@@ -100,7 +152,21 @@ const CustomerTable = () => {
             Cell: ActionColumn,
         },
     ];
-
+    const handlePageChange = (newPage: number) => {
+        try {
+            getCustomersPaginated(newPage);
+            setPageIndex(newPage);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handlePageSizeChange = (size: number) => {
+        try {
+            console.log(size);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const sizePerPageList = [
         {
             text: '10',
@@ -112,11 +178,7 @@ const CustomerTable = () => {
         },
     ];
     useEffect(() => {
-        try {
-            getCustomers();
-        } catch (error: any) {
-            toast?.showToast('Error occure while fetching data ', 'error');
-        }
+        getCustomersPaginated(1);
         return () => {
             controllerRef.current?.abort();
         };
@@ -126,26 +188,29 @@ const CustomerTable = () => {
             <Card.Body>
                 <Row>
                     {/* <Col> */}
-                    <h4 className="header-title mb-3">CUSTOMERS LIST</h4>
+                    <h4 className="header-title mb-3">CUSTOMERS LIST (Backend Paginated Component- WIP)</h4>
                     {/* </Col> */}
                 </Row>
                 {!isLoading ? (
-                    <Table
+                    <TableTest
                         columns={columns}
                         data={customerTabledata}
-                        pageSize={10}
+                        pageSize={selectedPageSize}
                         sizePerPageList={sizePerPageList}
                         isSortable={true}
                         pagination={true}
-                        isSearchable={true}
+                        isSearchable={false}
                         tableClass=" mt-3 "
                         searchBoxClass="mb-2"
+                        onPageChange={handlePageChange}
+                        currentPage={pageIndex}
+                        totalPages={totalPages}
+                        onPageSizeChange={handlePageSizeChange}
                     />
                 ) : (
                     <>
-                        {' '}
-                        <SkeltonLoader />
-                        <SkeltonLoader />
+                        <TableSkelton2 />
+                        {/* < /> */}
                     </>
                 )}
             </Card.Body>
