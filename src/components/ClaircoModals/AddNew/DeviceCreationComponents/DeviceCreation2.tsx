@@ -232,29 +232,31 @@ const DeviceCreation2 = (props: any) => {
                         {deviceType === 'vrv/vrfindoor' ? <IndoorModule /> : null}
                         {/* {deviceType === 'gateway' ? <BTUModule /> : null}
                         {deviceType === 'pir' ? <BTUModule /> : null} */}
-
-                        <Col className="d-flex justify-content-end mt-3">
-                            <Button
-                                onClick={props.onClose}
-                                type="button"
-                                className="ms-2 btn-secondary"
-                                // style={{ backgroundColor: '#008675', borderColor: '#008675' }}
-                            >
-                                Close
-                            </Button>{' '}
-                            {deviceType && (
-                                <Button
-                                    type="button"
-                                    onClick={handleSubmit}
-                                    className="ms-2"
-                                    style={{ backgroundColor: '#008675', borderColor: '#008675' }}>
-                                    Submit
-                                </Button>
-                            )}{' '}
-                        </Col>
                     </Form>
                 </Row>
             </Modal.Body>
+            <Modal.Footer>
+                {' '}
+                <Col className="d-flex justify-content-end mt-3">
+                    <Button
+                        onClick={props.onClose}
+                        type="button"
+                        className="ms-2 btn-secondary"
+                        // style={{ backgroundColor: '#008675', borderColor: '#008675' }}
+                    >
+                        Close
+                    </Button>{' '}
+                    {deviceType && (
+                        <Button
+                            type="button"
+                            onClick={handleSubmit}
+                            className="ms-2"
+                            style={{ backgroundColor: '#008675', borderColor: '#008675' }}>
+                            Submit
+                        </Button>
+                    )}{' '}
+                </Col>
+            </Modal.Footer>
         </Modal>
     );
 };
