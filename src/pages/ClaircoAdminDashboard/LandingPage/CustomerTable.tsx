@@ -34,7 +34,7 @@ const CustomerTable = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [pageIndex, setPageIndex] = useState(0);
     const [selectedPageSize, setSelectedPageSize] = useState(10);
-    const [totalPages, setTotalPages] = useState(0);
+    const [totalPages, setTotalPages] = useState(20);
 
     const controllerRef = useRef<AbortController>();
     const navigate = useNavigate();
@@ -72,7 +72,7 @@ const CustomerTable = () => {
                     controllerRef.current.abort();
                 }
                 controllerRef.current = new AbortController();
-                const res = await customer.allTest(newIndex, 25, controllerRef.current.signal);
+                const res = await customer.allTest(newIndex, selectedPageSize, controllerRef.current.signal);
                 if (res.data) {
                     const customers = res.data.map((customer: customerData) => ({
                         customerId: customer.id,
@@ -82,7 +82,7 @@ const CustomerTable = () => {
                     }));
                     //Wrong calculation. Take the total document count from api. Once the api is ready
                     setTotalPages(
-                        5
+                        20
                         // calculateTotalPage(customers?.length, selectedPageSize)
                     );
                     setCustomerTableData(customers);

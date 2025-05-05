@@ -29,7 +29,7 @@ const PaginationTest = ({
      * pagination count , index
      */
     // console.log('Pagination', tableProps);
-    const [pageCount, setPageCount] = useState<number>(tableProps.pageCount);
+    const [pageCount, setPageCount] = useState<number>();
     const [pageIndex, setPageIndex] = useState<number>(tableProps.state.pageIndex);
 
     useEffect(() => {
@@ -42,7 +42,7 @@ const PaginationTest = ({
      */
     const filterPages = useCallback(
         (visiblePages: number[], totalPages: number) => {
-            return visiblePages.filter((page: number) => page <= pageCount);
+            return visiblePages.filter((page: number) => page <= (pageCount ?? 0));
         },
         [pageCount]
     );
@@ -73,14 +73,14 @@ const PaginationTest = ({
      * @returns
      */
     const changePage = (page: number) => {
+        if (!pageCount) return;
         const activePage = pageIndex + 1;
         onPageChange(page);
         if (page === activePage) {
             return;
         }
-
         const visiblePages = getVisiblePages(page, pageCount);
-        setVisiblePages(filterPages(visiblePages, pageCount));
+        setVisiblePages(() => filterPages(visiblePages, pageCount));
 
         tableProps.gotoPage(page - 1);
     };
@@ -107,16 +107,21 @@ const PaginationTest = ({
         }
     };
     useEffect(() => {
-        const visiblePages = getVisiblePages(0, pageCount);
-        setVisiblePages(visiblePages);
-    }, [pageCount, getVisiblePages]);
+        if (pageCount) {
+            const visiblePages = getVisiblePages(currentPage ?? 0, pageCount);
+            setVisiblePages(visiblePages);
+        }
+    }, [pageCount, currentPage, getVisiblePages]);
     useEffect(() => {
         if (currentPage) setPageIndex(currentPage - 1);
     }, [currentPage]);
     useEffect(() => {
-        if (totalPages !== undefined && totalPages !== 0) setPageCount(totalPages);
+        if (totalPages !== undefined && totalPages !== 0) {
+            setPageCount(totalPages);
+        }
     }, [totalPages]);
-    const [visiblePages, setVisiblePages] = useState<number[]>(getVisiblePages(0, pageCount));
+    const [visiblePages, setVisiblePages] = useState<number[]>();
+    // getVisiblePages(0, pageCount)
     const activePage: number = pageIndex + 1;
 
     return (
