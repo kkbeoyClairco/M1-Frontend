@@ -11,6 +11,7 @@ import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/Land
 import { setLocale } from 'yup';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import NoDevice from 'components/ClaircoGeneral/NoDevice';
+import TableSkelton2 from 'components/ClaircoCustomer/Skeltons/TableSkelton2';
 type DeviseTables = {
     _id: string;
     deviceName: string;
@@ -196,7 +197,7 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
                         searchBoxClass="mb-2"
                     />
                 ) : (
-                    <TableSkelton />
+                    <TableSkelton2 />
                 )}
             </Card.Body>
         </Card>

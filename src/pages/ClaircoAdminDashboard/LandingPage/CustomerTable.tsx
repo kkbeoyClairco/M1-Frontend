@@ -13,6 +13,7 @@ import { TableTest } from 'components/table Test';
 import { useCalendar } from 'pages/apps/Calendar/hooks';
 import TableSkelton2 from 'components/ClaircoCustomer/Skeltons/TableSkelton2';
 import { error } from 'console';
+import { toast } from 'sonner';
 // export type CustomerTables = {
 //     customerName: string;
 //     numberOfDevices: number;
@@ -90,6 +91,7 @@ const CustomerTable = () => {
                 setIsLoading(false);
             } catch (error) {
                 setIsLoading(false);
+                toast.error('Oops! Something went wrong. Please try again in a moment.');
                 console.log('Error', error);
             }
         },
@@ -183,6 +185,7 @@ const CustomerTable = () => {
             controllerRef.current?.abort();
         };
     }, []);
+
     return (
         <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 ">
             <Card.Body>

@@ -33,7 +33,7 @@ export const Section = ({ title, onAddClick, data, columns, modal = null, modalP
                             isSortable
                             pagination
                             isSearchable
-                            tableClass="table-striped text-center"
+                            tableClass="table-striped "
                             searchBoxClass="mb-2"
                         />
                     </Card.Body>

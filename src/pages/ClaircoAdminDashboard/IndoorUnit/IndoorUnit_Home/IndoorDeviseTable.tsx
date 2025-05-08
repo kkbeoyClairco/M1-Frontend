@@ -10,6 +10,7 @@ import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import { convertUnixToIST } from 'utils/timeFunctions';
 import { getUserIdFromSession } from 'utils/storageFunctions';
 import NoDevice from 'components/ClaircoGeneral/NoDevice';
+import TableSkelton2 from 'components/ClaircoCustomer/Skeltons/TableSkelton2';
 // import { URLSearchParams } from 'url';
 
 type NewType = CellFormatter<DeviseTables>;
@@ -182,7 +183,7 @@ const IndoorDevicesTable = ({ setTotalDevices }: any) => {
                         />
                     ) : null
                 ) : (
-                    <TableSkelton />
+                    <TableSkelton2 />
                 )}
             </Card.Body>
         </Card>

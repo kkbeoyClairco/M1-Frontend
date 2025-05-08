@@ -33,22 +33,23 @@ const ScheduleSet = () => {
     const { deviceNameToId } = appSelector((state) => ({
         deviceNameToId: state.Device.deviceNameToId,
     }));
-    const deviceTypeList = Array.from(deviceNameToId, ([key, value]) => ({ label: key, value: value }));
+    const deviceTypeList = Array.from(deviceNameToId, ([key, value]) => ({ label: key, value: key }));
 
     const fetchDeviceData = async (e: any) => {
         try {
             const label = e.label?.replace(/\s+/g, '');
             const value = e.value;
+            console.log('Value', value);
             setDeviceType({ label, value });
-            if (value === '' || label === '') {
-                toast?.showToast('Please select device type', 'error');
-                return;
-            } else if (label != 'AHU') {
-                toast?.showToast('only AHU device type is available', 'error');
-                return;
-            }
+            // if (value === '' || label === '') {
+            //     toast?.showToast('Please select device type', 'error');
+            //     return;
+            // } else if (label != 'AHU') {
+            //     toast?.showToast('only AHU device type is available', 'error');
+            //     return;
+            // }
 
-            const response = await device.byDeviceTypeId({ deviceTypeId: value });
+            const response = await device.byDeviceTypeId({ deviceType: value });
             if (response.data) {
                 setDeviceData(response.data);
                 toast?.showToast('Device Data fetched successfully', 'success');

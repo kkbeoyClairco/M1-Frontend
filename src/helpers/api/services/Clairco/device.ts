@@ -24,7 +24,7 @@ export const device = {
     },
     byId: async () => {},
     byDeviceTypeId: (params: any) => {
-        const baseUrl = `/devices/all?deviceTypeId=${params.deviceTypeId}`;
+        const baseUrl = `/devices/all?deviceType=${params.deviceType}`;
         return api.get(baseUrl, null);
     },
     types: async () => {

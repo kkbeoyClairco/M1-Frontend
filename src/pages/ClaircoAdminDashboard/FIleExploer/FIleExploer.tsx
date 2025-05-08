@@ -284,19 +284,23 @@ const FIleExploer = () => {
     // };
     // API fetching Customers list- CALLED ON INIAL PAGE LOAD
     const fetchCustomers = async () => {
-        const customers = await customer.all();
-        const customersList = customers.data.map((data: any) => {
-            return {
-                name: data.name,
-                isFolder: true,
-                type: 'Customer',
-                id: data.id,
-                isExpanded: false,
-                children: [],
-            };
-        });
-        setCustomers(customersList);
-        setData(customersList);
+        try {
+            const customers = await customer.all();
+            const customersList = customers.data.map((data: any) => {
+                return {
+                    name: data.name,
+                    isFolder: true,
+                    type: 'Customer',
+                    id: data.id,
+                    isExpanded: false,
+                    children: [],
+                };
+            });
+            setCustomers(customersList);
+            setData(customersList);
+        } catch (error) {
+            toast.error('Oops! We couldn’t retrieve the customer list. Please try again');
+        }
     };
 
     // API Router Function

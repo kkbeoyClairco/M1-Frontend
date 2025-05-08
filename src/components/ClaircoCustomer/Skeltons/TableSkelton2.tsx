@@ -1,51 +1,26 @@
 import React from 'react';
+import skelton from '../skelton';
 
+const SkeltonBase = () => {
+    return (
+        <div className="card-body py-0 px-1">
+            <h5 className="card-title placeholder-glow">
+                <span className="placeholder col-1 mx-2 "></span>
+                <span className="placeholder col-2 m-1"></span>
+                <span className="placeholder col-4 m-1"></span>
+                <span className="placeholder col-3 m-1"></span>
+
+                <span className="placeholder col-1"></span>
+            </h5>
+        </div>
+    );
+};
 const TableSkelton2 = () => {
     return (
         <div>
-            <div>
-                <div className="" aria-hidden="true">
-                    {/* <img src="..." className="card-img-top" alt="..." /> */}
-                    <div className="card-body">
-                        <h5 className="card-title placeholder-glow">
-                            <span className="placeholder col-12"></span>
-                            {/* <span className="placeholder col-4"></span> */}
-                        </h5>
-                        <p className="card-text placeholder-glow">
-                            <span className="placeholder col-8"></span>
-                        </p>
-                        {/* <a href="#" tabIndex="-1" class="btn btn-primary disabled placeholder col-6"></a> */}
-                    </div>
-                    <div className="card-body">
-                        <h5 className="card-title placeholder-glow">
-                            <span className="placeholder col-12"></span>
-                            {/* <span className="placeholder col-4"></span> */}
-                        </h5>
-                        <p className="card-text placeholder-glow">
-                            <span className="placeholder col-8"></span>
-                        </p>
-                        {/* <a href="#" tabIndex="-1" class="btn btn-primary disabled placeholder col-6"></a> */}
-                    </div>
-                    <div className="card-body">
-                        <h5 className="card-title placeholder-glow">
-                            <span className="placeholder col-12"></span>
-                            {/* <span className="placeholder col-4"></span> */}
-                        </h5>
-                        <p className="card-text placeholder-glow">
-                            <span className="placeholder col-8"></span>
-                        </p>
-                    </div>
-                    <div className="card-body">
-                        <h5 className="card-title placeholder-glow">
-                            <span className="placeholder col-12"></span>
-                            {/* <span className="placeholder col-4"></span> */}
-                        </h5>
-                        <p className="card-text placeholder-glow">
-                            <span className="placeholder col-8"></span>
-                        </p>
-                    </div>
-                </div>
-            </div>
+            {Array.from({ length: 10 }, (_, index) => {
+                return <SkeltonBase key={index} />;
+            })}
         </div>
     );
 };
