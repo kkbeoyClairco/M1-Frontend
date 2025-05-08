@@ -2,21 +2,15 @@ import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { Col, Form, Row } from 'react-bootstrap';
-import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Select, { MultiValue } from 'react-select';
-import { useForm } from 'react-hook-form';
 import { FormInput } from 'components';
-import { useRedux } from '../../../../hooks';
 import { deviceTypeId } from 'appConstants/DeviceMappingConstants';
-import { device } from 'helpers/api/services/Clairco/device';
-import { convertToObject, forEachChild, isMethodSignature } from 'typescript';
-import { controlVrfVrcStateAPI } from 'helpers/api/services/Clairco/customerSide/vrf-vrf';
 import { building, customer } from 'helpers/api/services/Clairco/customer';
-import { convertUnixToISTForTable } from 'utils/claircoFunctions';
 import { selectTagType } from 'types/selectTagType';
 import { userValidationSchema } from 'pages/CalircoAdminSettings/utils/validations';
 import { toast } from 'sonner';
+
 type ErrorState = {
     type: string | null;
     name: string | null;
@@ -50,7 +44,7 @@ const UserModal: React.FC<UserModalProps> = (props) => {
     // const [selectedBuildingName, setSelectedBuildingName] = useState<string[]>([]);
     const [buildingsSelected, setBuildingsSelected] = useState<selectTagType[] | null>();
     const [userName, setUserName] = useState<string | undefined>(undefined);
-    const [password, setPassword] = useState();
+    const [password, setPassword] = useState<string | undefined>(undefined);
     const [email, setEmail] = useState();
     const [phoneNumber, setPhoneNumber] = useState();
     const [error, setError] = useState<ErrorState>({
@@ -119,41 +113,47 @@ const UserModal: React.FC<UserModalProps> = (props) => {
             console.log(error);
         }
     };
+
     const onSubmit = (event: any) => {
         event.preventDefault();
         event.stopPropagation();
 
-        // console.log('Event', event);
-        const buildingsArray = buildingsSelected?.map((building) => building.value);
-        const newUserDetails = {
-            type: userTypeSelected ?? '',
-            name: userName ?? '',
-            phone: phoneNumber ?? '',
-            email: email ?? '',
-            password: password ?? '',
-            customerId: customerIdSelected ?? '',
-            buildingIds: buildingsArray ?? [],
-            assignedDeviceTypes: deviceTypeIdsSelected ?? '',
-        };
-        userValidationSchema
-            .validate(newUserDetails, { abortEarly: false })
-            .then((res: any) => {
-                console.log('Validation helper', res);
-                Object.keys(res).forEach((field: string) => setError((prev) => ({ ...prev, [field]: null })));
-            })
-            .catch((err) => {
-                console.log(err.inner);
-                err.inner?.forEach((validationError: yup.ValidationError) => {
-                    setError((prev) => ({
-                        ...prev,
-                        [validationError.path as keyof ErrorState]: validationError.message,
-                    }));
+        try {
+            // console.log('Event', event);
+            const buildingsArray = buildingsSelected?.map((building) => building.value);
+            const newUserDetails = {
+                type: userTypeSelected ?? '',
+                name: userName ?? '',
+                phone: phoneNumber ?? '',
+                email: email ?? '',
+                password: password ?? '',
+                customerId: customerIdSelected ?? '',
+                buildingIds: buildingsArray ?? [],
+                assignedDeviceTypes: deviceTypeIdsSelected ?? '',
+            };
+            userValidationSchema
+                .validate(newUserDetails, { abortEarly: false })
+                .then((res: any) => {
+                    props.onSubmit(event, newUserDetails);
+                    Object.keys(res).forEach((field: string) => setError((prev) => ({ ...prev, [field]: null })));
+                    props.onClose();
+                })
+                .catch((err) => {
+                    console.log(err.inner);
+                    err.inner?.forEach((validationError: yup.ValidationError) => {
+                        setError((prev) => ({
+                            ...prev,
+                            [validationError.path as keyof ErrorState]: validationError.message,
+                        }));
+                    });
                 });
-            });
-        console.log('Submit', newUserDetails);
-        // props.onSubmit(event, newUserDetails);
-        // props.onClose();
+            // console.log('Submit', newUserDetails);
+        } catch (error) {
+            console.log(error);
+        }
     };
+
+    // Customer Selection
     const handleCustomerSelection = async (e: any) => {
         try {
             await userValidationSchema
@@ -171,20 +171,28 @@ const UserModal: React.FC<UserModalProps> = (props) => {
             console.log(error);
         }
     };
+
+    // Building Selection
     const handleBuildingSelection = async (e: any) => {
         try {
+            const buildingIds = e.map((building: any) => building.value);
             await userValidationSchema
-                .validateAt('customerId', { buildingIds: e.value ?? '' })
+                .validateAt('buildingIds', { buildingIds: buildingIds ?? [] })
                 .then((res) => {
-                    console.log('Customer Id', res);
                     setError((prev) => ({ ...prev, buildingIds: null }));
                 })
-                .catch((error) => console.log(error));
+                .catch((error) => {
+                    setError((prev) => ({ ...prev, buildingIds: error.message }));
+
+                    console.log(error);
+                });
             setBuildingsSelected(e);
         } catch (error) {
             console.log(error);
         }
     };
+
+    // Device Types selection
     const handleDeviceTypeSelection = async (e: MultiValue<selectTagType>) => {
         try {
             // const deviceIDs = e?.map((device) => device.value);
@@ -193,7 +201,6 @@ const UserModal: React.FC<UserModalProps> = (props) => {
             await userValidationSchema
                 .validateAt('assignedDeviceTypes', { assignedDeviceTypes: deviceTypes })
                 .then((res) => {
-                    console.log('assignedDeviceTypes Id', res);
                     setError((prev) => ({ ...prev, assignedDeviceTypes: null }));
                 })
                 .catch((error) => setError((prev) => ({ ...prev, assignedDeviceTypes: error.message })));
@@ -203,13 +210,14 @@ const UserModal: React.FC<UserModalProps> = (props) => {
             console.log(error);
         }
     };
+
+    // User Type Selection
     const handleUserTypeSelection = async (e: any) => {
         try {
             // console.log('Entered e', e);
             await userValidationSchema
                 .validateAt('type', { type: e?.value })
                 .then((res) => {
-                    console.log('type Id', res);
                     setError((prev) => ({ ...prev, type: null }));
                 })
                 .catch((error) => setError((prev) => ({ ...prev, type: error.message })));
@@ -219,18 +227,37 @@ const UserModal: React.FC<UserModalProps> = (props) => {
             console.log(error);
         }
     };
-
+    // Name Input``
     const handleNameInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
         try {
-            console.log('Name', e?.target?.value);
+            const sanitizedInput = e?.target?.value;
+
             await userValidationSchema
-                .validateAt('name', { name: e?.target?.value ?? '' })
-                .then((res) => {
+                .validateAt('name', { name: sanitizedInput ?? '' })
+                .then(() => {
                     setError((prev) => ({ ...prev, name: null }));
                 })
                 .catch((error) => setError((prev) => ({ ...prev, name: error.message })));
 
-            setUserName(e.target.value);
+            setUserName(sanitizedInput);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handlePasswordInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        try {
+            const sanitizedInput = e?.target?.value;
+            await userValidationSchema
+                .validateAt('password', { password: sanitizedInput ?? '' })
+                .then((res) => {
+                    setError((prev) => ({ ...prev, password: null }));
+                })
+                .catch((error) => {
+                    setError((prev) => ({ ...prev, password: error.message }));
+                });
+
+            setPassword(e?.target?.value);
         } catch (error) {
             console.log(error);
         }
@@ -331,7 +358,8 @@ const UserModal: React.FC<UserModalProps> = (props) => {
                             onChange={(e: any) => setPhoneNumber(e.target.value)}
 
                             // classNamePrefix="react-select"
-                        />
+                        />{' '}
+                        {error?.phone && <p className="text-danger">{error.phone}</p>}
                     </Form.Group>
                     <Form.Group className="mb-1">
                         <Form.Label>Email ID</Form.Label>
@@ -341,7 +369,8 @@ const UserModal: React.FC<UserModalProps> = (props) => {
                             className="react-select"
                             // classNamePrefix="react-select"
                             onChange={(e: any) => setEmail(e.target.value)}
-                        />
+                        />{' '}
+                        {error?.email && <p className="text-danger">{error.email}</p>}
                     </Form.Group>
                     <Form.Group className="mb-1">
                         <Form.Label>Password</Form.Label>
@@ -352,8 +381,8 @@ const UserModal: React.FC<UserModalProps> = (props) => {
                             // type="password"
                             // classNamePrefix="react-select"
                             // options={Buildings}
-                            onChange={(e: any) => setPassword(e?.target?.value)}
-                        />{' '}
+                            onChange={handlePasswordInput}
+                        />
                         {error?.password && <p className="text-danger">{error.password}</p>}
                     </Form.Group>
                     <Row className="float-end">

@@ -1,5 +1,6 @@
 const config = {
-    API_URL: process.env.REACT_APP_API_URL,
+    API_URL: 'http://192.168.1.124:4446/api/v1',
+    //  process.env.REACT_APP_API_URL,
     API_STAGING_URL: process.env.REACT_APP_API_STAGING_URL,
     API_STAGING_URL_SIMPLE: process.env.REACT_APP_API_STAGING_URL_SIMPLE,
 
