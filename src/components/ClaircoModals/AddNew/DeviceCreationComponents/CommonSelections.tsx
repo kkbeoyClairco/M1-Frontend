@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { Col, Form } from 'react-bootstrap';
-import Select, { ActionMeta } from 'react-select';
+import { Provider } from 'react-redux';
+import Select, { ActionMeta, SingleValue } from 'react-select';
 import { selectTagType } from 'types/selectTagType';
 interface CommonSelectionsInterface {
     deviceTypeList: selectTagType[];
@@ -30,10 +31,25 @@ const CommonSelections: React.FC<CommonSelectionsInterface> = ({
                     className="react-select mb-2"
                     classNamePrefix="react-select"
                     options={deviceTypeList}
-                    onChange={(e: any) => {
-                        const label = e.label?.toLowerCase().replace(/\s+/g, '');
-                        setDeviceType(label);
+                    onChange={(e: SingleValue<selectTagType>) => {
+                        const label = e?.label?.toLowerCase().replace(/\s+/g, '');
+                        setDeviceType(label ?? '');
                     }}
+                    // styles={{
+                    //     control: (provided: any) => ({
+                    //         ...provided,
+                    //         color: 'black',
+                    //     }),
+                    //     singleValue: (provided: any) => ({
+                    //         ...provided,
+                    //         color: 'black', // Selected value text color
+                    //     }),
+                    //     option: (provided: any, state: any) => ({
+                    //         ...provided,
+                    //         color: 'black', // Text color for dropdown options
+                    //         backgroundColor: state.isFocused ? '#f0f0f0' : 'white', // Highlight focused option
+                    //     }),
+                    // }}
                 />
             </Col>
 

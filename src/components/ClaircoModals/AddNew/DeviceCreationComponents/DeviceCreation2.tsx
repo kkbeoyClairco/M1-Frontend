@@ -76,7 +76,7 @@ const DeviceCreation2 = (props: any) => {
 
     const handleChildInputChanges = (key: string, value: any) => {
         try {
-            // console.log('New value', key, value);
+            console.log('New value', key, value);
             setNewData((prev) => ({ ...prev, [key]: value }));
         } catch (error) {
             console.error(error);
@@ -207,8 +207,8 @@ const DeviceCreation2 = (props: any) => {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Row style={{ marginLeft: '1em', marginTop: '0em', marginRight: '1em' }}>
-                    <Row className="d-flex justify-content-end"></Row>
+                <Row className="text-dark" style={{ marginLeft: '1em', marginTop: '0em', marginRight: '1em' }}>
+                    <Row className="d-flex justify-content-end "></Row>
                     <CommonSelections
                         buldingSelected={buldingSelected}
                         customerSelected={customerSelected}

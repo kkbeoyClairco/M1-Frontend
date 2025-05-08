@@ -7,38 +7,36 @@ interface BTUModuleInterface {
     data?: {
         name?: string;
         alias?: string;
-        gatewayId?: string;
-        parameters?: any;
-        limits?: any;
-        calibrationValues?: any;
+        limits?: number | string;
+        calibrationValues?: number | string;
     };
     // gateWayList: selectTagType[];
     onChange?: (value: any) => void;
 }
 export const BTUModule: React.FC<BTUModuleInterface> = ({ data, onChange }) => {
-    const [gateWayList, setGateWayList] = useState<selectTagType[]>([]);
+    // const [limit];
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         // const newValue = e.target.value;
         const { name, value } = e.target;
         if (onChange) onChange({ ...data, [name]: value });
     };
-    const getGatewayList = async () => {
-        try {
-            // const res=await getGatewayListAPI()
-            // return res?.data
-            // const gatewayFormattedData = gatewayList.map((data: any) => ({
-            //     label: data?.name ?? '',
-            //     value: data?.id ?? '',
-            // }));
-            // setGateWayList(gatewayFormattedData);
-            if (1) return [];
-        } catch (error) {
-            return [];
-        }
-    };
-    useEffect(function getGatewayListData() {
-        getGatewayList();
-    }, []);
+    // const getGatewayList = async () => {
+    //     try {
+    //         // const res=await getGatewayListAPI()
+    //         // return res?.data
+    //         // const gatewayFormattedData = gatewayList.map((data: any) => ({
+    //         //     label: data?.name ?? '',
+    //         //     value: data?.id ?? '',
+    //         // }));
+    //         // setGateWayList(gatewayFormattedData);
+    //         if (1) return [];
+    //     } catch (error) {
+    //         return [];
+    //     }
+    // };
+    // useEffect(function getGatewayListData() {
+    //     getGatewayList();
+    // }, []);
     return (
         <Fragment>
             <Col style={{ marginTop: '20px' }}>
@@ -65,7 +63,7 @@ export const BTUModule: React.FC<BTUModuleInterface> = ({ data, onChange }) => {
                     onChange={handleInputChange}
                 />
             </Col>
-            <Col style={{ marginTop: '20px' }}>
+            {/* <Col style={{ marginTop: '20px' }}>
                 <Form.Label>{'GateWay'}</Form.Label>
 
                 <Select
@@ -84,23 +82,29 @@ export const BTUModule: React.FC<BTUModuleInterface> = ({ data, onChange }) => {
                     name={'parameters'}
                     style={{ width: '100%', height: '8em' }}
                 />
-            </Col>
+            </Col> */}
             <Col style={{ marginTop: '20px' }}>
                 <Form.Label>{'Limits'}</Form.Label>
-                <Form.Control
-                    as="textarea"
-                    placeholder={'Enter Limits  in this proper format'}
+                <FormInput
+                    placeholder={'Enter Limits '}
+                    type="number"
                     name={'limits'}
-                    style={{ width: '100%', height: '8em' }}
+                    containerClass={'mb-1'}
+                    key="limits"
+                    value={data?.limits ?? ''}
+                    onChange={handleInputChange}
                 />
             </Col>
             <Col style={{ marginTop: '20px' }}>
-                <Form.Label>{'CalibrationValues'}</Form.Label>
-                <Form.Control
-                    as="textarea"
-                    placeholder={'Enter CalibrationValues  in this proper format'}
+                <Form.Label>{'Calibration Values'}</Form.Label>
+                <FormInput
+                    placeholder={'Enter Calibration Values '}
+                    type="number"
                     name={'calibrationValues'}
-                    style={{ width: '100%', height: '8em' }}
+                    containerClass={'mb-1'}
+                    key="calibrationValue"
+                    value={data?.calibrationValues ?? ''}
+                    onChange={handleInputChange}
                 />
             </Col>
         </Fragment>
