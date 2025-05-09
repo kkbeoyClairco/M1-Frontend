@@ -1,13 +1,8 @@
-import { useState, useContext, useCallback, useEffect, Fragment } from 'react';
+import { useState, useContext, useCallback, useEffect } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-import Select, { ActionMeta } from 'react-select';
+import { ActionMeta } from 'react-select';
 import { useRedux } from 'hooks';
 import { ToastContext } from 'context/ToastContext';
-import { FormInput } from 'components/form';
-import { device } from 'helpers/api/services/Clairco/device';
-import { useNavigate } from 'react-router-dom';
-import { setSelectedFloor } from 'redux/homePage/actions';
-import { conforms, floor } from 'lodash';
 import { getDeviceTypes } from 'redux/actions';
 import { getZonesListAttachedToFloor } from 'helpers/api/services/Clairco/adminSide/zones';
 import { BTUModule } from './BTUModule';
@@ -19,10 +14,10 @@ import { IAQModule } from './IAQModule';
 import { SwitchesModule } from './SwitchesModule';
 import { DptModule } from './DptModule';
 import { EnergymeterModule } from './EnergymeterModule';
-import BuildingSelection from 'components/ClaircoCustomerDashboard/Widgets/LandingPageWidgets/BuildingSelection';
 import { customer } from 'helpers/api/services/Clairco/customer';
 import CommonSelections from './CommonSelections';
-
+import { btuFormValidator } from 'validators/btuFormValidator';
+import { toast } from 'sonner';
 const transformArray = (array: any) => {
     const transformedArray = array?.map((item: any) => {
         return { value: item?.id, label: item?.name };
@@ -48,9 +43,21 @@ const DeviceCreation2 = (props: any) => {
     const [buldingSelected, setBuldingSelected] = useState<any>();
     const [selectedFloor, setSelectedFloor] = useState<any>();
     const [zoneSelected, setZoneSelected] = useState<any>();
-
+    const [isApiLoading, setIsApiLoading] = useState(false);
     const [zonesList, setZonesList] = useState<any>();
     const [newData, setNewData] = useState({
+        btu: {},
+        occupancy: {},
+        ahu: {},
+        vrfOutdoor: {},
+        vrfIndoor: {},
+        energyMeter: {},
+        dpt: {},
+        switch: {},
+        iaq: {},
+    });
+
+    const [error, setError] = useState({
         btu: {},
         occupancy: {},
         ahu: {},
@@ -70,56 +77,70 @@ const DeviceCreation2 = (props: any) => {
 
     const [deviceType, setDeviceType] = useState<string | null>(null);
 
-    const toast = useContext(ToastContext);
     const deviceTypeList = Array.from(deviceNameToId, ([key, value]) => ({ label: key, value: value }));
     // const customersList = customers.map((customer: any) => ({ label: customer?.name, value: customer?.customerId }));
 
     const handleChildInputChanges = (key: string, value: any) => {
         try {
-            console.log('New value', key, value);
+            if (key === 'btu') {
+                Object.entries(value).forEach(([key, value]) => {
+                    btuFormValidator
+                        .validateAt(key, { [key]: value })
+                        .then((res) => {
+                            setError((prev) => ({ ...prev, btu: { [key]: null } }));
+                        })
+                        .catch((error) => {
+                            setError((prev) => ({
+                                ...prev,
+                                btu: { ...prev.btu, [error.path]: error.message },
+                            }));
+                        });
+                });
+            }
             setNewData((prev) => ({ ...prev, [key]: value }));
         } catch (error) {
             console.error(error);
         }
     };
 
-    const handleSubmit = async (event: any) => {
-        event.preventDefault();
-        event.stopPropagation();
+    const handleSubmit = async () => {
         try {
-            const formData = new FormData(event.target);
+            setIsApiLoading(true);
             let deviceData: any = {};
-            formData.forEach((value, key) => {
-                switch (key) {
-                    case 'parameters':
-                        deviceData[key] = transformToArray(value);
-                        break;
-                    case 'calibrationValues':
-                        deviceData[key] = tarnsformTojsonObject(value);
-                        break;
-                    case 'limits':
-                        deviceData[key] = tarnsformTojsonObject(value);
-                        break;
-                    case 'dataIntervalTime':
-                        deviceData[key] = Number(value);
-                        break;
-                    default:
-                        deviceData[key] = value;
-                        break;
-                }
-            });
+            deviceData['deviceType'] = deviceType ?? '';
             deviceData['floorId'] = selectedFloor?.value ?? '';
             deviceData['customerId'] = customerSelected?.value ?? '';
             deviceData['buildingId'] = buldingSelected.value ?? '';
             if (zoneSelected?.value) deviceData['zoneId'] = zoneSelected.value ?? '';
+            Object.entries(newData.btu).forEach(([key, value]) => {
+                deviceData[key] = value;
+            });
+            await btuFormValidator
+                .validate(deviceData, { abortEarly: false })
+                .then((res) => {
+                    // console.log(res);
+                    Object.entries(res).forEach(([key, value]) => {
+                        setError((prev) => ({ ...prev, btu: { [key]: null } }));
+                    });
+                })
+                .catch((error) => {
+                    error.inner.forEach((error: any) => {
+                        // console.log('Error', error.path, error.message);
+                        setError((prev) => ({
+                            ...prev,
+                            btu: { ...prev.btu, [error.path]: error.message },
+                        }));
+                    });
+                    console.log(error);
+                });
 
+            // await new Promise((resolve) => setTimeout(resolve, 3000));
+            // console.log('Device Creation Data to API', deviceData);
             // props.onSubmit('Device', deviceData);
         } catch (error: any) {
-            if (error instanceof SyntaxError) {
-                toast?.showToast('invalid json syntax in calibration values or limits or parameters', 'error');
-            } else {
-                toast?.showToast(error, 'error');
-            }
+            toast.error('Oops! Something went wrong. Please try again in a moment.');
+        } finally {
+            setIsApiLoading(false);
         }
     };
     // console.log('Modal Info', props.data);
@@ -175,6 +196,9 @@ const DeviceCreation2 = (props: any) => {
         dispatch(getDeviceTypes());
     }, [dispatch]);
     useEffect(() => {
+        console.log('Error', error);
+    }, [error]);
+    useEffect(() => {
         const floorId = props?.data?.floorId ?? '';
         const customerId = props?.data?.customerId ?? '';
         const buildingId = props?.data?.buildingId ?? '';
@@ -220,7 +244,11 @@ const DeviceCreation2 = (props: any) => {
                     />
                     <Form>
                         {deviceType === 'btu' ? (
-                            <BTUModule data={newData.btu} onChange={(value) => handleChildInputChanges('btu', value)} />
+                            <BTUModule
+                                data={newData.btu}
+                                onChange={(value) => handleChildInputChanges('btu', value)}
+                                error={error.btu}
+                            />
                         ) : null}
                         {deviceType === 'occupancy' ? <OccupancyModule /> : null}
                         {deviceType === 'ahu' ? <AHUModule /> : null}
@@ -246,15 +274,14 @@ const DeviceCreation2 = (props: any) => {
                     >
                         Close
                     </Button>{' '}
-                    {deviceType && (
-                        <Button
-                            type="button"
-                            onClick={handleSubmit}
-                            className="ms-2"
-                            style={{ backgroundColor: '#008675', borderColor: '#008675' }}>
-                            Submit
-                        </Button>
-                    )}{' '}
+                    <Button
+                        disabled={!deviceType}
+                        type="button"
+                        onClick={handleSubmit}
+                        className="ms-2"
+                        style={{ backgroundColor: '#008675', borderColor: '#008675' }}>
+                        {isApiLoading ? 'Loading...' : '  Submit'}
+                    </Button>
                 </Col>
             </Modal.Footer>
         </Modal>

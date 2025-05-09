@@ -12,9 +12,14 @@ interface BTUModuleInterface {
     };
     // gateWayList: selectTagType[];
     onChange?: (value: any) => void;
+    error?: {
+        limits?: number;
+        calibrationValues?: number;
+        name?: string;
+        alias?: string;
+    };
 }
-export const BTUModule: React.FC<BTUModuleInterface> = ({ data, onChange }) => {
-    // const [limit];
+export const BTUModule: React.FC<BTUModuleInterface> = ({ data, onChange, error }) => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         // const newValue = e.target.value;
         const { name, value } = e.target;
@@ -50,6 +55,7 @@ export const BTUModule: React.FC<BTUModuleInterface> = ({ data, onChange }) => {
                     onChange={handleInputChange}
                     value={data?.name ?? ''}
                 />
+                {error?.name && <p className="text-danger">{error.name}</p>}
             </Col>
             <Col style={{ marginTop: '20px' }}>
                 <Form.Label>{'Alias'}</Form.Label>
@@ -61,7 +67,8 @@ export const BTUModule: React.FC<BTUModuleInterface> = ({ data, onChange }) => {
                     key="text"
                     value={data?.alias ?? ''}
                     onChange={handleInputChange}
-                />
+                />{' '}
+                {error?.alias && <p className="text-danger">{error.alias}</p>}
             </Col>
             {/* <Col style={{ marginTop: '20px' }}>
                 <Form.Label>{'GateWay'}</Form.Label>
@@ -94,6 +101,7 @@ export const BTUModule: React.FC<BTUModuleInterface> = ({ data, onChange }) => {
                     value={data?.limits ?? ''}
                     onChange={handleInputChange}
                 />
+                {error?.limits && <p className="text-danger">{error.limits}</p>}
             </Col>
             <Col style={{ marginTop: '20px' }}>
                 <Form.Label>{'Calibration Values'}</Form.Label>
@@ -106,6 +114,8 @@ export const BTUModule: React.FC<BTUModuleInterface> = ({ data, onChange }) => {
                     value={data?.calibrationValues ?? ''}
                     onChange={handleInputChange}
                 />
+
+                {error?.calibrationValues && <p className="text-danger">{error.calibrationValues}</p>}
             </Col>
         </Fragment>
     );

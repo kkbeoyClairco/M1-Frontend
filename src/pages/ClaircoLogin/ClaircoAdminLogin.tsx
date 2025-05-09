@@ -17,9 +17,9 @@ const ClaircoAdminLogin = () => {
     // const locationInfo = location.pathname.split('').slice(1).join('');
     // console.log('Clairco Locaiton:', locationInfo);
 
-    const storedData = sessionStorage.getItem('USER_DATA');
-    const data = storedData ? JSON.parse(storedData) : {}; /* Provide a meaningful default value here */
-    const customer: string = data?.user?.name.split(' ')[0] || 'customer';
+    // const storedData = sessionStorage.getItem('USER_DATA');
+    // const data = storedData ? JSON.parse(storedData) : {}; /* Provide a meaningful default value here */
+    // const customer: string = data?.user?.name.split(' ')[0] || 'customer';
     // console.log('Login dataaaaa:', customer);
 
     const { loading, userLoggedIn, error, redirectUrl, schemaResolver, onSubmit } = sensiableuseLogin();
