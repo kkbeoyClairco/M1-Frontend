@@ -1,4 +1,4 @@
-import { useState, useContext, useCallback, useEffect } from 'react';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { ActionMeta } from 'react-select';
 import { useRedux } from 'hooks';
@@ -16,8 +16,9 @@ import { DptModule } from './DptModule';
 import { EnergymeterModule } from './EnergymeterModule';
 import { customer } from 'helpers/api/services/Clairco/customer';
 import CommonSelections from './CommonSelections';
-import { btuFormValidator } from 'validators/btuFormValidator';
+import { btuFormValidator, occupancyFormValidator } from 'validators/btuFormValidator';
 import { toast } from 'sonner';
+import { userValidationSchema } from 'pages/CalircoAdminSettings/utils/validations';
 const transformArray = (array: any) => {
     const transformedArray = array?.map((item: any) => {
         return { value: item?.id, label: item?.name };
@@ -80,7 +81,67 @@ const DeviceCreation2 = (props: any) => {
     const deviceTypeList = Array.from(deviceNameToId, ([key, value]) => ({ label: key, value: value }));
     // const customersList = customers.map((customer: any) => ({ label: customer?.name, value: customer?.customerId }));
 
-    const handleChildInputChanges = (key: string, value: any) => {
+    const validateSubmitData = async (
+        deviceType: string,
+        data: Record<string, any>,
+        validationSchema: any,
+        setError: React.Dispatch<React.SetStateAction<any>>
+    ) => {
+        try {
+            await validationSchema.validate(data, { abortEarly: false });
+            setError((prev: any) => ({
+                ...prev,
+                [deviceType]: {},
+            }));
+        } catch (error: any) {
+            if (error.inner) {
+                const validationErrors: Record<string, string> = {};
+                error.inner.forEach((validationError: any) => {
+                    validationErrors[validationError.path] = validationError.message;
+                });
+                setError((prev: any) => ({
+                    ...prev,
+                    [deviceType]: validationErrors,
+                }));
+            } else {
+                console.error(error);
+            }
+            throw new Error('Validation Failed', error);
+        }
+    };
+
+    const validateInputs = async (
+        deviceType: string,
+        data: Record<string, any>,
+        validationSchema: any,
+        setError: React.Dispatch<React.SetStateAction<any>>
+    ) => {
+        try {
+            for (const [key, value] of Object.entries(data)) {
+                await validationSchema.validateAt(key, { [key]: value });
+                setError((prev: any) => ({
+                    ...prev,
+                    [deviceType]: {
+                        ...prev[deviceType],
+                        [key]: null,
+                    },
+                }));
+            }
+        } catch (error: any) {
+            if (error.path) {
+                setError((prev: any) => ({
+                    ...prev,
+                    [deviceType]: {
+                        ...prev[deviceType],
+                        [error.path]: error.message,
+                    },
+                }));
+            } else {
+                console.error(error);
+            }
+        }
+    };
+    const handleChildInputChanges = async (key: string, value: any) => {
         try {
             if (key === 'btu') {
                 Object.entries(value).forEach(([key, value]) => {
@@ -96,7 +157,10 @@ const DeviceCreation2 = (props: any) => {
                             }));
                         });
                 });
+            } else if (key === 'occupancy') {
+                validateInputs('occupancy', value, occupancyFormValidator, setError);
             }
+
             setNewData((prev) => ({ ...prev, [key]: value }));
         } catch (error) {
             console.error(error);
@@ -112,30 +176,37 @@ const DeviceCreation2 = (props: any) => {
             deviceData['customerId'] = customerSelected?.value ?? '';
             deviceData['buildingId'] = buldingSelected.value ?? '';
             if (zoneSelected?.value) deviceData['zoneId'] = zoneSelected.value ?? '';
-            Object.entries(newData.btu).forEach(([key, value]) => {
-                deviceData[key] = value;
-            });
-            await btuFormValidator
-                .validate(deviceData, { abortEarly: false })
-                .then((res) => {
-                    // console.log(res);
-                    Object.entries(res).forEach(([key, value]) => {
-                        setError((prev) => ({ ...prev, btu: { [key]: null } }));
-                    });
-                })
-                .catch((error) => {
-                    error.inner.forEach((error: any) => {
-                        // console.log('Error', error.path, error.message);
-                        setError((prev) => ({
-                            ...prev,
-                            btu: { ...prev.btu, [error.path]: error.message },
-                        }));
-                    });
-                    console.log(error);
-                });
 
+            if (deviceType === 'btu') {
+                Object.entries(newData.btu).forEach(([key, value]) => {
+                    deviceData[key] = value;
+                });
+                await btuFormValidator
+                    .validate(deviceData, { abortEarly: false })
+                    .then((res) => {
+                        // console.log(res);
+                        Object.entries(res).forEach(([key, value]) => {
+                            setError((prev) => ({ ...prev, btu: { [key]: null } }));
+                        });
+                    })
+                    .catch((error) => {
+                        error.inner.forEach((error: any) => {
+                            // console.log('Error', error.path, error.message);
+                            setError((prev) => ({
+                                ...prev,
+                                btu: { ...prev.btu, [error.path]: error.message },
+                            }));
+                        });
+                        console.log(error);
+                    });
+            } else if (deviceType === 'occupancy') {
+                Object.entries(newData.occupancy).forEach(([key, value]) => {
+                    deviceData[key] = value;
+                });
+                await validateSubmitData(deviceType, deviceData, occupancyFormValidator, setError);
+            }
             // await new Promise((resolve) => setTimeout(resolve, 3000));
-            // console.log('Device Creation Data to API', deviceData);
+            console.log('Device Creation Data to API', deviceData);
             // props.onSubmit('Device', deviceData);
         } catch (error: any) {
             toast.error('Oops! Something went wrong. Please try again in a moment.');
@@ -214,10 +285,11 @@ const DeviceCreation2 = (props: any) => {
     // console.log(props?.data);
 
     // useEffect(() => {
-    //     // console.log('BTU', newData);
+    //     console.log('BTU', newData);
     // }, [newData]);
     return (
         <Modal
+            size="lg"
             {...props}
             aria-labelledby="contained-modal-title-vcenter"
             className="modal-center text-dark"
@@ -250,7 +322,14 @@ const DeviceCreation2 = (props: any) => {
                                 error={error.btu}
                             />
                         ) : null}
-                        {deviceType === 'occupancy' ? <OccupancyModule /> : null}
+                        {deviceType === 'occupancy' ? (
+                            <OccupancyModule
+                                data={newData.occupancy}
+                                onChange={(value) => handleChildInputChanges('occupancy', value)}
+                                error={error.occupancy}
+                                customerInfo={customerSelected}
+                            />
+                        ) : null}
                         {deviceType === 'ahu' ? <AHUModule /> : null}
                         {deviceType === 'vrv/vrfoutdoor' ? <OutdoorModule /> : null}
                         {deviceType === 'energymeter' ? <EnergymeterModule /> : null}

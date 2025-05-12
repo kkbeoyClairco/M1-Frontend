@@ -1,6 +1,7 @@
 import { APICore } from 'helpers/api/apiCore';
+import { customer } from '../customer';
 const api = new APICore();
-export const getDevices = async (deviceType: string, floorId?: string) => {
+export const getDevices = async (deviceType: string, floorId?: string, customerId?: string) => {
     try {
         // let url = `/devices/by-filter`;
         let url = `/devices/all?`;
@@ -10,6 +11,10 @@ export const getDevices = async (deviceType: string, floorId?: string) => {
         }
         if (floorId) {
             searchParams.append('floorId', floorId);
+            // url = url + searchParams.toString();
+        }
+        if (customerId) {
+            searchParams.append('customerId', customerId);
             // url = url + searchParams.toString();
         }
         url = url + searchParams.toString();
