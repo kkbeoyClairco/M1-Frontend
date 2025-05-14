@@ -1,4 +1,4 @@
-import { MODIFY_ALERT, serverDomains } from 'appConstants/claircoConstants';
+import { serverDomains } from 'appConstants/claircoConstants';
 import axios from 'axios';
 import { APICore } from 'helpers/api/apiCore';
 const api = new APICore();
@@ -9,6 +9,14 @@ export const getOccupancyDeviceList = async () => {
         const baseUrl = `/devices/occupancy`;
         // return api.get(baseUrl);
         return api.get(baseUrl, null);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const getPcsTrendsData = async (sensorName: string, timeFrameInHours: string | number) => {
+    try {
+        return [];
     } catch (error) {
         console.log(error);
     }

@@ -20,6 +20,7 @@ import OccupancyWidget from './OccupancyWidget';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import TrendsSkelton from 'components/ClaircoSkeltonLoaders/TrendsSkelton';
 import { toast } from 'sonner';
+import { TrendsSkelton3 } from 'components/ClaircoSkeltonLoaders/TrendsSkelton3';
 
 interface GraphOptions {
     [key: string]: number;
@@ -273,7 +274,7 @@ const ThermopileDevicePage = () => {
     }, []);
     return (
         <>
-            <PageHeading title={`Occupancy Details `} />
+            <PageHeading title={`Thermopile Occupancy Details `} />
             <p className="mb-0 mx-3 fst-italic text-wrap">
                 {locationDetails?.location +
                     ' ' +
@@ -355,7 +356,7 @@ const ThermopileDevicePage = () => {
                                     />
                                 ) : (
                                     <>
-                                        <TrendsSkelton />
+                                        <TrendsSkelton3 />
                                     </>
                                 )}
                             </Col>

@@ -114,6 +114,11 @@ const OccupancyListAdmin = React.lazy(
 const OccupancySensorPageAdmin = React.lazy(
     () => import('pages/ClaircoAdminDashboard/Occupancy/OccupancyDevice/OccupancyDetailsPage')
 );
+
+const PCSDevicePageAdmin = React.lazy(() => import('pages/ClaircoAdminDashboard/PCS/PCSDevice/PCSDevicePage'));
+
+const PCSHomeAdmin = React.lazy(() => import('pages/ClaircoAdminDashboard/PCS/PCSHome/PcsHome'));
+
 const PIROccupancyDevicePage = React.lazy(
     () => import('pages/ClaircoAdminDashboard/Occupancy/PirDevicesHome/PIRDevicePage')
 );
@@ -566,11 +571,11 @@ const AllRoutes = () => {
                         },
                         {
                             path: 'pcs',
-                            element: <LoadComponent component={Occupancy_Home} />,
+                            element: <LoadComponent component={PCSHomeAdmin} />,
                         },
                         {
                             path: 'pcs/:device',
-                            element: <LoadComponent component={OccupancyDetailsPage} />,
+                            element: <LoadComponent component={PCSDevicePageAdmin} />,
                         },
 
                         {
