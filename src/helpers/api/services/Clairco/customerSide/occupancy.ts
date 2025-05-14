@@ -123,3 +123,12 @@ export const getOccupancyTrendsData = (params: any) => {
     const baseUrl = `/devices/sens-data`;
     return api.get(baseUrl, params);
 };
+
+export const getThemopileData = async (sensor: string, timeFrameInHours: string | number) => {
+    try {
+        const url = `${serverDomains.flask}/api/v1/desktherm-realtime?Sensor=${sensor}&timeFrameInHours=${timeFrameInHours}`;
+        return axios.get(url);
+    } catch (error) {
+        console.log(error);
+    }
+};

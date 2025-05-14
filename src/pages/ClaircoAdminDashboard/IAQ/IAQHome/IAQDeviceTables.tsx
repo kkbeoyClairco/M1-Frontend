@@ -17,7 +17,7 @@ import { sessionKeys } from 'appConstants/sessionKeys';
 
 import downloadIcon from 'assets/icons/downloads.png';
 import DownloadModal from './DownloadModal';
-import TableSkelton2 from 'components/ClaircoCustomer/Skeltons/TableSkelton2';
+import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 // import { sampleTableTestData } from '../test';
 
 type NewType = CellFormatter<DeviseTables>;

@@ -6,11 +6,10 @@ import { fetchAHUDeviceList } from 'helpers/api/services/Clairco/customerSide/ah
 import { convertUnixToIST } from 'utils/timeFunctions';
 import { getUserDetailsFromSession, getUserIdFromSession } from 'utils/storageFunctions';
 import { useRedux } from 'hooks';
-import { deviceTypeId, deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
+import { deviceTypeId } from 'appConstants/DeviceMappingConstants';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
-import { setLocale } from 'yup';
+import { date, setLocale } from 'yup';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
-import NoDevice from 'components/ClaircoGeneral/NoDevice';
 import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 type DeviseTables = {
     _id: string;
@@ -29,28 +28,74 @@ type DeviseTables = {
 };
 
 type ColumnType = CellFormatter<DeviseTables>;
-const AHUDevicesTable = ({ setTotalDevices }: any) => {
-    const [tableData, setTableData] = useState([]);
+const ThermopileDevicePage = ({ setTotalDevices }: any) => {
+    const [tableData, setTableData] = useState([
+        {
+            // _id: '67c6c8bad14eb2beb538a30d',
+            name: 'S1',
+            customerId: '67c6c75ad14eb2beb538a30b',
+            buildingId: '67c6c8bad14eb2beb538a30d',
+            floorId: '67b4575da7bfc488c4831acf',
+            // switchDeviceId: '67b46001a2d826c53ebd7d46',
+            building: 'Tesco Blr',
+            location: 'Bangalore',
+            // building: 'BIEC',
+            floor: '1st',
+            // floor: 'Hall 5',
+            zone: 'Table 1',
+        },
+        {
+            // _id: '67c6c8bad14eb2beb538a30d',
+            name: 'S2',
+            customerId: '67c6c75ad14eb2beb538a30b',
+            buildingId: '67c6c8bad14eb2beb538a30d',
+            floorId: '67b4575da7bfc488c4831acf',
+            // switchDeviceId: '67b46001a2d826c53ebd7d46',
+            building: 'Tesco Blr',
+            location: 'Bangalore',
+            // building: 'BIEC',
+            floor: '1st',
+            // floor: 'Hall 5',
+            zone: 'Table 2',
+        },
+        {
+            // _id: '67c6c8bad14eb2beb538a30d',
+            name: '6_Seater',
+            customerId: '67c6c75ad14eb2beb538a30b',
+            buildingId: '67c6c8bad14eb2beb538a30d',
+            floorId: '67b4575da7bfc488c4831acf',
+            // switchDeviceId: '67b46001a2d826c53ebd7d46',
+            building: 'Tesco Blr',
+            location: 'Bangalore',
+            // building: 'BIEC',
+            floor: '1st',
+            // floor: 'Hall 5',
+            zone: '6_Seater',
+        },
+    ]);
     const [isEmpty, setIsEmpty] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
-    // const { isAdmin, id } = getUserIdFromSession();
-    // // console.log('Session storage:', isAdmin, id);
+    const { isAdmin, id } = getUserIdFromSession();
+    // console.log('Session storage:', isAdmin, id);
 
-    // const data = getUserDetailsFromSession();
-    // const { dispatch, appSelector } = useRedux();
+    const data = getUserDetailsFromSession();
+    const { dispatch, appSelector } = useRedux();
 
-    // const {
-    //     activeFloor: { floorId },
-    // } = appSelector((state: any) => state.HomePageReducer);
+    const {
+        activeFloor: { floorId },
+    } = appSelector((state: any) => state.HomePageReducer);
 
     const getAHUData = async () => {
         try {
             setIsLoading(true);
-            const deviceType = deviceTypesConstant.AHU;
-            const response = await fetchDevicesList(deviceType);
+            const deviceId = deviceTypeId['AHU'];
+            // const { customerId } = data;
+
+            const customerId = '67b45646a7bfc488c4831ab4';
+            const response = await fetchDevicesList(deviceId, customerId, floorId);
             if (response?.data.length === 0) setIsEmpty(true);
 
             setTableData(response?.data || []);
@@ -65,27 +110,33 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
     };
     //Function to navigate to devise specific page
     const handleNavigation = (data: any) => {
-        // console.log('AHU Nav data', data);
-        const id = data?.id;
-        const buildingName = data?.buildingId.name ?? '';
-        const floorName = data?.floorId?.name ?? '';
-        const floorId = data?.floorId?.id;
-        const location = data?.buildingId?.location ?? '';
-        // const name = data?.name ?? '';
+        // const id = data?._id ?? '';
+        const buildingName = data?.building ?? '	';
+        const floorName = data?.floor ?? '	';
+        const zone = data?.zone ?? '	';
 
-        const sensorName = data?.switchDeviceId?.name ?? '';
-        const ahuName = data?.name ?? '';
-        const btuName = data?.btuDeviceId?.name ?? '';
+        // const floorId = data?.floorId?._id ?? '';
+        const location = data?.location ?? '';
+        const deviceName = data?.name ?? '';
         const searchParam = new URLSearchParams();
         searchParam.append('location', location);
         searchParam.append('building', buildingName);
         searchParam.append('floorName', floorName);
-        searchParam.append('ahuName', ahuName);
-        searchParam.append('btuSensor', btuName);
-        searchParam.append('ahuSensor', sensorName);
-        searchParam.append('ahuId', id);
-        searchParam.append('floorId', floorId);
+        searchParam.append('deviceName', deviceName);
+        searchParam.append('zone', zone);
 
+        // const name = data?.name ?? '';
+        // const sensorName = data?.switchDeviceId?.name ?? '';
+        // const btuName = data?.btuDeviceId?.name ?? '';
+        // console.log('Thermopile nav data', data, deviceName);
+        // searchParam.append('btuSensor', btuName);
+        // searchParam.append('ahuSensor', sensorName);
+        // searchParam.append('ahuId', id);
+
+        // searchParam.append('floorId', floorId);
+        // searchParam.append('zone', zone);
+
+        // console.log('id to navigate', floorId);
         navigate(`${searchParam}`, {
             // state: { sensorName: sensorName, deviceName: name, btuName, id, floorId },
         });
@@ -116,25 +167,41 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
     };
 
     const columns = [
+        // {
+        //     Header: 'Customer',
+        //     accessor: 'customer',
+        //     defaultCanSort: true,
+        // },
+
         {
             Header: 'Building',
-            accessor: 'buildingId.name',
+            accessor: 'building',
             defaultCanSort: true,
         },
         {
             Header: 'Floor',
-            accessor: 'floorId.name',
+            accessor: 'floor',
             defaultCanSort: true,
         },
 
         {
             Header: 'Location',
-            accessor: 'buildingId.location',
+            accessor: 'location',
             defaultCanSort: false,
         },
+        {
+            Header: 'Zone',
+            accessor: 'zone',
+            defaultCanSort: false,
+        },
+        // {
+        //     Header: 'Status',
+        //     accessor: 'health_status',
+        //     defaultCanSort: false,
+        // },
 
         {
-            Header: 'Device',
+            Header: 'Device ',
             accessor: 'name',
             defaultCanSort: true,
         },
@@ -144,7 +211,7 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
             accessor: 'updatedAt',
             defaultCanSort: false,
             Cell: ({ value }: any) => {
-                const time = convertUnixToIST(value);
+                const time = convertUnixToIST(Date?.now());
                 return time;
             },
         },
@@ -171,19 +238,23 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
         },
     ];
     useEffect(() => {
-        getAHUData();
+        // getAHUData();
     }, []);
-    return isEmpty ? (
-        <NoDevice name={'AHU'} />
-    ) : (
+    return (
         <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 ">
             <Card.Body>
                 <Row>
                     <Col>
-                        <h4 className="header-title mb-3">AHU Devices </h4>
+                        <h4 className="header-title mb-3">Thermopile Devices </h4>
                     </Col>
                 </Row>
-
+                {isEmpty && (
+                    <Row>
+                        <Col>
+                            <h4 className="header-title mb-3">No AHU devices installed here</h4>
+                        </Col>
+                    </Row>
+                )}
                 {!isLoading ? (
                     <Table
                         columns={columns}
@@ -204,4 +275,4 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
     );
 };
 
-export default AHUDevicesTable;
+export default ThermopileDevicePage;

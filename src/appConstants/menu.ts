@@ -64,7 +64,20 @@ const MENU_ITEMS: MenuItemType[] = [
         icon: 'uil-filter',
         url: 'pages/ahu',
     },
-
+    {
+        key: 'Thermopile',
+        label: 'Thermopile',
+        isTitle: false,
+        icon: 'uil-list-ul',
+        url: 'pages/thermopile',
+    },
+    {
+        key: 'Pcs',
+        label: 'PCS',
+        isTitle: false,
+        icon: 'uil-list-ul',
+        url: 'pages/pcs',
+    },
     {
         key: 'Settings',
         label: 'Settings',
@@ -79,6 +92,7 @@ const MENU_ITEMS: MenuItemType[] = [
         icon: 'mdi mdi-file-tree',
         url: 'pages/tree',
     },
+
     // {
     //     key: 'Control-Logs',
     //     label: 'Control-Logs',

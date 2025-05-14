@@ -1,5 +1,5 @@
 import React from 'react';
-import skelton from '../skelton';
+import skelton from '../ClaircoCustomer/skelton';
 
 const SkeltonBase = () => {
     return (

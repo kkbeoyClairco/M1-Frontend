@@ -125,8 +125,12 @@ const EnergyMeterSensorAdmin = React.lazy(
 );
 const ControlLogs = React.lazy(() => import('pages/ClaircoAdminDashboard/ControlLogs/ControlLogsPage'));
 //const IAQSensorPage = React.lazy(() => import('pages/ClaircoAdminDashboard/IAQ/DeviceSpecific/IAQSensorPage'));
-
-// CUSTOMER SIDE
+const ThemopileHome = React.lazy(
+    () => import('pages/ClaircoAdminDashboard/Thermopile/ThermopileHome/ThermopileHomePage')
+);
+const ThemopileDevicePage = React.lazy(
+    () => import('pages/ClaircoAdminDashboard/Thermopile/ThermopileDevice/ThermopileDevicePage')
+); // CUSTOMER SIDE
 //Clairco Customer Side
 
 const claircoCustomerLandingPage = React.lazy(
@@ -512,6 +516,14 @@ const AllRoutes = () => {
                             element: <LoadComponent component={PIROccupancyDevicePage} />,
                         },
                         {
+                            path: 'thermopile',
+                            element: <LoadComponent component={ThemopileHome} />,
+                        },
+                        {
+                            path: 'thermopile/:device',
+                            element: <LoadComponent component={ThemopileDevicePage} />,
+                        },
+                        {
                             path: 'iaq',
                             element: <LoadComponent component={IAQDetailsPage} />,
                         },
@@ -551,6 +563,14 @@ const AllRoutes = () => {
                         {
                             path: 'control-logs',
                             element: <LoadComponent component={ControlLogs} />,
+                        },
+                        {
+                            path: 'pcs',
+                            element: <LoadComponent component={Occupancy_Home} />,
+                        },
+                        {
+                            path: 'pcs/:device',
+                            element: <LoadComponent component={OccupancyDetailsPage} />,
                         },
 
                         {

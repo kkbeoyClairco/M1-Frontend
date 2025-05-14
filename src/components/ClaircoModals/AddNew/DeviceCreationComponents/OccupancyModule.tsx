@@ -26,7 +26,6 @@ const parentDeviceTypes = [
 export const OccupancyModule: React.FC<OccupancyModuleInterface> = ({ data, customerInfo, onChange, error }) => {
     const [parentDevices, setParentDevices] = useState<selectTagType[]>([]);
     const [isApiLoading, setIsApiLoading] = useState(false);
-    console.log('Data', data);
     const getDeviceData = async (deviceType: string) => {
         try {
             // let devices = [];

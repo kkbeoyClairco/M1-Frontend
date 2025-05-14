@@ -11,7 +11,7 @@ import { convertUnixToIST } from 'utils/timeFunctions';
 import SkeltonLoader from 'components/ClaircoCustomer/Skeltons/SkeltonLoader';
 import { TableTest } from 'components/table Test';
 import { useCalendar } from 'pages/apps/Calendar/hooks';
-import TableSkelton2 from 'components/ClaircoCustomer/Skeltons/TableSkelton2';
+import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 import { error } from 'console';
 import { toast } from 'sonner';
 // export type CustomerTables = {

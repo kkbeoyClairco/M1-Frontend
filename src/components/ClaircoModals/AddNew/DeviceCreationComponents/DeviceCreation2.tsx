@@ -292,7 +292,7 @@ const DeviceCreation2 = (props: any) => {
             size="lg"
             {...props}
             aria-labelledby="contained-modal-title-vcenter"
-            className="modal-center text-dark"
+            className="modal-center text-dark "
             centered
             onHide={props.onClose}>
             <Modal.Header

@@ -45,7 +45,7 @@
     width: $leftbar-width;
     z-index: 10;
     background: $bg-leftbar-gradient;
-    bottom: 20px;
+    bottom: 0px;
     position: fixed;
     top: 96px;
     // margin-top: 10px;
@@ -53,6 +53,10 @@
     // padding-top: $topbar-height;
     box-shadow: $box-shadow;
     border-radius: 15px;
+    overflow: hidden;
+    .side-nav {
+        flex-grow: 1; /* Allow the UL to take up remaining space */
+    }
 }
 .leftside-menu .nav-logo {
     // align-items: center; /* or inline-block */
@@ -76,11 +80,18 @@
 // Side-nav
 .side-nav {
     padding-left: 0;
-    list-style-type: none;
-    overflow-x: hidden;
+    // list-style-type: none;
+    // overflow-x: hidden;
+    max-height: 350px;
+    overflow: scroll;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    scrollbar-width: thin; /* For modern browsers, make the scrollbar thinner */
+    scrollbar-color: #ccc transparent; /* Customize scrollbar color */
 
     ul {
         list-style-type: none;
+        // overflow: scroll;
     }
     .side-nav-link {
         color: $menu-item;

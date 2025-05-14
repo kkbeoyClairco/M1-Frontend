@@ -12,7 +12,7 @@ import { convertUnixToIST } from 'utils/timeFunctions';
 import { getUserIdFromSession } from 'utils/storageFunctions';
 import NoDevice from 'components/ClaircoGeneral/NoDevice';
 import { fetchPIRDeviceList } from 'helpers/api/services/Clairco/customerSide/occupancy';
-import TableSkelton2 from 'components/ClaircoCustomer/Skeltons/TableSkelton2';
+import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 // import { URLSearchParams } from 'url';
 
 type NewType = CellFormatter<DeviseTables>;
