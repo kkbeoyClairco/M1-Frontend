@@ -197,7 +197,7 @@ const editFloorModal = React.lazy(() => import('pages/CalircoAdminSettings/modal
 const editZoneModal = React.lazy(() => import('pages/CalircoAdminSettings/modals/ZoneModal/EditZoneModal'));
 const editUserModal = React.lazy(() => import('pages/CalircoAdminSettings/modals/UserModal/EditUserModal'));
 const DeviceCreation = React.lazy(() => import('pages/CalircoAdminSettings/modals/DeviceCreation/DeviceCreation'));
-
+const GrowingTree = React.lazy(() => import('components/ClaircoSkeltonLoaders/TreeLoader'));
 // - other
 // const Invoice = React.lazy(() => import('pages/other/Invoice'));
 // const FAQ = React.lazy(() => import('pages/other/FAQ'));
@@ -426,7 +426,7 @@ const AllRoutes = () => {
                 },
                 {
                     path: 'test',
-                    element: <LoadComponent component={treeView} />,
+                    element: <LoadComponent component={GrowingTree} />,
                 },
             ],
         },
@@ -458,6 +458,10 @@ const AllRoutes = () => {
                         {
                             path: 'error-404-alt',
                             element: <LoadComponent component={ErrorPageNotFoundAlt} />,
+                        },
+                        {
+                            path: 'test',
+                            element: <LoadComponent component={GrowingTree} />,
                         },
                         // {
                         //     path: 'timeline',
@@ -561,10 +565,7 @@ const AllRoutes = () => {
                             path: 'tree',
                             element: <LoadComponent component={treeView} />,
                         },
-                        {
-                            path: 'test',
-                            element: <LoadComponent component={treeView} />,
-                        },
+
                         {
                             path: 'control-logs',
                             element: <LoadComponent component={ControlLogs} />,

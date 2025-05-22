@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { showRightSidebar, changeSidebarType } from 'redux/actions';
 import * as layoutConstants from 'appConstants';
 import { useRedux, useToggle, useViewport } from 'hooks';
-import { notifications, profileMenus, searchOptions } from './data';
+import { profileMenus } from './data';
 import LanguageDropdown from './LanguageDropdown';
 import NotificationDropdown from './NotificationDropdown';
 import ProfileDropdown from './ProfileDropdown';
@@ -16,6 +16,7 @@ import logoSmLight from 'assets/images/logo_sm.png';
 import logo from 'assets/images/logo-light.png';
 import { useEffect, useState } from 'react';
 import { getUserDetailsFromSession } from 'utils/storageFunctions';
+const userImageDummy = `https://res.cloudinary.com/dlulq6hny/image/upload/v1737283789/dummy-prod-1_bzsdsp.jpg`;
 
 type TopbarProps = {
     hideLogo?: boolean;
@@ -96,10 +97,10 @@ const Topbar = ({ hideLogo, navCssClasses, openLeftMenuCallBack, topbarDark }: T
                 <ul className="list-unstyled topbar-menu float-end mb-0">
                     <li className="dropdown notification-list">
                         <ProfileDropdown
-                            userImage={userImage}
+                            userImage={userImageDummy}
                             menuItems={profileMenus}
                             username={user.name}
-                            userTitle={'Bangalore'}
+                            userTitle={''}
                         />
                     </li>
                 </ul>

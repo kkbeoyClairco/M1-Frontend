@@ -191,7 +191,9 @@ const CustomerTable = () => {
             <Card.Body>
                 <Row>
                     {/* <Col> */}
-                    <h4 className="header-title mb-3">CUSTOMERS LIST (Backend Paginated Component- WIP)</h4>
+                    <h4 style={{ color: '#333333' }} className="header-title mb-3">
+                        CUSTOMERS LIST (Backend Paginated Component- WIP)
+                    </h4>
                     {/* </Col> */}
                 </Row>
                 {!isLoading ? (

@@ -23,7 +23,7 @@ const ProfileDropdown = ({ userTitle, username, menuItems, userImage }: ProfileD
                 to="#"
                 onClick={toggleDropdown}
                 className="nav-link dropdown-toggle nav-user arrow-none me-0"
-            >
+                style={{ height: '20px', padding: '0px' }}>
                 <span className="account-user-avatar">
                     <img src={userImage} className="rounded-circle" alt="user" />
                 </span>

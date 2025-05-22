@@ -10,7 +10,9 @@ const PageHeading = ({ title }: PageHeadingProps) => {
             <Col xs={12}>
                 <div className="page-title-box">
                     <div className="page-title-right"></div>
-                    <h4 className="page-title">{title}</h4>
+                    <h4 className="page-title" style={{ color: '#333333' }}>
+                        {title}
+                    </h4>
                 </div>
             </Col>
         </Row>

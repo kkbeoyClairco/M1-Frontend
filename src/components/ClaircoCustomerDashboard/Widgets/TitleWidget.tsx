@@ -12,7 +12,9 @@ export const TitleWidget: React.FC<TitleWidgetInterface> = ({ title, value, icon
         <Card className="shadow-lg rounded-lg" style={{ height: '8em' }}>
             <Card.Body>
                 <Row>
-                    <p className="font-weight-normal text-capitalize">{title}</p>
+                    <p className="fw-bold fs-5 text-capitalize" style={{ color: '#333333' }}>
+                        {title}
+                    </p>
                 </Row>
                 <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
                     {' '}

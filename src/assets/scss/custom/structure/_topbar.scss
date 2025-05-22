@@ -6,7 +6,8 @@
     padding: 0 $grid-gutter-width;
     background-color: #008675;
     box-shadow: $box-shadow;
-    min-height: $topbar-height;
+    height: 60px;
+    // min-height: $topbar-height;
     position: fixed;
     left: 0; //$leftbar-width
     top: 0;
@@ -33,6 +34,7 @@
     .topbar-menu {
         position: relative;
         z-index: 1;
+        background: 'red';
 
         li {
             float: left;
@@ -244,11 +246,10 @@
     padding: calc(#{$topbar-height - 39px} * 0.5) 20px calc(#{$topbar-height - 39px} * 0.5) 57px !important;
     text-align: left !important;
     position: relative;
-    background-color: #008675; //#{lighten(map-get($grays, '100'), 2.5%)};
+    // background-color: #008675; //#{lighten(map-get($grays, '100'), 2.5%)};
     border: 0; // #{($border-width) solid map-get($grays, '100')};
     border-width: 0 1px;
-    min-height: $topbar-height;
-
+    min-height: 50px;
     .account-user-avatar {
         position: absolute;
         top: calc(#{$topbar-height - 32px} * 0.5);

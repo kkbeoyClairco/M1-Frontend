@@ -138,54 +138,43 @@ const ThermopileDevicePage = () => {
             console.log(error);
         }
     };
-    const getOccupantsData = useCallback(
-        async (deviceId, timePeriod) => {
-            try {
-                if (!Object.values(graphOptions).includes(timePeriod) || !deviceId) return;
-                setIsLoading((prev) => ({ ...prev, trends: true }));
-                // const currentEpoch = convertDateToEpoch(new Date());
-                // const startEpoch = currentEpoch - oneHourInMilliseconds * timePeriod;
-                // const endEpochTime = convertDateToEpoch(endDate);
-                // const data: any = await getRawOccupancyData(
-                //     Math.floor(startEpoch / 1000),
-                //     Math.floor(currentEpoch / 1000),
-                //     deviceId
-                // );
+    const getOccupantsData = useCallback(async (deviceId, timePeriod) => {
+        try {
+            if (!Object.values(graphOptions).includes(timePeriod) || !deviceId) return;
+            setIsLoading((prev) => ({ ...prev, trends: true }));
 
-                const data = await getThemopileData(deviceId, timePeriod);
-                const extracted = data?.data?.data ?? [];
+            const data = await getThemopileData(deviceId, timePeriod);
+            const extracted = data?.data?.data ?? [];
 
-                const occupancyNumberArray = extracted?.map((data: any) => data?.COUNT);
-                const extractTime = extracted?.map((data: any) => {
-                    const extractedTime = data?.['TIME'];
-                    const time = convertUnixToIST(extractedTime);
-                    return time;
-                });
+            const occupancyNumberArray = extracted?.map((data: any) => data?.COUNT);
+            const extractTime = extracted?.map((data: any) => {
+                const extractedTime = data?.['TIME'];
+                const time = convertUnixToIST(extractedTime);
+                return time;
+            });
 
-                const thermopileId = extracted?.map((doc: any) => {
-                    return doc?._id;
-                });
+            const thermopileId = extracted?.map((doc: any) => {
+                return doc?._id;
+            });
 
-                getThermalImage(thermopileId[thermopileId.length - 1]);
-                // console.log('Data for occupa:', data, thermopileId);
-                setGraphXAxis(extractTime);
-                setOccupancyData(occupancyNumberArray);
-                setLastUpdated(extractTime[extractTime.length - 1]);
-                setImageDate(extractTime[extractTime.length - 1]);
-                setStartDate(new Date(new Date().setDate(new Date().getDate() - 1)));
-                setEndDate(new Date());
-                setIdArray(thermopileId);
-                setOccupantsCount(occupancyNumberArray[occupancyNumberArray.length - 1]);
-            } catch (error) {
-                setOccupancyData([]);
-                setGraphXAxis([]);
-                console.log(error);
-            } finally {
-                setIsLoading((prev) => ({ ...prev, trends: false }));
-            }
-        },
-        [timePeriod]
-    );
+            getThermalImage(thermopileId[thermopileId.length - 1]);
+            // console.log('Data for occupa:', data, thermopileId);
+            setGraphXAxis(extractTime);
+            setOccupancyData(occupancyNumberArray);
+            setLastUpdated(extractTime[extractTime.length - 1]);
+            setImageDate(extractTime[extractTime.length - 1]);
+            setStartDate(new Date(new Date().setDate(new Date().getDate() - 1)));
+            setEndDate(new Date());
+            setIdArray(thermopileId);
+            setOccupantsCount(occupancyNumberArray[occupancyNumberArray.length - 1]);
+        } catch (error) {
+            setOccupancyData([]);
+            setGraphXAxis([]);
+            console.log(error);
+        } finally {
+            setIsLoading((prev) => ({ ...prev, trends: false }));
+        }
+    }, []);
 
     // const fetchOccupancyData = async () => {
     //     try {
@@ -193,48 +182,47 @@ const ThermopileDevicePage = () => {
     //         console.log(error);
     //     }
     // };
-    const handleDatePick = async () => {
-        try {
-            if (!locationDetails.deviceName) return;
-            // 5 is an invalid input it will unselect the time selection buttons
-            setTimePeriod(5);
-            // console.log(startDate, new Date(new Date().setDate(new Date().getDate() - 1)));
-            const startEpochTime = convertDateToEpoch(startDate);
-            const endEpochTime = convertDateToEpoch(endDate);
-            const res = await getOccupancywithDates(
-                Math.floor(startEpochTime / 1000),
-                Math.floor(endEpochTime / 1000),
-                locationDetails?.deviceName
-            );
-            const occupancyNumberArray = res?.data?.reverse()?.map((doc: any) => {
-                return doc?.metaData?.['occupancy_number'];
-            });
-            const extractTime = res?.data?.map((data: any) => {
-                const extractedTime = data?.['epochTime'];
-                const time = convertUnixToIST(extractedTime);
-                return time;
-            });
-            const thermopileId = res?.data.map((doc: any) => {
-                return doc?.rawDataId;
-            });
-            getThermalImage(thermopileId[thermopileId.length - 1]);
-            if (!extractTime) return;
-            setGraphXAxis(extractTime);
-            setImageDate(extractTime[extractTime.length - 1]);
-            setLastUpdated(extractTime[extractTime.length - 1]);
+    // const handleDatePick = async () => {
+    //     try {
+    //         if (!locationDetails.deviceName) return;
+    //         // 5 is an invalid input it will unselect the time selection buttons
+    //         setTimePeriod(5);
+    //         // console.log(startDate, new Date(new Date().setDate(new Date().getDate() - 1)));
+    //         const startEpochTime = convertDateToEpoch(startDate);
+    //         const endEpochTime = convertDateToEpoch(endDate);
+    //         const res = await getOccupancywithDates(
+    //             Math.floor(startEpochTime / 1000),
+    //             Math.floor(endEpochTime / 1000),
+    //             locationDetails?.deviceName
+    //         );
+    //         const occupancyNumberArray = res?.data?.reverse()?.map((doc: any) => {
+    //             return doc?.metaData?.['occupancy_number'];
+    //         });
+    //         const extractTime = res?.data?.map((data: any) => {
+    //             const extractedTime = data?.['epochTime'];
+    //             const time = convertUnixToIST(extractedTime);
+    //             return time;
+    //         });
+    //         const thermopileId = res?.data.map((doc: any) => {
+    //             return doc?.rawDataId;
+    //         });
+    //         getThermalImage(thermopileId[thermopileId.length - 1]);
+    //         if (!extractTime) return;
+    //         setGraphXAxis(extractTime);
+    //         setImageDate(extractTime[extractTime.length - 1]);
+    //         setLastUpdated(extractTime[extractTime.length - 1]);
 
-            setOccupancyData(occupancyNumberArray);
-            setIdArray(thermopileId);
-            setOccupantsCount(occupancyNumberArray[occupancyNumberArray.length - 1]);
-        } catch (error) {
-            setOccupancyData([]);
-            setGraphXAxis([]);
-            console.log(error);
-        }
-    };
+    //         setOccupancyData(occupancyNumberArray);
+    //         setIdArray(thermopileId);
+    //         setOccupantsCount(occupancyNumberArray[occupancyNumberArray.length - 1]);
+    //     } catch (error) {
+    //         setOccupancyData([]);
+    //         setGraphXAxis([]);
+    //         console.log(error);
+    //     }
+    // };
     const getThermalImage = async (id: any) => {
         try {
-            // console.log('Themaml image id', id);
             if (!id) return;
             setThermalImageLoading(true);
             const res = await fetchThermalmage(id);
@@ -248,8 +236,6 @@ const ThermopileDevicePage = () => {
     };
     const handleChartClick = async (params: any) => {
         try {
-            // console.log('Params', params.dataIndex);
-            // setThermalImageLoading(true);
             const id = idArray[params.dataIndex];
             setImageDate(graphXAxis[params.dataIndex]);
             getThermalImage(id);
@@ -262,7 +248,7 @@ const ThermopileDevicePage = () => {
         if (locationDetails?.deviceName) getOccupantsData(locationDetails.deviceName, timePeriod);
     }, [getOccupantsData, locationDetails.deviceName, timePeriod]);
     useEffect(() => {
-        handleChartClick('');
+        // handleChartClick('');
         const path = location?.pathname;
         const paramsString = path?.split('/')?.pop(); // Extracts the last part of the path
         const searchParams = new URLSearchParams(paramsString);
@@ -271,7 +257,7 @@ const ThermopileDevicePage = () => {
         const zoneName = searchParams?.get('zone') ?? '';
         const deviceName = searchParams?.get('deviceName') ?? '';
         setLocationDetails({ zone: zoneName, building: building, location: locationName, deviceName: deviceName });
-    }, []);
+    }, [location?.pathname]);
     return (
         <>
             <PageHeading title={`Thermopile Occupancy Details `} />
