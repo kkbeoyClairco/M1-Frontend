@@ -25,7 +25,7 @@ import { getIaqData } from 'helpers/api/services/Clairco/customerSide/iaq';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
 import { convertUnixToIST } from 'utils/timeFunctions';
 import { getUserIdFromSession } from 'utils/storageFunctions';
-import { roundToOneDecimal } from 'utils/maths';
+import { roundToDecimal, roundToOneDecimal } from 'utils/maths';
 // Constants
 import { deviceTypeId, deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 interface CardData {
@@ -173,7 +173,7 @@ const IAQDevicePage = () => {
             });
 
             const data = response?.data;
-            // console.log('IAQ cards', response, data);
+            console.log('IAQ cards', response, data);
             const {
                 VOC = 0,
                 TEMP = 0,
@@ -189,17 +189,17 @@ const IAQDevicePage = () => {
                 OTemp = 0,
             } = data;
             setCardData({
-                aqi: roundToOneDecimal(AQI),
-                voc: roundToOneDecimal(VOC),
-                temp: roundToOneDecimal(TEMP),
-                pm1: roundToOneDecimal(PM1),
-                pm10: roundToOneDecimal(PM10),
-                pm25: roundToOneDecimal(PM25),
-                hum: roundToOneDecimal(HUM),
-                co2: roundToOneDecimal(CO2),
-                opm10: roundToOneDecimal(OPM10),
-                opm25: roundToOneDecimal(OPM25),
-                oTemp: roundToOneDecimal(OTemp),
+                aqi: AQI ? Number(roundToDecimal(AQI)) : 0,
+                voc: VOC ? Number(roundToDecimal(VOC)) : 0,
+                temp: TEMP ? Number(roundToDecimal(TEMP)) : 0,
+                pm1: PM1 ? Number(roundToDecimal(PM1)) : 0,
+                pm10: PM10 ? Number(roundToDecimal(PM10)) : 0,
+                pm25: PM25 ? Number(roundToDecimal(PM25)) : 0,
+                hum: HUM ? Number(roundToDecimal(HUM)) : 0,
+                co2: CO2 ? Number(roundToDecimal(CO2)) : 0,
+                opm10: OPM10 ? Number(roundToDecimal(OPM10)) : 0,
+                opm25: OPM25 ? Number(roundToDecimal(OPM25)) : 0,
+                oTemp: OPM25 ? Number(roundToDecimal(OTemp)) : 0,
             });
             setLastUpdated(convertUnixToIST(timestamp));
         } catch (error) {

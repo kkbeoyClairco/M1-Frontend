@@ -286,7 +286,7 @@ const FIleExploer = () => {
     const fetchCustomers = async () => {
         try {
             const customers = await customer.all();
-            const customersList = customers.data.map((data: any) => {
+            const customersList = customers?.data?.records?.map((data: any) => {
                 return {
                     name: data.name,
                     isFolder: true,

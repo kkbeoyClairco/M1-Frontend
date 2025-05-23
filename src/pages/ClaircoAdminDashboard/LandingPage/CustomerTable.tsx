@@ -74,8 +74,8 @@ const CustomerTable = () => {
                 }
                 controllerRef.current = new AbortController();
                 const res = await customer.allTest(newIndex, selectedPageSize, controllerRef.current.signal);
-                if (res.data) {
-                    const customers = res.data.map((customer: customerData) => ({
+                if (res.data?.records) {
+                    const customers = res?.data?.records?.map((customer: customerData) => ({
                         customerId: customer.id,
                         customerName: customer.name,
                         timeCreated: customer?.createdAt ? convertUnixToIST(customer?.createdAt) : 'N/A',

@@ -6,7 +6,7 @@ const api = new APICore();
 export const getIaqData = (params: any) => {
     // MODIFY_ALERT
 
-    const baseUrl = `http://192.168.29.8:4446/api/v1/devices/sens-data`;
+    const baseUrl = `/devices/sens-data`;
     return api.get(baseUrl, params);
 };
 
@@ -15,7 +15,7 @@ export const getIaqAggregate = (sensorName: string, buildingId: string, deviceId
         const dateNow = getDateNow();
         // http://3.7.82.174:4446/api/v1/devices
         // MODIFY_ALERT
-        const url1 = `http://192.168.29.8:4446/api/v1/devices/iaq/${sensorName}/data?date=${dateNow}&buildingId=${buildingId}&deviceId=${deviceId}`;
+        const url1 = `/devices/iaq/${sensorName}/data?date=${dateNow}&buildingId=${buildingId}&deviceId=${deviceId}`;
         const params = new URLSearchParams();
         if (deviceId) params.append('deviceId', deviceId);
         if (buildingId) params.append('buildingId', buildingId);

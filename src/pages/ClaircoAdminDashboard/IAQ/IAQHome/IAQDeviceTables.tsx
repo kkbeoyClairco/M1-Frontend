@@ -90,9 +90,9 @@ const IAQDeviseTable = ({ setTotalDevices }: any) => {
             setIsLoading(true);
             const deviceType = deviceTypesConstant.IAQ;
             const response = await fetchDevicesList(deviceType, customerId, '', buildingId ?? '');
-            setIaqList(response?.data); //Sets data as a referece for the filter
-            if (response?.data.length === 0) setIsEmpty(true);
-            let filtered = response?.data; //Unfiltered
+            setIaqList(response?.data?.records); //Sets data as a referece for the filter
+            if (response?.data?.records?.length === 0) setIsEmpty(true);
+            let filtered = response?.data?.records; //Unfiltered
             getBuildingAndFloorList(filtered); //Populates the building and floor list for Selection
             ////Saved Filters
             // const filtersSaved = getDataFromSession(sessionKeys.IAQFilterKey);
@@ -101,10 +101,10 @@ const IAQDeviseTable = ({ setTotalDevices }: any) => {
             //     filtered = filterData(filtersSaved, filtered);
             //     console.log('filtered', filtered);
             // }
-            setTableData(response?.data || []);
-            setDeviceExists(response?.data?.length > 0 ? true : false);
+            setTableData(response?.data?.records || []);
+            setDeviceExists(response?.data?.records?.length > 0 ? true : false);
             setIsLoading(false);
-            setTotalDevices(response?.data?.length);
+            setTotalDevices(response?.data?.records?.length);
         } catch (error) {
             console.log(error);
             setTableData([]);

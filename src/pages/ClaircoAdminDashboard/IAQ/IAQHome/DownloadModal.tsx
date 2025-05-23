@@ -13,6 +13,7 @@ import { customer } from 'pages/Sensiable-Dashboard/OccupancyTrends/data';
 
 // import XLSX from 'xlsx';
 import * as XLSX from 'xlsx';
+import { data } from 'components/ClaircoAdminDashboard/data';
 type DownloadModalProps = {
     modalState?: boolean;
     modalControlFn?: any;
@@ -55,10 +56,10 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
             });
 
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.customerId?._id)
-                    customerMap.set(data?.[i]?.customerId._id, {
+                if (data?.[i]?.customerId?.id)
+                    customerMap.set(data?.[i]?.customerId.id, {
                         label: data?.[i]?.customerId?.name ?? '',
-                        value: data?.[i]?.customerId._id ?? '',
+                        value: data?.[i]?.customerId.id ?? '',
                     });
             }
             const customerList = Array.from(customerMap.values());
@@ -76,10 +77,10 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
                 label: 'None',
             });
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.buildingId?._id)
-                    buildingMap.set(data?.[i]?.buildingId._id, {
+                if (data?.[i]?.buildingId?.id)
+                    buildingMap.set(data?.[i]?.buildingId.id, {
                         label: data?.[i]?.buildingId?.name ?? '',
-                        value: data?.[i]?.buildingId._id ?? '',
+                        value: data?.[i]?.buildingId.id ?? '',
                     });
             }
             const buildingList = Array.from(buildingMap.values());
@@ -97,9 +98,9 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
                 label: 'None',
             });
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.floorId?._id)
-                    floorMap.set(data?.[i]?.floorId?._id, {
-                        value: data?.[i]?.floorId?._id,
+                if (data?.[i]?.floorId?.id)
+                    floorMap.set(data?.[i]?.floorId?.id, {
+                        value: data?.[i]?.floorId?.id,
                         label: data?.[i]?.floorId?.name,
                     });
             }
@@ -113,7 +114,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
     const filterFloorsBasedOnBuilding = (buildingId: string, data: any) => {
         try {
             let filterdFloors = data;
-            if (buildingId) filterdFloors = data.filter((item: any) => item?.buildingId?._id === buildingId);
+            if (buildingId) filterdFloors = data.filter((item: any) => item?.buildingId?.id === buildingId);
             const floorList = getFloorsListForSelect(filterdFloors);
             // setFloorList(floorList ?? []);
             return floorList;
@@ -247,7 +248,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
     const filterBuildingsBasedOnCustomer = (customerId: string, data: any) => {
         try {
             // console.log('customerId', customerId);
-            let filterdBuildings = data.filter((item: any) => item?.customerId?._id === customerId);
+            let filterdBuildings = data.filter((item: any) => item?.customerId?.id === customerId);
             if (customerId) {
                 const buildingList = getBuidinglListForSelect(filterdBuildings);
                 setBuildingList(buildingList ?? []);
@@ -262,6 +263,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
             const customersArray = getCustomersListForSelect(dataArray);
             const buildingArray = getBuidinglListForSelect(dataArray);
             const floorArray = getFloorsListForSelect(dataArray);
+            console.log('Data array', customersArray, buildingArray, floorArray);
             setCustomersList(customersArray);
             setBuildingList(buildingArray);
             setFloorsList(floorArray);

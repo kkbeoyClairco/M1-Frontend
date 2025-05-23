@@ -77,10 +77,10 @@ const OccupancyDeviceTable = ({ setTotalDevices, setTotalOccupants }: any) => {
             const response = await fetchDevicesList(deviceType, customerId);
             if (response?.data.length === 0) setIsEmpty(true);
 
-            setTableData(response?.data || []);
-            setDeviceExists(response?.data?.length > 0 ? true : false);
+            setTableData(response?.data?.records || []);
+            setDeviceExists(response?.data?.records?.length > 0 ? true : false);
             setIsLoading(false);
-            setTotalDevices(response?.data?.length);
+            setTotalDevices(response?.data?.records?.length);
         } catch (error) {
             console.log(error);
             setTableData([]);

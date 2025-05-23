@@ -51,11 +51,11 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
             setIsLoading(true);
             const deviceType = deviceTypesConstant.AHU;
             const response = await fetchDevicesList(deviceType);
-            if (response?.data.length === 0) setIsEmpty(true);
+            if (response?.data?.records?.length === 0) setIsEmpty(true);
 
-            setTableData(response?.data || []);
+            setTableData(response?.data?.records || []);
             // console.log('AHu', response);
-            setTotalDevices(response?.data?.length);
+            setTotalDevices(response?.data?.records?.length);
             setIsLoading(false);
         } catch (error) {
             console.log(error);

@@ -61,8 +61,8 @@ const PIRDeviceTable = ({ setTotalDevices, setTotalOccupants }: any) => {
             const deviceType = deviceTypesConstant.PIR;
             const res = await fetchDevicesList(deviceType, customerId);
 
-            if (res?.data?.length === 0) setDeviceExists(false);
-            setTableData(res?.data ?? []);
+            if (res?.data?.records?.length === 0) setDeviceExists(false);
+            setTableData(res?.data?.records ?? []);
             // setOccupancyCount(res?.data?.length ?? 0);
             setIsLoading(false);
         } catch (error) {

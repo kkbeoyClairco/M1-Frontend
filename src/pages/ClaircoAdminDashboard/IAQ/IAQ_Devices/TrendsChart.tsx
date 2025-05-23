@@ -91,6 +91,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                     timeFrameInHours: timeGroup,
                     deviceTypeId: Id,
                 });
+                // console.log('Trends', response);
                 const xAxisData = response?.data?.reverse().map((doc: any) => convertUnixToIST(doc?.timestamp));
                 const tempArray = response?.data?.map((doc: any) => roundToOneDecimal(doc?.TEMP));
                 const humidityArray = response?.data?.map((doc: any) => roundToOneDecimal(doc?.HUM));
