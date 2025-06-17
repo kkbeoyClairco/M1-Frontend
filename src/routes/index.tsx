@@ -18,7 +18,9 @@ const Logout2 = React.lazy(() => import('pages/account/Logout2'));
 const Confirm2 = React.lazy(() => import('pages/account/Confirm2'));
 const ForgetPassword2 = React.lazy(() => import('pages/account/ForgetPassword2'));
 const LockScreen2 = React.lazy(() => import('pages/account/LockScreen2'));
-
+const MaintananceLogsPage = React.lazy(
+    () => import('pages/ClaircoAdminDashboard/IAQ/MaintananceLogs/MaintananceLogsPage')
+);
 // dashboard
 // const AnalyticsDashboard = React.lazy(() => import('pages/dashboard/Analytics'));
 // const EcommerceDashboard = React.lazy(() => import('pages/dashboard/Ecommerce'));
@@ -96,7 +98,7 @@ const VrvVrfDetailsPage = React.lazy(
 const treeView = React.lazy(() => import('pages/ClaircoAdminDashboard/FIleExploer/FIleExploer'));
 // const claircoIaq = React.lazy(() => import('pages/ClaircoCustomerDashboard/Clairco-IAQ/IaqTable'));
 // const IaqDashboard = React.lazy(() => import('pages/ClaircoCustomerDashboard/Clairco-IAQ/ClaircIaqDashboard/index'));
-const IAQSensorPageAdmin = React.lazy(() => import('pages/ClaircoAdminDashboard/IAQ/IAQ_Devices/IAQDevicePage'));
+const IAQSensorPageAdmin = React.lazy(() => import('pages/ClaircoAdminDashboard/IAQ/IAQ_Devices/IAQDevicePage2'));
 const IAQDetailsPage = React.lazy(() => import('pages/ClaircoAdminDashboard/IAQ/IAQHome/IAQDetailsPage'));
 const VrvVrfSensorPage = React.lazy(
     () => import('pages/ClaircoAdminDashboard/VRV-VRF/DeviceSpecific/VRVVRFSensorPage')
@@ -135,7 +137,15 @@ const ThemopileHome = React.lazy(
 );
 const ThemopileDevicePage = React.lazy(
     () => import('pages/ClaircoAdminDashboard/Thermopile/ThermopileDevice/ThermopileDevicePage')
-); // CUSTOMER SIDE
+);
+
+// //UV
+
+const Uvbuilding = React.lazy(() => import('pages/ClaircoAdminDashboard/UV Devices/Uvbuilding'));
+const Uvfloor = React.lazy(() => import('pages/ClaircoAdminDashboard/UV Devices/Uvfloor'));
+const Uvlamps = React.lazy(() => import('pages/ClaircoAdminDashboard/UV Devices/Lamps'));
+
+// CUSTOMER SIDE
 //Clairco Customer Side
 
 const claircoCustomerLandingPage = React.lazy(
@@ -352,9 +362,6 @@ const AllRoutes = () => {
             path: '/customer',
             element: <PrivateRoute component={Layout} roles={'Customer'} />,
             children: [
-                // {
-                //     path: 'dashboard',
-                //     children: [
                 {
                     path: 'dashboard',
                     element: (
@@ -391,10 +398,7 @@ const AllRoutes = () => {
                     path: 'occupancy/:deviceId',
                     element: <LoadComponent component={OccupancyDetailsPage} />,
                 },
-                // {
-                //     path: 'layouts',
-                //     element: <LoadComponent component={LayoutSPage} />,
-                // },
+
                 {
                     path: 'energymeter',
                     element: <LoadComponent component={EnergyMeterHomePage} />,
@@ -424,6 +428,7 @@ const AllRoutes = () => {
                     path: 'iaq/:devices',
                     element: <LoadComponent component={IAQDevicePage} />,
                 },
+
                 {
                     path: 'test',
                     element: <LoadComponent component={GrowingTree} />,
@@ -438,23 +443,6 @@ const AllRoutes = () => {
                 {
                     path: 'pages',
                     children: [
-                        // {
-                        //     path: 'starter',
-                        //     element: <LoadComponent component={Starter} />,
-                        // },
-
-                        // {
-                        //     path: 'profile',
-                        //     element: <LoadComponent component={Profile} />,
-                        // },
-                        // {
-                        //     path: 'profile2',
-                        //     element: <LoadComponent component={Profile2} />,
-                        // },
-                        // {
-                        //     path: 'pricing',
-                        //     element: <LoadComponent component={Pricing} />,
-                        // },
                         {
                             path: 'error-404-alt',
                             element: <LoadComponent component={ErrorPageNotFoundAlt} />,
@@ -463,22 +451,6 @@ const AllRoutes = () => {
                             path: 'test',
                             element: <LoadComponent component={GrowingTree} />,
                         },
-                        // {
-                        //     path: 'timeline',
-                        //     element: <LoadComponent component={Timeline} />,
-                        // },
-                        // {
-                        //     path: 'invoice',
-                        //     element: <LoadComponent component={Invoice} />,
-                        // },
-                        // {
-                        //     path: 'faq',
-                        //     element: <LoadComponent component={FAQ} />,
-                        // },
-                        // {
-                        //     path: 'preloader',
-                        //     element: <LoadComponent component={PreLoader} />,
-                        // },
                         {
                             path: 'admindashboard',
                             element: <LoadComponent component={ClaircoAdminDashboard} />,
@@ -539,6 +511,10 @@ const AllRoutes = () => {
                         {
                             path: 'iaq/:device',
                             element: <LoadComponent component={IAQSensorPageAdmin} />,
+                        },
+                        {
+                            path: 'maintenance-logs',
+                            element: <LoadComponent component={MaintananceLogsPage} />,
                         },
                         {
                             path: 'claircosettings',
@@ -627,18 +603,24 @@ const AllRoutes = () => {
                             path: 'deviceCreation',
                             element: <LoadComponent component={DeviceCreation} />,
                         },
-                        // {
-                        //     path: 'mappingsettings',
-                        //     element: <LoadComponent component={MappingSettings} />,
-                        // },
-                        // {
-                        //     path: 'commissionsequence',
-                        //     element: <LoadComponent component={CommissionSequence} />,
-                        // },
-                        // {
-                        //     path: 'sensormapping',
-                        //     element: <LoadComponent component={SensorsMapping} />,
-                        // },
+                        {
+                            path: 'uv',
+                            // element: <PrivateRoute component={Layout} />,
+                            children: [
+                                {
+                                    path: '',
+                                    element: <LoadComponent component={Uvbuilding} />,
+                                },
+                                {
+                                    path: 'floors',
+                                    element: <LoadComponent component={Uvfloor} />,
+                                },
+                                {
+                                    path: 'Lamps',
+                                    element: <LoadComponent component={Uvlamps} />,
+                                },
+                            ],
+                        },
                     ],
                 },
             ],

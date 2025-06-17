@@ -7,7 +7,7 @@ const config = {
     API_STAGING_URL_SIMPLE: process.env.REACT_APP_API_STAGING_URL_SIMPLE,
 
     API_URL_LOCAL: process.env.REACT_APP_API_LOCAL,
-    DEVICE_CONTROL_API: process.env.DEVICE_CONTROL_API,
+    DEVICE_CONTROL_API: process.env.REACT_APP_API_DEVICE_CONTROL_API,
 };
 
 export default config;

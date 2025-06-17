@@ -54,3 +54,42 @@ export const getVoCLabel = (value: number) => {
     else if (value >= 301 && value <= 1000) return 'Unhealthy';
     else return '';
 };
+
+// PM25 ARGB
+export const getPM25ColorARGB = (value1: string) => {
+    const value: number = Number(value1);
+    if (!value || Number.isNaN(value)) {
+        return;
+    }
+    if (value >= 0 && value <= 13) return 'FF59E759'; // Green
+    else if (value > 13 && value <= 36) return 'FFF2F262'; //  Yellow
+    else if (value > 36 && value <= 56) return 'FFF5B43E'; // Orange
+    else if (value > 56 && value <= 151) return 'FFFF4500'; // Red
+    else if (value > 151 && value <= 251) return 'FF4EA4F8'; //  Blue
+    else if (value > 251) return 'FF8B0000'; // Dark Red
+    else return 'FFFFFFFF'; // White
+};
+
+// PM 10 ARGB
+export const getPM10ColorARGB = (value: number) => {
+    if (value === 0) return 'FFFFFFFF';
+    else if (value > 0 && value <= 54) return 'FF59e759';
+    else if (value > 54 && value <= 154) return 'FFF2F262';
+    else if (value > 154 && value <= 254) return 'FFF5B43E';
+    else if (value > 254 && value <= 354) return 'FFFF4500';
+    else if (value > 354 && value <= 424) return 'FF4EA4F8';
+    else if (value > 424) return 'FF8B0000';
+    else return 'FFFFFFFF';
+};
+
+//IAQ ARGB
+export const getIAQColorARGB = (value: any) => {
+    // if (value === 0) return 'FFFFFFFF';
+    if (value > 0 && value <= 50) return 'FF59e759';
+    else if (value > 50 && value <= 100) return 'FFf2f262';
+    else if (value > 100 && value <= 200) return 'FFf5b43e';
+    else if (value > 200 && value <= 300) return 'FFFF4500';
+    else if (value > 300 && value <= 400) return 'FF4ea4f8';
+    else if (value > 400) return 'FF8B0000';
+    else return 'FFFFFFFF';
+};

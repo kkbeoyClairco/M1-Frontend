@@ -331,14 +331,7 @@ const IAQDeviseTable = ({ setTotalDevices }: any) => {
             Cell: ActionColumn,
         },
     ];
-    // console.log('isAdmin', isAdmin);
-    // if (isAdminOrNot) {
-    //     columns.unshift({
-    //         Header: 'Customer',
-    //         accessor: 'customerId.name',
-    //         defaultCanSort: true,
-    //     });
-    // }
+
     const sizePerPageList = [
         {
             text: '10',

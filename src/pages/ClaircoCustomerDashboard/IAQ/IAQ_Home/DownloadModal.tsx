@@ -4,13 +4,17 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Col, Modal, Row } from 'react-bootstrap';
 import { getDateOnly } from 'utils/timeFunctions';
 import Select from 'react-select';
-
-import { getUserDetailsFromSession, getUserIdFromSession } from 'utils/storageFunctions';
+import { use } from 'i18next';
+import { da } from 'date-fns/locale';
+import { setBuildings } from 'redux/actions';
+import { conforms, set, split } from 'lodash';
+import { getUserDetailsFromSession, getUserIdFromSession, getUserInfoFromSession } from 'utils/storageFunctions';
+import { customer } from 'pages/Sensiable-Dashboard/OccupancyTrends/data';
 // import ExcelJS from 'exceljs';
 // import XLSX from 'xlsx';
-
+import * as XLSX from 'xlsx';
 import { toast } from 'sonner';
-// import { getIAQColorARGB, getPM10ColorARGB, getPM25Color, getPM25ColorARGB } from 'utils/AQI/colorUtils';
+import { getIAQColorARGB, getPM10ColorARGB, getPM25Color, getPM25ColorARGB } from 'utils/AQI/colorUtils';
 type DownloadModalProps = {
     modalState?: boolean;
     modalControlFn?: any;
@@ -53,10 +57,10 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
             });
 
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.customerId?.id)
-                    customerMap.set(data?.[i]?.customerId.id, {
+                if (data?.[i]?.customerId?._id)
+                    customerMap.set(data?.[i]?.customerId._id, {
                         label: data?.[i]?.customerId?.name ?? '',
-                        value: data?.[i]?.customerId.id ?? '',
+                        value: data?.[i]?.customerId._id ?? '',
                     });
             }
             const customerList = Array.from(customerMap.values());
@@ -74,10 +78,10 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
                 label: 'None',
             });
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.buildingId?.id)
-                    buildingMap.set(data?.[i]?.buildingId.id, {
+                if (data?.[i]?.buildingId?._id)
+                    buildingMap.set(data?.[i]?.buildingId._id, {
                         label: data?.[i]?.buildingId?.name ?? '',
-                        value: data?.[i]?.buildingId.id ?? '',
+                        value: data?.[i]?.buildingId._id ?? '',
                     });
             }
             const buildingList = Array.from(buildingMap.values());
@@ -95,9 +99,9 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
                 label: 'None',
             });
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.floorId?.id)
-                    floorMap.set(data?.[i]?.floorId?.id, {
-                        value: data?.[i]?.floorId?.id,
+                if (data?.[i]?.floorId?._id)
+                    floorMap.set(data?.[i]?.floorId?._id, {
+                        value: data?.[i]?.floorId?._id,
                         label: data?.[i]?.floorId?.name,
                     });
             }
@@ -111,7 +115,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
     const filterFloorsBasedOnBuilding = (buildingId: string, data: any) => {
         try {
             let filterdFloors = data;
-            if (buildingId) filterdFloors = data.filter((item: any) => item?.buildingId?.id === buildingId);
+            if (buildingId) filterdFloors = data.filter((item: any) => item?.buildingId?._id === buildingId);
             const floorList = getFloorsListForSelect(filterdFloors);
             // setFloorList(floorList ?? []);
             return floorList;
@@ -166,23 +170,6 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
             const start_time = getDateOnly(startDate);
             const end_time = getDateOnly(endDate);
             let csvData: any = [];
-            // const res1: any = await downloadExcel();
-            // // console.log(res1);
-            // let excelBlob = res1?.data;
-            // const excelURL = URL.createObjectURL(excelBlob);
-            // // const url = window.URL.createObjectURL(blob);
-            // const a = document.createElement('a');
-            // a.style.display = 'none';
-            // a.href = excelURL;
-            // a.download = `${'IAQ_Data'}_${start_time}-${end_time}_${interval}.xlsx`;
-            // document.body.appendChild(a);
-            // a.click();
-            // window.URL.revokeObjectURL(excelURL);
-            // document.body.removeChild(a);
-            // modalControlFn(false);
-            // setIsLoading(false);
-
-            // return;
 
             if (!customerSelected?.value && !buildingSelected?.value && !floorSelected?.value) {
                 toast.warning('Please choose a customer to continue with the process.');
@@ -244,7 +231,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
     const filterBuildingsBasedOnCustomer = (customerId: string, data: any) => {
         try {
             // console.log('customerId', customerId);
-            let filterdBuildings = data.filter((item: any) => item?.customerId?.id === customerId);
+            let filterdBuildings = data.filter((item: any) => item?.customerId?._id === customerId);
             if (customerId) {
                 const buildingList = getBuidinglListForSelect(filterdBuildings);
                 setBuildingList(buildingList ?? []);

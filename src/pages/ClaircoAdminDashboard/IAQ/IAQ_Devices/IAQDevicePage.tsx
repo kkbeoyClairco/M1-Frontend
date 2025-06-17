@@ -12,8 +12,8 @@ import CarbonDioxide from 'assets/icons/co2-cloud.png';
 //Components
 import PageHeading from 'components/ClaircoCustomerDashboard/Headings/PageHeading';
 import UnitSelectedWidgetWithoutSwitch from 'components/ClaircoCustomerDashboard/Widgets/UnitSelectedWidgetWithoutSwitch';
-import GaugeChartIAQ from 'components/ClaircoGauges/AQI/GaugeChartIAQ';
-import GaugeChartVOC from 'components/ClaircoGauges/AQI/GaugeChartVOC';
+import GaugeChartIAQ from 'components/ClaircoGauges/AQI/NewGauges/GaugeChartIAQ';
+import GaugeChartVOC from 'components/ClaircoGauges/AQI/NewGauges/GaugeChartVOC';
 import PMChart from 'components/ClaircoGauges/AQI/PmChart';
 import InteractiveBackgroundWidget from 'components/ClaircoCustomerDashboard/Widgets/InteractiveBackgroundWidget';
 import PlainWidgetWithTwoParameters1 from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithTwoParameters1';
@@ -28,6 +28,7 @@ import { getUserIdFromSession } from 'utils/storageFunctions';
 import { roundToDecimal, roundToOneDecimal } from 'utils/maths';
 // Constants
 import { deviceTypeId, deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
+import { toast } from 'sonner';
 interface CardData {
     aqi: number;
     temp: number;
@@ -204,6 +205,7 @@ const IAQDevicePage = () => {
             setLastUpdated(convertUnixToIST(timestamp));
         } catch (error) {
             console.log(error);
+            toast.error(typeof error === 'string' ? error : 'Something went wrong');
             setCardData({
                 aqi: 0,
                 temp: 0,
@@ -391,12 +393,10 @@ const IAQDevicePage = () => {
             <IAQToolTip show={toolTipState} positionValues={positionValue} currentState={hoverState} />
             {/* } */}
             <Row style={{ marginLeft: '10px', marginTop: '0em' }}>
-                {' '}
                 <Col xxl={3}>
                     <PageHeading title={'IAQ'} />
                 </Col>
                 <Col xxl={3} style={{ marginTop: '1em' }}>
-                    {' '}
                     <Select
                         options={buildingList ?? []}
                         onChange={(e) => handleFilterSelection(e, 'building')}

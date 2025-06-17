@@ -79,6 +79,20 @@ const MENU_ITEMS: MenuItemType[] = [
         url: 'pages/pcs',
     },
     {
+        key: 'Maintenance',
+        label: 'Maintenance Logs',
+        isTitle: false,
+        icon: 'uil-sitemap',
+        url: 'pages/maintenance-logs',
+    },
+    {
+        key: 'UV',
+        label: 'UV Home',
+        isTitle: false,
+        icon: 'uil-home-alt',
+        url: 'pages/uv',
+    },
+    {
         key: 'Settings',
         label: 'Settings',
         isTitle: false,

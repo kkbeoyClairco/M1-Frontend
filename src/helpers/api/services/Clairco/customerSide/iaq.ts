@@ -1,4 +1,6 @@
 import { MODIFY_ALERT, serverDomains } from 'appConstants/claircoConstants';
+import axios from 'axios';
+import config from 'config';
 import { APICore } from 'helpers/api/apiCore';
 import { getDateNow } from 'utils/timeFunctions';
 const api = new APICore();
@@ -52,17 +54,12 @@ async function getCsvdownload(deviceId: any, start_time: any, end_time: any, int
     }
 }
 
-export const getCsvdownload1 = async (
-    params: any
-    // deviceId: any, start_time: any, end_time: any, interval: any
-) => {
-    // http://3.7.82.174:5001/api/v1
-    const url = `/iaq/interval-csv`;
-
-    // console.log('params', params);
+export const getCsvdownload1 = async (params: any) => {
+    const url = `${config.DEVICE_CONTROL_API}/iaq/interval-csv`;
 
     try {
-        const response = await api.create(url, params);
+        const response = await axios.post(url, params, { responseType: 'blob' });
+        // const response = await api.create(url, params);
         return response;
     } catch (error) {
         console.error('Error fetching params data:', error);
@@ -92,3 +89,38 @@ export const fetchDevicesList1 = async (
 };
 
 export { getCsvdownload };
+
+export const downloadExcel = async () => {
+    try {
+        const url = `http://192.168.1.124:2001/api/v1/iaq/interval-csv`;
+        const body = {
+            customer_id: '6698e2d415023def020a7c45',
+            start_time: '2025-04-10',
+            end_time: '2025-04-11',
+            interval: 'daily',
+        };
+        const res = await axios.post(url, body, { responseType: 'blob' });
+        // console.log('res', res);
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const getAlerts = (customerId?: string, buildingId?: string) => {
+    try {
+        // console.log('Alerts api', customerId);
+        const deviceTypeId = '6690ef7fdeb2b486e92011aa';
+        let url = `/devices/offdevices`;
+        const searchParam = new URLSearchParams();
+        searchParam.append('deviceTypeId', deviceTypeId);
+        if (buildingId) searchParam.append('buildingId', buildingId);
+        if (customerId) {
+            searchParam.append('customerId', customerId);
+        }
+        url = `https://apiv1.claircoair.com/api/v1/devices/offdevices?${searchParam.toString()}`;
+        return api.get(url, null);
+    } catch (error) {
+        console.log(error);
+    }
+};
