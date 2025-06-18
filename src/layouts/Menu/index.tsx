@@ -5,7 +5,7 @@ import { MenuItemType } from 'appConstants';
 import MenuItem from './MenuItem';
 import MenuItemWithChildren from './MenuItemWithChildren';
 import ClaircoLogo from '../../assets/images/Clairco_Logo.png';
-import { isAdmin, isPanasonic } from 'utils/storageFunctions';
+import { getUserDetailsFromSession, isAdmin, isPanasonic } from 'utils/storageFunctions';
 
 type AppMenuProps = {
     menuItems: Array<MenuItemType>;
@@ -13,6 +13,9 @@ type AppMenuProps = {
 };
 
 const AppMenu = ({ menuItems, isCondensed }: AppMenuProps) => {
+    const [isUV, setIsUV] = useState(false);
+    const [isAdminOrNot, setisAdminOrNot] = useState(false);
+
     let location = useLocation();
     const menuRef = useRef<HTMLUListElement>(null);
     const [activeMenuItems, setActiveMenuItems] = useState<Array<string>>([]);
@@ -56,12 +59,16 @@ const AppMenu = ({ menuItems, isCondensed }: AppMenuProps) => {
         activeMenu();
     }, [activeMenu]);
     useEffect(() => {
-        // const user = isAdmin();
-        // setIsPanasonicUser(!user);
+        const user = isAdmin();
+        const userDetails = getUserDetailsFromSession();
+        if (userDetails.type === 'uvCustomer') setIsUV(true);
+        setisAdminOrNot(user);
     }, []);
     return (
         <ul className="side-nav " ref={menuRef} id="main-side-menu">
             {(menuItems || []).map((item, index) => {
+                if (item.key === 'UV' && !isUV && !isAdminOrNot) return null;
+                else if (item.key === 'IAQ' && isUV) return null;
                 return (
                     <React.Fragment key={index.toString()}>
                         {item.isTitle ? (
