@@ -13,19 +13,19 @@ import lodash from 'lodash';
 
 import Select from 'react-select';
 
-import InteractiveBackgroundWidget from 'components/ClaircoCustomerDashboard/Widgets/InteractiveBackgroundWidget';
+// import InteractiveBackgroundWidget from 'components/ClaircoCustomerDashboard/Widgets/InteractiveBackgroundWidget';
 import TrendsChart from './TrendsChart';
 import { getIaqData } from 'helpers/api/services/Clairco/customerSide/iaq';
-import { deviceTypeId } from 'appConstants/DeviceMappingConstants';
+import { deviceTypeId, deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 import { convertUnixToIST } from 'utils/timeFunctions';
 import { roundToOneDecimal } from 'utils/maths';
 
 import { useLocation, useNavigate } from 'react-router-dom';
-import PlainWidgetWithTwoParameters1 from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithTwoParameters1';
+// import PlainWidgetWithTwoParameters1 from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithTwoParameters1';
 import { IAQToolTip } from 'components/ClaircoCustomerDashboard/ToolTip/IAQToolTIp';
-import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
+// import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
-import { searchOptions } from 'layouts/Topbar/data';
+// import { searchOptions } from 'layouts/Topbar/data';
 import { getUserIdFromSession } from 'utils/storageFunctions';
 // import InteractiveBackgroundWidgetTEST from 'components/ClaircoCustomerDashboard/Widgets/InteractiveBackgroundWidgetB';
 import InteractiveBackgroundWidgetB from 'components/ClaircoCustomerDashboard/Widgets/InteractiveBackgroundWidgetB';
@@ -89,7 +89,7 @@ const IAQDevicePage = () => {
     const { buildingId: buildingId1 = '' } = getUserIdFromSession();
 
     const location = useLocation();
-    const parentRef = useRef(null);
+    // const parentRef = useRef(null);
     const navigate = useNavigate();
     const getBuidinglListForSelect = (data: any) => {
         try {
@@ -99,10 +99,10 @@ const IAQDevicePage = () => {
                 label: 'None',
             });
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.buildingId?._id)
-                    buildingMap.set(data?.[i]?.buildingId?._id, {
+                if (data?.[i]?.buildingId?.id)
+                    buildingMap.set(data?.[i]?.buildingId?.id, {
                         label: data?.[i]?.buildingId?.name ?? '',
-                        value: data?.[i]?.buildingId?._id ?? '',
+                        value: data?.[i]?.buildingId?.id ?? '',
                     });
             }
             const buildingList = Array.from(buildingMap.values());
@@ -120,9 +120,9 @@ const IAQDevicePage = () => {
                 label: 'None',
             });
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.floorId?._id)
-                    floorMap.set(data?.[i]?.floorId?._id, {
-                        value: data?.[i]?.floorId?._id,
+                if (data?.[i]?.floorId?.id)
+                    floorMap.set(data?.[i]?.floorId?.id, {
+                        value: data?.[i]?.floorId?.id,
                         label: data?.[i]?.floorId?.name,
                     });
             }
@@ -141,9 +141,9 @@ const IAQDevicePage = () => {
                     buildingName: doc?.buildingId?.name,
                     locationName: doc?.locationId?.name,
                     floorName: doc?.floorId?.name,
-                    deviceId: doc?._id,
-                    customerId: doc?.customerId?._id,
-                    buildingId: doc?.buildingId?._id,
+                    deviceId: doc?.id,
+                    customerId: doc?.customerId?.id,
+                    buildingId: doc?.buildingId?.id,
                 },
             }));
             return deviceList;
@@ -160,12 +160,12 @@ const IAQDevicePage = () => {
             // const floorName = data?.floorId?.name ?? '';
             // const deviceId = data?._id ?? '';
             // const customerId = data?.customerId?._id;
-            const deviceId = deviceTypeId['IAQ'];
+            const deviceId = deviceTypesConstant['IAQ'];
             const response = await fetchDevicesList(deviceId, customerId, '', buildingId1 ?? '');
-            const buildingsList = getBuidinglListForSelect(response?.data ?? []);
-            const floorList = getFloorsListForSelect(response?.data ?? []);
-            const deviceList = getDeviceListForSelection(response?.data ?? []);
-            // console.log('Device List', deviceList);
+            const buildingsList = getBuidinglListForSelect(response?.data?.records ?? []);
+            const floorList = getFloorsListForSelect(response?.data?.records ?? []);
+            const deviceList = getDeviceListForSelection(response?.data?.records ?? []);
+            console.log('Device List', buildingsList, floorList);
             setStoredData(response?.data ?? []);
             setBuidingList(buildingsList ?? []);
             setFloorList(floorList ?? []);
@@ -339,7 +339,7 @@ const IAQDevicePage = () => {
                 setFloorList(floorList1 ?? []);
                 return;
             }
-            filterdFloors = storedData.filter((item: any) => item?.buildingId?._id === buildingId);
+            filterdFloors = storedData.filter((item: any) => item?.buildingId?.id === buildingId);
             const floorList1 = getFloorsListForSelect(filterdFloors);
             // console.log('Floor Selection', storedData, filterdFloors);
             setFloorList(floorList1 ?? []);
@@ -351,14 +351,14 @@ const IAQDevicePage = () => {
         try {
             // console.log('FLoors:', e);
             if (e.value) {
-                const filterdFloors = storedData.filter((item: any) => item?.floorId?._id === e.value);
+                const filterdFloors = storedData.filter((item: any) => item?.floorId?.id === e.value);
                 const deviceList = getDeviceListForSelection(filterdFloors);
                 setDeviceList(deviceList);
                 return;
             } else {
                 // const filterdFloors = storedData.filter((item: any) => item?.floorId?._id === e.value);
                 const filterdFloors = storedData.filter(
-                    (item: any) => item?.buildingId?._id === buildingSelected?.value
+                    (item: any) => item?.buildingId?.id === buildingSelected?.value
                 );
                 // console.log('Fileterd floor', filterdFloors);
                 const deviceList = getDeviceListForSelection(filterdFloors);
