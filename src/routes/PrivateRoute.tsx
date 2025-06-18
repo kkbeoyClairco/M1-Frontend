@@ -38,9 +38,9 @@ const PrivateRoute = ({ component: RouteComponent, roles, ...rest }: PrivateRout
         return <Navigate to={'/login'} state={{ from: location }} replace />;
     }
     // check if route is restricted by role
-    if (userType !== roleType) {
-        return <Navigate to={{ pathname: '/' }} />;
-    }
+    // if (userType !== roleType) {
+    //     return <Navigate to={{ pathname: '/' }} />;
+    // }
 
     return <RouteComponent />;
 };

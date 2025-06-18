@@ -19,7 +19,11 @@ import downloadIcon from 'assets/icons/downloads.png';
 import DownloadModal from './DownloadModal';
 import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 // import { sampleTableTestData } from '../test';
-
+const placeHolder = {
+    customer: 'Select Customer',
+    building: 'Select Building',
+    floor: 'Select Floor',
+};
 type NewType = CellFormatter<DeviseTables>;
 export type DeviseTables = {
     name: string;
@@ -34,7 +38,7 @@ export type DeviseTables = {
     sensor_address: string;
 };
 
-const IAQDeviseTable = ({ setTotalDevices }: any) => {
+const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
     const [downloadModal, setDownloadModal] = useState(false);
 
     const [tableData, setTableData] = useState<any[]>([]);
@@ -46,17 +50,13 @@ const IAQDeviseTable = ({ setTotalDevices }: any) => {
     const [buildingList, setBuildingList] = useState<any>([]);
     const [floorList, setFloorList] = useState<any>([]);
     const [filter, setFilter] = useState<any>({});
-    const [placeHolder, setPlacehoder] = useState({
-        customer: 'Select Customer',
-        building: 'Select Building',
-        floor: 'Select Floor',
-    });
-    const { customerId = '', buildingId = '' } = getUserIdFromSession();
-
+    // const [placeHolder, setPlacehoder] = useState();
     //Selected
     const [customerSelected, setCustomerSelected] = useState<any>([]);
     const [floorSelected, setFloorSelected] = useState<any>([]);
     const [buildingSelected, setBuildingSelected] = useState<any>([]);
+
+    const { customerId = '', buildingId = '' } = getUserIdFromSession();
     const { isAdmin } = getUserIdFromSession();
     const isAdminOrNot = isAdmin === 'Admin';
     const navigate = useNavigate();
@@ -316,7 +316,7 @@ const IAQDeviseTable = ({ setTotalDevices }: any) => {
 
         {
             Header: 'Updated on',
-            accessor: 'data.iaq.timestamp',
+            accessor: 'dataUpdatedAt',
             defaultCanSort: false,
             Cell: ({ value }: any) => {
                 if (!value) return '-';

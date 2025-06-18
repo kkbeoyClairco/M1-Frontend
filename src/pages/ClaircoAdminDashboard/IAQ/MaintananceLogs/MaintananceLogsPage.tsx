@@ -47,10 +47,10 @@ const MaintananceLogsPage = () => {
                     </Col>
                 )}
             </Row>
-            <Row style={{ display: 'flex', justifyContent: 'end' }}>
+            {/* <Row style={{ display: 'flex', justifyContent: 'end' }}>
                 <Col xs={3}></Col>
-            </Row>
-            <Row style={{ marginLeft: '10px' }}>
+            </Row> */}
+            <Row className="mx-3">
                 <MaintenanceTable refresh={refresh} />
             </Row>
         </>

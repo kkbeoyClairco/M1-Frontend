@@ -20,6 +20,7 @@ const IAQDetailsPage = () => {
     // const { dispatch, appSelector } = useRedux();
     const [totalDevices, setTotalDevices] = useState();
     const [alertsModalStatus, setAlertsModalStatus] = useState(false);
+    const [offlineCount, setOfflineCount] = useState(0);
     const customerId = getUserDetailsFromSession()?.customerId ?? '';
     const { buildingId = '' } = getUserIdFromSession();
     const isAdmin1 = isAdmin();
@@ -33,6 +34,8 @@ const IAQDetailsPage = () => {
             if (!isAdmin1) res = await getAlerts(customerId, buildingId ?? '');
             else res = await getAlerts();
             setAlerts(res?.data?.offDevices ?? []);
+            setOfflineCount(res?.data?.offDevices?.length ?? 0);
+
             // console.log(res);
         } catch (error) {
             console.log(error);
@@ -65,11 +68,11 @@ const IAQDetailsPage = () => {
                     <TitleWidget icon={alertIcon} title={'Alerts'} value={alerts?.length ?? 0} />
                 </Col>
                 <Col lg={4}>
-                    <TitleWidget icon={iconConstant.offline1 ?? ''} title={'Offline'} value={''} />
+                    <TitleWidget icon={iconConstant.offline1 ?? ''} title={'Offline'} value={offlineCount} />
                 </Col>
             </Row>
             <Row className="mx-2 rounded-lg">
-                <IAQDeviseTable setTotalDevices={setTotalDevices} />
+                <IAQDeviseTable setTotalDevices={setTotalDevices} setOfflineCount={setOfflineCount} />
             </Row>
         </>
     );

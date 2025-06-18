@@ -79,7 +79,7 @@ const Uvbuilding = () => {
         <>
             {' '}
             <PageHeading title={'UV Home'} />{' '}
-            <Row style={{ paddingRight: '0px', marginLeft: '1em' }}>
+            <Row className="mx-3">
                 <Card style={{ height: '100%' }}>
                     <Card.Body>
                         <Row>
