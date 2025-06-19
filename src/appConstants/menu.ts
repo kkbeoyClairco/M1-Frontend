@@ -18,7 +18,7 @@ const MENU_ITEMS: MenuItemType[] = [
         key: 'IAQ',
         label: 'Home',
         isTitle: false,
-        icon: 'uil-wind',
+        icon: 'uil-home-alt',
         url: 'iaq-home',
     },
     {
@@ -32,7 +32,7 @@ const MENU_ITEMS: MenuItemType[] = [
         key: 'UV',
         label: 'UV Home',
         isTitle: false,
-        icon: 'uil-home-alt',
+        icon: 'uil-cloud-data-connection',
         url: 'uv',
     },
     // {
