@@ -21,19 +21,20 @@ const MENU_ITEMS: MenuItemType[] = [
         icon: 'uil-home-alt',
         url: 'iaq-home',
     },
-    {
-        key: 'Maintenance',
-        label: 'Maintenance Logs',
-        isTitle: false,
-        icon: 'uil-sitemap',
-        url: 'maintenance-logs',
-    },
+
     {
         key: 'UV',
         label: 'UV Home',
         isTitle: false,
         icon: 'uil-cloud-data-connection',
         url: 'uv',
+    },
+    {
+        key: 'Maintenance',
+        label: 'Maintenance Logs',
+        isTitle: false,
+        icon: 'uil-sitemap',
+        url: 'maintenance-logs',
     },
     // {
     //     key: 'Settings',

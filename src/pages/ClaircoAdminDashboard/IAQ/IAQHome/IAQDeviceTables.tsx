@@ -18,6 +18,8 @@ import { sessionKeys } from 'appConstants/sessionKeys';
 import downloadIcon from 'assets/icons/downloads.png';
 import DownloadModal from './DownloadModal';
 import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
+import IAQDeviceCreation from './IAQDeviceCreation';
+const addIcon = `https://res.cloudinary.com/dlulq6hny/image/upload/v1741001702/plus_u1czew.png`;
 // import { sampleTableTestData } from '../test';
 const placeHolder = {
     customer: 'Select Customer',
@@ -40,7 +42,7 @@ export type DeviseTables = {
 
 const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
     const [downloadModal, setDownloadModal] = useState(false);
-
+    const [deviceCreationModal, setDeviceCreationModal] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
     const [iaqList, setIaqList] = useState<any>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +52,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
     const [buildingList, setBuildingList] = useState<any>([]);
     const [floorList, setFloorList] = useState<any>([]);
     const [filter, setFilter] = useState<any>({});
+    const [infoToModal, setInfotoModal] = useState({});
     // const [placeHolder, setPlacehoder] = useState();
     //Selected
     const [customerSelected, setCustomerSelected] = useState<any>([]);
@@ -117,7 +120,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
             const floorMap = new Map();
             floorMap.set('Others', {
                 value: '',
-                label: 'None',
+                label: 'All',
             });
             for (let i = 0; i < data.length; i++) {
                 if (data?.[i]?.floorId?.id)
@@ -138,7 +141,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
             const customerMap = new Map();
             customerMap.set('Others', {
                 value: '',
-                label: 'None',
+                label: 'All',
             });
 
             for (let i = 0; i < data.length; i++) {
@@ -160,7 +163,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
             const buildingMap = new Map();
             buildingMap.set('Others', {
                 value: '',
-                label: 'None',
+                label: 'All',
             });
             for (let i = 0; i < data.length; i++) {
                 if (data?.[i]?.buildingId?.id)
@@ -188,6 +191,11 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
 
             setBuildingList(buildingList);
             setFloorList(floorList);
+            setInfotoModal({
+                customerList,
+                buildingList,
+                floorList,
+            });
         } catch (error) {
             console.log(error);
             setBuildingList([]);
@@ -273,7 +281,14 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
             console.log(error);
         }
     };
-
+    const handleAddClick = async () => {
+        try {
+            console.log('Add new Click');
+            setDeviceCreationModal((prev) => !prev);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     //Table action Column
     const ActionColumn = ({ row }: NewType) => {
         return (
@@ -355,6 +370,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
         }
     }, []);
     useEffect(() => {
+        console.log('Fileters', filter);
         if (filter.buildingId || filter.floorId || filter.customerId) {
             const filteredData = filterData(filter, iaqList);
             setTableData(filteredData ?? []);
@@ -372,7 +388,14 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
                     floorsData={floorList}
                 />
             )}
-
+            {deviceCreationModal && (
+                <IAQDeviceCreation
+                    show={deviceCreationModal}
+                    data={infoToModal}
+                    // onSubmit={handleDeviceCreation}
+                    onClose={() => setDeviceCreationModal(false)}
+                />
+            )}
             <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 ">
                 <Card.Body>
                     <Row style={{ marginBottom: '1em' }}>
@@ -389,10 +412,16 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
                                 alignContent: 'baseline',
                                 height: '30px',
                             }}>
-                            {/* <div style={{ textAlign: 'left', marginRight: '2em', cursor: 'pointer' }}>
-                                    <img src={alertIcon} alt="" height={'55%'} style={{}} />{' '}
-                                    <h6 style={{ fontSize: '10px', textAlign: 'start' }}>Alerts</h6>
-                                </div> */}
+                            {isAdminOrNot && (
+                                <div
+                                    className="mx-2"
+                                    style={{ textAlign: 'center', cursor: 'pointer' }}
+                                    onClick={handleAddClick}>
+                                    {' '}
+                                    <img src={addIcon} alt="" height={'55%'} />
+                                    <h6 style={{ fontSize: '10px', textAlign: 'center' }}>Add new</h6>
+                                </div>
+                            )}
                             <div style={{ textAlign: 'center', cursor: 'pointer' }} onClick={handleDownloadModal}>
                                 {' '}
                                 <img src={downloadIcon} alt="" height={'55%'} style={{}} />
@@ -467,4 +496,4 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
     );
 };
 
-export default IAQDeviseTable;
+export default React.memo(IAQDeviseTable);

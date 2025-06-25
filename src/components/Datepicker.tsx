@@ -90,6 +90,9 @@ const HyperDatepicker = (props: HyperDatepickerProps) => {
                 showTimeSelectOnly={props.showTimeSelectOnly}
                 inline={props.inline}
                 autoComplete="off"
+                showYearDropdown
+                showMonthDropdown
+                // dropdownMode="select"
             />
         </>
     );

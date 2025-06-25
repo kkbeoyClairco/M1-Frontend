@@ -13,7 +13,6 @@ import {
     getFloorListWithBuildingId,
     getTechnicianList,
 } from 'helpers/api/services/Clairco/customerSide/maintenance';
-import { AxiosResponse } from 'axios';
 import { convertDateToEpoch } from 'utils/timeFunctions';
 
 interface LogInputModalPropTYpes {

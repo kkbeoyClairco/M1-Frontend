@@ -96,7 +96,7 @@ const IAQDevicePage = () => {
             const buildingMap = new Map();
             buildingMap.set('Others', {
                 value: '',
-                label: 'None',
+                label: 'All',
             });
             for (let i = 0; i < data.length; i++) {
                 if (data?.[i]?.buildingId?.id)
@@ -117,7 +117,7 @@ const IAQDevicePage = () => {
             const floorMap = new Map();
             floorMap.set('Others', {
                 value: '',
-                label: 'None',
+                label: 'All',
             });
             for (let i = 0; i < data.length; i++) {
                 if (data?.[i]?.floorId?.id)
@@ -165,8 +165,8 @@ const IAQDevicePage = () => {
             const buildingsList = getBuidinglListForSelect(response?.data?.records ?? []);
             const floorList = getFloorsListForSelect(response?.data?.records ?? []);
             const deviceList = getDeviceListForSelection(response?.data?.records ?? []);
-            console.log('Device List', buildingsList, floorList);
-            setStoredData(response?.data ?? []);
+            // console.log('Device List', buildingsList, floorList);
+            setStoredData(response?.data?.records ?? []);
             setBuidingList(buildingsList ?? []);
             setFloorList(floorList ?? []);
             setDeviceList(deviceList);
@@ -339,9 +339,9 @@ const IAQDevicePage = () => {
                 setFloorList(floorList1 ?? []);
                 return;
             }
-            filterdFloors = storedData.filter((item: any) => item?.buildingId?.id === buildingId);
+            filterdFloors = storedData?.filter((item: any) => item?.buildingId?.id === buildingId);
             const floorList1 = getFloorsListForSelect(filterdFloors);
-            // console.log('Floor Selection', storedData, filterdFloors);
+            console.log('Floor Selection', storedData, buildingId);
             setFloorList(floorList1 ?? []);
         } catch (error) {
             console.log(error);
@@ -372,9 +372,10 @@ const IAQDevicePage = () => {
     };
     const handleFilterSelection = (e: any, state: string) => {
         try {
+            console.log('Filters', e, state);
             switch (state) {
                 case 'building':
-                    filterFloorsBasedOnBuilding(e.value);
+                    filterFloorsBasedOnBuilding(e?.value);
                     setBuildingSelected(e);
                     setFloorSelected({});
                     setDeviceSelected({});
@@ -424,7 +425,7 @@ const IAQDevicePage = () => {
             searchParam.append('customerId', customerId);
             searchParam.append('buildingId', buildingId);
 
-            let url = `/customer/iaq/${searchParam.toString()}`;
+            let url = `/customer/iaq-home/${searchParam.toString()}`;
 
             navigate(url);
         } catch (error) {

@@ -63,7 +63,7 @@ export const deviceTypesConstant: { [key: string]: string } = {
 // Needs to verify // MODIFY_ALERT
 export const deviceTypesReverseConstant: { [key: string]: string } = {
     'VRV/VRF Indoor': 'VRV_VRF_INDOOR',
-    'VRV/VRF Outdoor': ' VRV_VRF_OUTDOOR',
+    'VRV/VRF Outdoor': 'VRV_VRF_OUTDOOR',
     IAQ: 'IAQ',
     AHU: 'AHU',
     BTU: 'BTU',

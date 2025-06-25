@@ -32,7 +32,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
     };
     const graphOptions: { [key: string]: string } = { a: 'live', b: 'aggregated' };
     const [graphState, setGraphState] = useState(graphOptions.a);
-
+    const [incomingParams, setIncomingParams] = useState({});
     const [downloadModal, setDownloadModal] = useState(false);
     const [timeGroup, setTimeGroup] = useState<any>(timeGrouingConstants.a);
     const [graphPara, setGraphPara] = useState(parameters.a);
@@ -104,6 +104,29 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                 const outdoorPm25Array = response?.data?.map((doc: any) => roundToOneDecimal(doc?.OPM25));
                 const outdoorPm10Array = response?.data?.map((doc: any) => roundToOneDecimal(doc?.OPM10));
 
+                //         a: 'PM 2.5',
+                // b: 'PM 10',
+                // c: 'CO2',
+                // d: 'VOC',
+                // e: 'AQI',
+                // f: 'Temperature',
+                // g: 'Humidity',
+                // h: 'Outdoor PM 2.5',
+                // i: 'Outdoor PM 10',
+                const newIncomingParams: Record<string, any> = {
+                    ...(tempArray.length > 0 && { Temperature: 'Temperature' }),
+                    ...(humidityArray.length > 0 && { Humidity: 'Humidity' }),
+                    // ...(pm1Array.length > 0 && { "pm1": pm1Array }),
+                    ...(pm10Array.length > 0 && { 'PM 10': 'PM 10' }),
+                    ...(pm25Array.length > 0 && { 'PM 2.5': 'PM 2.5' }),
+                    ...(vocArray.length > 0 && { VOC: 'VOC' }),
+                    ...(aqiArray.length > 0 && { AQI: 'AQI' }),
+                    ...(co2Array.length > 0 && { CO2: 'CO2' }),
+                    ...(outdoorPm25Array.length > 0 && { 'Outdoor PM 2.5': 'Outdoor PM 2.5' }),
+                    ...(outdoorPm10Array.length > 0 && { 'Outdoor PM 10': 'Outdoor PM 10' }),
+                };
+
+                setIncomingParams(newIncomingParams);
                 setXAxis(xAxisData);
                 setTemperature(tempArray);
                 sethumidity(humidityArray);
@@ -449,7 +472,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                     {/* Parameter selection area */}
                                     <div className="flex-container">
                                         <div className="parameter-container" style={{ paddingTop: '20px' }}>
-                                            {Object.keys(parameters).map((parameter) => {
+                                            {Object.keys(incomingParams)?.map((parameter) => {
                                                 return (
                                                     <div
                                                         style={{
