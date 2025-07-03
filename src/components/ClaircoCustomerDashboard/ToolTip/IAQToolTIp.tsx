@@ -56,7 +56,7 @@ export const IAQToolTip = ({ show, positionValues, toolTipData, currentState }: 
 
                 // 'rgba(64, 64, 64, 0.85)',
                 // opacity: 1,
-                zIndex: 1,
+                zIndex: 10,
                 padding: '10px 20px',
                 borderRadius: '4px',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',

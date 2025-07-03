@@ -10,6 +10,9 @@ import { getIaqAggregate, getIaqData } from 'helpers/api/services/Clairco/custom
 import { deviceTypeId } from 'appConstants/DeviceMappingConstants';
 import { useLocation } from 'react-router-dom';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
+import { iaqParameters } from 'appConstants/iaqConstants';
+import SkeltonLoader from 'components/ClaircoCustomer/Skeltons/SkeltonLoader';
+import LeanParallelSketon from 'components/ClaircoCustomer/Skeltons/LeanParallelSketon';
 
 const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
     const timeGrouingConstants: { [key: string]: string } = {
@@ -32,10 +35,10 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
     };
     const graphOptions: { [key: string]: string } = { a: 'live', b: 'aggregated' };
     const [graphState, setGraphState] = useState(graphOptions.a);
-    const [incomingParams, setIncomingParams] = useState({});
+    const [apiParams, setApiParams] = useState({});
     const [downloadModal, setDownloadModal] = useState(false);
     const [timeGroup, setTimeGroup] = useState<any>(timeGrouingConstants.a);
-    const [graphPara, setGraphPara] = useState(parameters.a);
+    const [graphPara, setGraphPara] = useState<string | null>(null);
     const [graphLineColour, setGraphLinecolour] = useState(coloursTable.a);
     const [temperature, setTemperature] = useState<any[]>([]);
     const [humidity, sethumidity] = useState<any>([]);
@@ -93,40 +96,71 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                 });
                 // console.log('Trends', response);
                 const xAxisData = response?.data?.reverse().map((doc: any) => convertUnixToIST(doc?.timestamp));
-                const tempArray = response?.data?.map((doc: any) => roundToOneDecimal(doc?.TEMP));
-                const humidityArray = response?.data?.map((doc: any) => roundToOneDecimal(doc?.HUM));
-                const pm1Array = response?.data?.map((doc: any) => roundToOneDecimal(doc?.PM1));
-                const pm10Array = response?.data?.map((doc: any) => roundToOneDecimal(doc?.PM10));
-                const pm25Array = response?.data?.map((doc: any) => roundToOneDecimal(doc?.PM25));
-                const vocArray = response?.data?.map((doc: any) => roundToOneDecimal(doc?.VOC));
-                const aqiArray = response?.data?.map((doc: any) => roundToOneDecimal(doc?.AQI));
-                const co2Array = response?.data?.map((doc: any) => roundToOneDecimal(doc?.CO2));
-                const outdoorPm25Array = response?.data?.map((doc: any) => roundToOneDecimal(doc?.OPM25));
-                const outdoorPm10Array = response?.data?.map((doc: any) => roundToOneDecimal(doc?.OPM10));
+                //    stamp));
+                const tempArray = response?.data
+                    ?.map((doc: any) => roundToOneDecimal(doc?.TEMP))
+                    .filter((val: any) => !isNaN(val));
+                const humidityArray = response?.data
+                    ?.map((doc: any) => roundToOneDecimal(doc?.HUM))
+                    .filter((val: any) => !isNaN(val));
+                const pm1Array = response?.data
+                    ?.map((doc: any) => roundToOneDecimal(doc?.PM1))
+                    .filter((val: any) => !isNaN(val));
+                const pm10Array = response?.data
+                    ?.map((doc: any) => roundToOneDecimal(doc?.PM10))
+                    .filter((val: any) => !isNaN(val));
+                const pm25Array = response?.data
+                    ?.map((doc: any) => roundToOneDecimal(doc?.PM25))
+                    .filter((val: any) => !isNaN(val));
+                const vocArray = response?.data
+                    ?.map((doc: any) => roundToOneDecimal(doc?.VOC))
+                    .filter((val: any) => !isNaN(val));
+                const aqiArray = response?.data
+                    ?.map((doc: any) => roundToOneDecimal(doc?.AQI))
+                    .filter((val: any) => !isNaN(val));
+                const co2Array = response?.data
+                    ?.map((doc: any) => roundToOneDecimal(doc?.CO2))
+                    .filter((val: any) => !isNaN(val));
+                const outdoorPm25Array = response?.data
+                    ?.map((doc: any) => roundToOneDecimal(doc?.OPM25))
+                    .filter((val: any) => !isNaN(val));
+                const outdoorPm10Array = response?.data
+                    ?.map((doc: any) => roundToOneDecimal(doc?.OPM10))
+                    .filter((val: any) => !isNaN(val));
+                const arr = [
+                    // { key: 'pm1Array', value: pm1Array },
+                    { key: 'pm25Array', value: pm25Array },
+                    { key: 'pm10Array', value: pm10Array },
+                    { key: 'co2Array', value: co2Array },
+                    { key: 'vocArray', value: vocArray },
+                    { key: 'aqiArray', value: aqiArray },
+                    { key: 'tempArray', value: tempArray },
+                    { key: 'humidityArray', value: humidityArray },
+                    { key: 'outdoorPm25Array', value: outdoorPm25Array },
+                    { key: 'outdoorPm10Array', value: outdoorPm10Array },
+                ];
 
-                //         a: 'PM 2.5',
-                // b: 'PM 10',
-                // c: 'CO2',
-                // d: 'VOC',
-                // e: 'AQI',
-                // f: 'Temperature',
-                // g: 'Humidity',
-                // h: 'Outdoor PM 2.5',
-                // i: 'Outdoor PM 10',
-                const newIncomingParams: Record<string, any> = {
-                    ...(tempArray.length > 0 && { Temperature: 'Temperature' }),
-                    ...(humidityArray.length > 0 && { Humidity: 'Humidity' }),
-                    // ...(pm1Array.length > 0 && { "pm1": pm1Array }),
-                    ...(pm10Array.length > 0 && { 'PM 10': 'PM 10' }),
-                    ...(pm25Array.length > 0 && { 'PM 2.5': 'PM 2.5' }),
-                    ...(vocArray.length > 0 && { VOC: 'VOC' }),
-                    ...(aqiArray.length > 0 && { AQI: 'AQI' }),
-                    ...(co2Array.length > 0 && { CO2: 'CO2' }),
-                    ...(outdoorPm25Array.length > 0 && { 'Outdoor PM 2.5': 'Outdoor PM 2.5' }),
-                    ...(outdoorPm10Array.length > 0 && { 'Outdoor PM 10': 'Outdoor PM 10' }),
+                const map: { [key: string]: string } = {
+                    tempArray: 'Temperature',
+                    humidityArray: 'Humidity',
+                    // pm1Array, 'PM 1',
+                    pm10Array: 'PM 10',
+                    pm25Array: 'PM 2.5',
+                    vocArray: 'VOC',
+                    aqiArray: 'AQI',
+                    co2Array: 'CO2',
+                    outdoorPm10Array: 'Outdoor PM 10',
+                    outdoorPm25Array: 'Outdoor PM 2.5',
                 };
-
-                setIncomingParams(newIncomingParams);
+                const newparameters: { [key: string]: string } = {};
+                for (let i = 0; i < arr.length; i++) {
+                    if (arr[i].value.length > 0) {
+                        newparameters[i + 1] = map[arr[i].key];
+                    }
+                }
+                // console.log(newparameters);
+                if (!graphPara) setGraphPara((Object.values(newparameters)?.[0] as string)?.toString());
+                setApiParams(newparameters);
                 setXAxis(xAxisData);
                 setTemperature(tempArray);
                 sethumidity(humidityArray);
@@ -183,16 +217,53 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                 ?.reverse()
                 ?.map((time: string | number) => convertUnixToIST(time));
             const values = Object.values(data)?.reverse();
-            const tempArray = values.map((doc: any) => roundToOneDecimal(doc?.TEMP));
-            const humArray = values.map((doc: any) => roundToOneDecimal(doc?.HUM));
-            const pm25Array = values.map((doc: any) => roundToOneDecimal(doc?.PM25));
-            const pm10Array = values.map((doc: any) => roundToOneDecimal(doc?.PM10));
-            const co2Array = values.map((doc: any) => roundToOneDecimal(doc?.CO2));
-            const vocArray = values.map((doc: any) => roundToOneDecimal(doc?.VOC));
-            const pm1Array = values.map((doc: any) => roundToOneDecimal(doc?.PM1));
-            const aqiArray = values.map((doc: any) => roundToOneDecimal(doc?.AQI));
+            const tempArray = values.map((doc: any) => roundToOneDecimal(doc?.TEMP)).filter((val: any) => !isNaN(val));
+            const humArray = values.map((doc: any) => roundToOneDecimal(doc?.HUM)).filter((val: any) => !isNaN(val));
+            const pm25Array = values.map((doc: any) => roundToOneDecimal(doc?.PM25)).filter((val: any) => !isNaN(val));
+            const pm10Array = values.map((doc: any) => roundToOneDecimal(doc?.PM10)).filter((val: any) => !isNaN(val));
+            const co2Array = values.map((doc: any) => roundToOneDecimal(doc?.CO2)).filter((val: any) => !isNaN(val));
+            const vocArray = values.map((doc: any) => roundToOneDecimal(doc?.VOC)).filter((val: any) => !isNaN(val));
+            const pm1Array = values.map((doc: any) => roundToOneDecimal(doc?.PM1)).filter((val: any) => !isNaN(val));
+            const aqiArray = values.map((doc: any) => roundToOneDecimal(doc?.AQI)).filter((val: any) => !isNaN(val));
+            const outdoorPm25Array = values
+                ?.map((doc: any) => roundToOneDecimal(doc?.OPM25))
+                .filter((val: any) => !isNaN(val));
+            const outdoorPm10Array = values
+                ?.map((doc: any) => roundToOneDecimal(doc?.OPM10))
+                .filter((val: any) => !isNaN(val));
+            const map: { [key: string]: string } = {
+                tempArray: 'Temperature',
+                humidityArray: 'Humidity',
+                // pm1Array, 'PM 1',
+                pm10Array: 'PM 10',
+                pm25Array: 'PM 2.5',
+                vocArray: 'VOC',
+                aqiArray: 'AQI',
+                co2Array: 'CO2',
+                outdoorPm10Array: 'Outdoor PM 10',
+                outdoorPm25Array: 'Outdoor PM 2.5',
+            };
+            const arr = [
+                // { key: 'pm1Array', value: pm1Array },
+                { key: 'pm25Array', value: pm25Array },
+                { key: 'pm10Array', value: pm10Array },
+                { key: 'co2Array', value: co2Array },
+                { key: 'vocArray', value: vocArray },
+                { key: 'aqiArray', value: aqiArray },
+                { key: 'tempArray', value: tempArray },
+                { key: 'humidityArray', value: humArray },
+                { key: 'outdoorPm25Array', value: outdoorPm25Array },
+                { key: 'outdoorPm10Array', value: outdoorPm10Array },
+            ];
+            const newparameters: { [key: string]: string } = {};
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].value.length > 0) {
+                    newparameters[i + 1] = map[arr[i].key];
+                }
+            }
+            if (!graphPara) setGraphPara((Object.values(newparameters)?.[0] as string)?.toString());
+            setApiParams(newparameters);
 
-            // console.log('graph state', graphState, timeArray);
             setXAxis(timeArray ?? []);
             setTemperature(tempArray ?? []);
             sethumidity(humArray ?? []);
@@ -232,16 +303,15 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
         }
     };
 
-    const changeGraphParamer = async (parameter: string) => {
+    const changeGraphParamer = async (parameter: string, index: number) => {
         try {
-            setGraphPara(parameters[parameter]);
-            setGraphLinecolour(coloursTable[parameter]);
-            console.log(parameter === 'e' ? pm1 : '');
+            setGraphPara(parameter);
+            setGraphLinecolour(Object.values(coloursTable)[index]);
+            // console.log(parameter === 'e' ? pm1 : '');
         } catch (error) {
             console.log(error);
         }
     };
-
     const handleDownloadModal = async () => {
         try {
             console.log('download clicked');
@@ -348,7 +418,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
     return (
         <>
             <DownloadModal modalState={downloadModal} modalControlFn={handleDownloadModal} deviceId={deviceId} />
-            <Card>
+            <Card style={{ minHeight: '400px' }}>
                 <Card.Body>
                     <Row>
                         <Tab.Container defaultActiveKey="live">
@@ -384,36 +454,6 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                         </div>{' '}
                                     </Col>
                                 </Row>
-
-                                {/* Currently only live data is used, if aggregate is needed this can be used,otherwise useless */}
-                                {/* <Nav as="ul" variant="pills" className="bg-nav-pills p-1 rounded">
-                                    {Object.keys([]).map((option) => {
-                                        return (
-                                            <Nav.Item as="li" key={option}>
-                                                {' '}
-                                                <Nav.Link
-                                                    style={{
-                                                        background:
-                                                            graphState == graphOptions[option] ? '#00695C' : '#008675',
-                                                        border: '0px',
-                                                        // height: '25px',
-                                                        // backgroundColor: 'red',
-                                                    }}
-                                                    as={Link}
-                                                    className="py-1"
-                                                    to="#"
-                                                    eventKey="live"
-                                                    // {graphOptions[key]}
-                                                    // onClick={() => changeGraphState(option)}
-                                                >
-                                                    {graphOptions[option]}
-                                                </Nav.Link>
-                                            </Nav.Item>
-                                        );
-                                    })}{' '}
-                                    {/* ); */}
-                                {/* })} */}
-                                {/* </Nav> */}
                             </div>
                             <Row style={{ justifyContent: 'end' }}>
                                 <Col lg={3} xs={12} style={{ justifyContent: 'end' }}>
@@ -472,53 +512,57 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                     {/* Parameter selection area */}
                                     <div className="flex-container">
                                         <div className="parameter-container" style={{ paddingTop: '20px' }}>
-                                            {Object.keys(incomingParams)?.map((parameter) => {
-                                                return (
-                                                    <div
-                                                        style={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            padding: '0.35em',
-                                                            paddingLeft: '2em',
-                                                        }}
-                                                        onClick={() => changeGraphParamer(parameter)}
-                                                        key={parameter}>
-                                                        {' '}
+                                            {!isLoading ? (
+                                                Object.keys(apiParams)?.map((parameter, index) => {
+                                                    return (
                                                         <div
                                                             style={{
-                                                                background: coloursTable[parameter],
-                                                                height: '0.75em',
-                                                                width: '0.75em',
-                                                                borderRadius: '5px',
-                                                                marginRight: '1em',
-                                                            }}></div>
-                                                        <div
-                                                            className="form-check"
-                                                            style={{
-                                                                paddingLeft: '20px',
-                                                                marginTop: '0.25em',
-                                                                // paddingTop: '0.35em',
-                                                                paddingBottom: '0px',
-                                                                justifyContent: 'center',
+                                                                display: 'flex',
                                                                 alignItems: 'center',
-                                                            }}>
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="radio"
-                                                                name="flexRadioDefault"
-                                                                id={parameter}
-                                                                // onClick={() => changeGraphParamer(parameter)}
-                                                                checked={graphPara == parameters[parameter]}
-                                                            />
-                                                            <label
-                                                                className="form-check-label"
-                                                                htmlFor="flexRadioDefault1">
-                                                                {parameters[parameter]}
-                                                            </label>
+                                                                padding: '0.35em',
+                                                                paddingLeft: '2em',
+                                                            }}
+                                                            onClick={() => changeGraphParamer(String(parameter), index)}
+                                                            key={parameter}>
+                                                            {' '}
+                                                            <div
+                                                                style={{
+                                                                    background: Object.values(coloursTable)[index],
+                                                                    height: '0.75em',
+                                                                    width: '0.75em',
+                                                                    borderRadius: '5px',
+                                                                    marginRight: '1em',
+                                                                }}></div>
+                                                            <div
+                                                                className="form-check"
+                                                                style={{
+                                                                    paddingLeft: '20px',
+                                                                    marginTop: '0.25em',
+                                                                    // paddingTop: '0.35em',
+                                                                    paddingBottom: '0px',
+                                                                    justifyContent: 'center',
+                                                                    alignItems: 'center',
+                                                                }}>
+                                                                <input
+                                                                    className="form-check-input"
+                                                                    type="radio"
+                                                                    name="flexRadioDefault"
+                                                                    id={`param-${parameter}`}
+                                                                    // onClick={() => changeGraphParamer(parameter)}
+                                                                    checked={graphPara === parameter}
+                                                                />
+                                                                <label
+                                                                    className="form-check-label"
+                                                                    htmlFor={`param-${parameter}`}>
+                                                                    {String(parameter)}
+                                                                </label>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                );
-                                            })}
+                                                    );
+                                                })
+                                            ) : (
+                                                <LeanParallelSketon />
+                                            )}
                                         </div>{' '}
                                     </div>
                                 </Col>
@@ -529,7 +573,9 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                             style={{ height: '90vh', width: '100%', overflow: 'clip' }}
                                         />
                                     ) : (
-                                        <TableSkelton />
+                                        <div className="my-2 py-4">
+                                            <LeanParallelSketon />
+                                        </div>
                                     )}
                                 </Col>
                             </Row>

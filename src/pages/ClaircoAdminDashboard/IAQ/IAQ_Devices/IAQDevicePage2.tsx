@@ -587,6 +587,7 @@ const IAQDevicePage = () => {
                             title2="PM 10"
                             value2={cardData?.opm10 ? cardData?.opm10 : 'Na'}
                             unit2="µg/m³"
+                            infoClickFn={handleOnHover}
                             lastUpdated={lastUpdated ? lastUpdated : ''}
                         />
                     </Col>

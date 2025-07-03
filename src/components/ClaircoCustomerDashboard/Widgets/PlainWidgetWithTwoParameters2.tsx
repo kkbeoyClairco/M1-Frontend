@@ -3,6 +3,7 @@ import LastUpdated from '../General/LastUpdated/LastUpdated';
 import { last } from 'lodash';
 import { Card, Col, Row } from 'react-bootstrap';
 import Navigator from 'components/ClaircoCustomerDashboard/NavigatorComponent/Navigator';
+import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
 
 type PlainWidgetType = {
     name?: string;
@@ -14,6 +15,7 @@ type PlainWidgetType = {
     value2?: string | number;
     unit1?: string;
     unit2?: string;
+    infoClickFn?: (e: React.MouseEvent<HTMLDivElement>, state: string) => void;
 
     lastUpdated?: string;
     func1?: () => void;
@@ -30,6 +32,7 @@ const PlainWidgetWithTwoParameters2 = ({
     lastUpdated,
     func1,
     func2,
+    infoClickFn,
 }: PlainWidgetType) => {
     const handleNavOneClick = async () => {
         try {
@@ -54,6 +57,9 @@ const PlainWidgetWithTwoParameters2 = ({
                         style={{ display: 'flex', padding: '0px', justifyContent: 'center', alignItems: 'center' }}>
                         {' '}
                         <h5 style={{ padding: '10px', paddingLeft: '15px' }}>{name}</h5>{' '}
+                        <div onClick={(e: React.MouseEvent<HTMLDivElement>) => infoClickFn && infoClickFn(e, 'PM')}>
+                            <InformationIcon />
+                        </div>
                     </div>{' '}
                 </Row>
 
