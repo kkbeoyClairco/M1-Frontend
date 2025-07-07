@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import IAQDeviseTable from './IAQDeviceTables';
+import IAQDeviseTable2 from './IAQDeviceTables2';
+
 import { getAlerts } from 'helpers/api/services/Clairco/customerSide/iaq';
 
 // import { assignDeviceType, formatDateToLocalTime } from 'helpers/utils';
@@ -15,6 +17,8 @@ import { getDevices } from 'redux/actions';
 import { iconConstant } from 'appConstants/claircoConstants';
 import { getUserDetailsFromSession, getUserIdFromSession, isAdmin } from 'utils/storageFunctions';
 import AlertsModal from './AlertsModal';
+import { dummyData } from '../IAQ_Devices/test';
+import { selectTagType } from 'types/selectTagType';
 
 const IAQDetailsPage = () => {
     // const { dispatch, appSelector } = useRedux();
@@ -22,10 +26,41 @@ const IAQDetailsPage = () => {
     const [alertsModalStatus, setAlertsModalStatus] = useState(false);
     const [offlineCount, setOfflineCount] = useState(0);
     const customerId = getUserDetailsFromSession()?.customerId ?? '';
+    const [userAssignedAssets, setUserAssignedAssets] = useState<{
+        buildings: selectTagType[];
+        floors: selectTagType[];
+    } | null>(null);
     const { buildingId = '' } = getUserIdFromSession();
     const isAdmin1 = isAdmin();
 
     const [alerts, setAlerts] = useState<any>([]);
+    const extractBuildings = (data: any) => {
+        try {
+            const buildings = data?.buildings?.map((doc: any) => ({
+                label: doc.name,
+                value: doc.id,
+                customerId: data?.customerId,
+            }));
+
+            const floors = data?.buildings?.reduce((floors: any, current: any) => {
+                const data1 = current?.floors?.map((docF: any) => ({
+                    label: docF.name,
+                    value: docF.id,
+                    buildingId: current.id,
+                    customerId: data?.customerId,
+                }));
+
+                floors.push(...data1);
+                return floors;
+            }, []);
+            // console.log('floor', floors1);
+
+            return { buildings, floors };
+        } catch (error) {
+            console.log(error);
+            return { buildings: {}, floors: {} };
+        }
+    };
 
     const fetchAlerts = async () => {
         try {
@@ -52,6 +87,10 @@ const IAQDetailsPage = () => {
         }
     };
     useEffect(() => {
+        const data = dummyData?.access?.[0] ?? {};
+        const { buildings, floors } = extractBuildings(data);
+        console.log('building data', buildings, floors);
+        setUserAssignedAssets({ buildings, floors });
         fetchAlerts();
     }, []);
 
@@ -72,7 +111,11 @@ const IAQDetailsPage = () => {
                 </Col>
             </Row>
             <Row className="mx-2 rounded-lg">
-                <IAQDeviseTable setTotalDevices={setTotalDevices} setOfflineCount={setOfflineCount} />
+                <IAQDeviseTable2
+                    setTotalDevices={setTotalDevices}
+                    setOfflineCount={setOfflineCount}
+                    data={userAssignedAssets}
+                />
             </Row>
         </>
     );
