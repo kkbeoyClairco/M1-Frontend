@@ -32,6 +32,8 @@ import InteractiveBackgroundWidgetB from 'components/ClaircoCustomerDashboard/Wi
 import PlainWidgetWithTwoParameters2 from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithTwoParameters2';
 import CardLoadingSkelton from 'components/ClaircoSkeltonLoaders/CardLoadingSkelton';
 import ErrorComponent from './ErrorComponent';
+import AnalyticsWrapper from '../Analytics/AnalyticsChart';
+
 interface CardData {
     aqi?: number;
     temp?: number;
@@ -502,7 +504,6 @@ const IAQDevicePage = () => {
                 </Col>
                 <Col></Col>
             </Row>
-
             <Row
                 className="g-3"
                 style={{
@@ -664,7 +665,10 @@ const IAQDevicePage = () => {
                     infoClickFn={handleOnHover}
                     infoClickName={'CO2'}
                 />
-            </Row> */}
+            </Row> */}{' '}
+            <Row style={{ marginLeft: '10px' }}>
+                <AnalyticsWrapper sensorName={sensorName} />
+            </Row>
             <Row style={{ marginLeft: '10px' }}>
                 <TrendsChart sensorName={sensorName} deviceId={deviceId} buildingId={buildingId} />
             </Row>

@@ -124,3 +124,28 @@ export const getAlerts = (customerId?: string, buildingId?: string) => {
         console.log(error);
     }
 };
+export const getRealTimeAnalytics = async (sensorName: string, startDate?: string, endDate?: string) => {
+    try {
+        const searchParam = new URLSearchParams();
+        searchParam.append('sensorName', sensorName);
+        if (startDate) searchParam.append('startDate', startDate);
+        if (endDate) searchParam.append('endDate', endDate);
+        const url = `/devices/aqi-realtime?${searchParam.toString()}`;
+        return api.get(url, null);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const getLevelTimeAnalytics = async (sensorName: string, startDate?: string, endDate?: string) => {
+    try {
+        const searchParam = new URLSearchParams();
+        searchParam.append('sensorName', sensorName);
+        if (startDate) searchParam.append('startDate', startDate);
+        if (endDate) searchParam.append('endDate', endDate);
+        const url = `/devices/aqi-level-analytics?${searchParam.toString()}`;
+        return api.get(url, null);
+    } catch (error) {
+        console.log(error);
+    }
+};
