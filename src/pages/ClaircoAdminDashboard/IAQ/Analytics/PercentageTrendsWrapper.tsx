@@ -10,6 +10,8 @@ import { getLevelTimeAnalytics } from 'helpers/api/services/Clairco/customerSide
 import { toast } from 'sonner';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import { SevendayWindowWarningMessage } from 'appConstants/text';
+import VerticalParametersGroup from 'components/ClaircoIterators/VerticalParametersGroup';
+import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 interface WrapperInterfaceProps {
     sensorName: string;
 }
@@ -90,8 +92,9 @@ const PercentageTrendsWrapper: React.FC<WrapperInterfaceProps> = ({ sensorName }
     const handleWarningModal = () => {
         setWarningModal((prev) => !prev);
     };
-    const changeGraphParameter = async (parameter: string, index: number) => {
+    const changeGraphParameter = async (parameter?: string, index?: number) => {
         try {
+            if (!parameter) return;
             setSelectedParam(parameter);
             const data = createDataForStacked2(rawData ?? [], parameter);
             setData(data?.series ?? []);
@@ -148,7 +151,13 @@ const PercentageTrendsWrapper: React.FC<WrapperInterfaceProps> = ({ sensorName }
             <Row className="d-flex">
                 {/* Parameters */}
                 <Col className="my-auto" sm={12} lg={3}>
-                    {parameters?.map((parameter, index) => {
+                    <VerticalParametersGroup
+                        parameters={parameters ?? []}
+                        selectedParameter={selectedParam ?? ''}
+                        onSelectFn={changeGraphParameter}
+                        parameterDisplayNames={ParamNameForDisplay}
+                    />
+                    {/* {parameters?.map((parameter, index) => {
                         return (
                             <div
                                 style={{
@@ -194,7 +203,7 @@ const PercentageTrendsWrapper: React.FC<WrapperInterfaceProps> = ({ sensorName }
                                 </div>
                             </div>
                         );
-                    })}
+                    })} */}
                 </Col>
                 <Col sm={12} md={8} style={{ height: '550px' }}>
                     {!isLoading ? (
@@ -205,7 +214,7 @@ const PercentageTrendsWrapper: React.FC<WrapperInterfaceProps> = ({ sensorName }
                             colors={['#59e759', '#129F17', '#E7E75F', '#f39c12', '#e74c3c']}
                         />
                     ) : (
-                        <TableSkelton />
+                        <TableSkelton2 />
                     )}
                 </Col>
             </Row>

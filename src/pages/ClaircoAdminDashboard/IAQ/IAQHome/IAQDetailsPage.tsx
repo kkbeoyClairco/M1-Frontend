@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import IAQDeviseTable from './IAQDeviceTables';
 import IAQDeviseTable2 from './IAQDeviceTables2';
@@ -30,6 +30,7 @@ const IAQDetailsPage = () => {
         buildings: selectTagType[];
         floors: selectTagType[];
     } | null>(null);
+
     const { buildingId = '' } = getUserIdFromSession();
     const isAdmin1 = isAdmin();
 
@@ -89,7 +90,7 @@ const IAQDetailsPage = () => {
     useEffect(() => {
         const data = dummyData?.access?.[0] ?? {};
         const { buildings, floors } = extractBuildings(data);
-        console.log('building data', buildings, floors);
+        // console.log('building data', buildings, floors);
         setUserAssignedAssets({ buildings, floors });
         fetchAlerts();
     }, []);
@@ -111,11 +112,15 @@ const IAQDetailsPage = () => {
                 </Col>
             </Row>
             <Row className="mx-2 rounded-lg">
-                <IAQDeviseTable2
-                    setTotalDevices={setTotalDevices}
-                    setOfflineCount={setOfflineCount}
-                    data={userAssignedAssets}
-                />
+                {isAdmin1 ? (
+                    <IAQDeviseTable setTotalDevices={setTotalDevices} />
+                ) : (
+                    <IAQDeviseTable2
+                        setTotalDevices={setTotalDevices}
+                        setOfflineCount={setOfflineCount}
+                        data={userAssignedAssets}
+                    />
+                )}
             </Row>
         </>
     );

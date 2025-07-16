@@ -84,7 +84,8 @@ const StackedBarChart = ({ parameters, xAxisData, data, colors }: any) => {
     };
     // console.log('series', series);
     return (
-        <div className="d-flex justify-content-center align-items-center">
+        // <div className="d-flex justify-content-center align-items-center">
+        <div className="chart-container ">
             {' '}
             <ReactEcharts option={option} style={{ height: '35em', width: '60em' }} className="responsive-echart" />
         </div>

@@ -20,6 +20,8 @@ import WarningModal from 'components/ClaircoModals/Warnings/WarningModal';
 // './components/ClaircoModals/Warnings/WarningModal';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import { SevendayWindowWarningMessage } from 'appConstants/text';
+import VerticalParametersGroup from 'components/ClaircoIterators/VerticalParametersGroup';
+import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 
 const LevelChartsWrapper = ({ sensorName }: any) => {
     const [data, setData] = React.useState<Record<string, any>>({});
@@ -29,9 +31,9 @@ const LevelChartsWrapper = ({ sensorName }: any) => {
     const [endDate, setEndDate] = useState<Date>(new Date());
     const [warningModal, setWarningModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const changeGraphParamer = async (parameter: string, index: number) => {
+    const changeGraphParameter = async (parameter?: string) => {
         try {
-            setSelectedParam(parameter);
+            if (parameter) setSelectedParam(parameter);
         } catch (error) {
             console.log(error);
         }
@@ -144,7 +146,13 @@ const LevelChartsWrapper = ({ sensorName }: any) => {
             <Row className="d-flex">
                 {/* Parameters */}
                 <Col className="my-auto" sm={12} lg={3}>
-                    {parameters?.map((parameter, index) => {
+                    <VerticalParametersGroup
+                        parameters={parameters ?? []}
+                        selectedParameter={selectedParam ?? ''}
+                        onSelectFn={changeGraphParameter}
+                        parameterDisplayNames={ParamNameForDisplay}
+                    />
+                    {/* {parameters?.map((parameter, index) => {
                         return (
                             <div
                                 style={{
@@ -190,7 +198,7 @@ const LevelChartsWrapper = ({ sensorName }: any) => {
                                 </div>
                             </div>
                         );
-                    })}
+                    })} */}
                 </Col>
                 <Col sm={12} md={8} style={{ height: '550px' }}>
                     {!isLoading ? (
@@ -199,7 +207,7 @@ const LevelChartsWrapper = ({ sensorName }: any) => {
                             xAxis={data?.[selectedParam]?.timestamps ?? []}
                         />
                     ) : (
-                        <TableSkelton />
+                        <TableSkelton2 />
                     )}
                 </Col>
             </Row>

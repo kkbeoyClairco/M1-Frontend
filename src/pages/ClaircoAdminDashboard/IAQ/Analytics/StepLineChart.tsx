@@ -71,7 +71,7 @@ const StepLineChart = ({ series, xAxis }: any) => {
         // console.log('Series', series);
     }, []);
     return (
-        <div className="d-flex justify-content-center align-items-center">
+        <div className="chart-container ">
             {' '}
             <ReactEcharts option={option} style={{ height: '35em', width: '60em' }} className="responsive-echart" />
         </div>

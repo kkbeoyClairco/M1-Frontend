@@ -48,5 +48,5 @@ export const iconConstant = {
 };
 
 export const serverDomains = {
-    flask: `https://flask.claircoair.com`,
+    flask: `https://flask.claircoair.com/api/v1`,
 };

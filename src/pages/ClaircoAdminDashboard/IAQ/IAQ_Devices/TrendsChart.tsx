@@ -13,6 +13,8 @@ import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import { iaqParameters } from 'appConstants/iaqConstants';
 import SkeltonLoader from 'components/ClaircoCustomer/Skeltons/SkeltonLoader';
 import LeanParallelSketon from 'components/ClaircoCustomer/Skeltons/LeanParallelSketon';
+import VerticalParametersGroup from 'components/ClaircoIterators/VerticalParametersGroup';
+import HorizontalButtonGroup1 from 'components/ClaircoButtons/HorizontalButtonGroup1';
 
 const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
     const timeGrouingConstants: { [key: string]: string } = {
@@ -73,9 +75,9 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
             return [];
         }
     };
-    const changeGraphState = async (current: string) => {
+    const changeGraphState = async (current?: string | number) => {
         try {
-            setGraphState(graphOptions[current]);
+            if (current) setGraphState(graphOptions[current]);
         } catch (error) {
             console.log(error);
         }
@@ -303,18 +305,18 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
         }
     };
 
-    const changeGraphParamer = async (parameter: string, index: number) => {
+    const changeGraphParamer = async (parameter?: string, index?: number) => {
         try {
-            setGraphPara(parameter);
-            setGraphLinecolour(Object.values(coloursTable)[index]);
-            // console.log(parameter === 'e' ? pm1 : '');
+            // console.log('Nw para', parameter);
+            if (parameter !== undefined) setGraphPara(parameter);
+            if (index !== undefined) setGraphLinecolour(Object.values(coloursTable)[index]);
         } catch (error) {
             console.log(error);
         }
     };
     const handleDownloadModal = async () => {
         try {
-            console.log('download clicked');
+            // console.log('download clicked');
             setDownloadModal((currentState) => !currentState);
         } catch (error) {
             console.log(error);
@@ -457,7 +459,14 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                             </div>
                             <Row style={{ justifyContent: 'end' }}>
                                 <Col lg={3} xs={12} style={{ justifyContent: 'end' }}>
-                                    <ButtonGroup className="w-100 mb-2">
+                                    <HorizontalButtonGroup1
+                                        choices={Object.keys(graphOptions)}
+                                        currentState={graphState}
+                                        onSelectFn={changeGraphState}
+                                        choicesDisplayNames={graphOptions}
+                                    />
+
+                                    {/* <ButtonGroup className="w-100 mb-2">
                                         {Object.keys(graphOptions).map((option) => {
                                             return (
                                                 <Button // disabled={key !== 'a'}
@@ -468,14 +477,14 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                                     onClick={(e) => changeGraphState(option)}
                                                     style={{
                                                         background:
-                                                            graphState == graphOptions[option] ? '#00695C' : '#008675',
+                                                            graphState === graphOptions[option] ? '#00695C' : '#008675',
                                                         border: '0px',
                                                     }}>
                                                     {graphOptions[option] === 'aggregated' ? '7 Day' : 'Live'}
                                                 </Button>
                                             );
                                         })}
-                                    </ButtonGroup>{' '}
+                                    </ButtonGroup>{' '} */}
                                 </Col>
                             </Row>
 
@@ -497,6 +506,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                                             timeGroup == timeGrouingConstants[key]
                                                                 ? '#00695C'
                                                                 : '#008675',
+
                                                         border: '0px',
                                                         // flex: '1 1 auto',
 
@@ -512,57 +522,11 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                     {/* Parameter selection area */}
                                     <div className="flex-container">
                                         <div className="parameter-container" style={{ paddingTop: '20px' }}>
-                                            {!isLoading ? (
-                                                Object.keys(apiParams)?.map((parameter, index) => {
-                                                    return (
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                padding: '0.35em',
-                                                                paddingLeft: '2em',
-                                                            }}
-                                                            onClick={() => changeGraphParamer(String(parameter), index)}
-                                                            key={parameter}>
-                                                            {' '}
-                                                            <div
-                                                                style={{
-                                                                    background: Object.values(coloursTable)[index],
-                                                                    height: '0.75em',
-                                                                    width: '0.75em',
-                                                                    borderRadius: '5px',
-                                                                    marginRight: '1em',
-                                                                }}></div>
-                                                            <div
-                                                                className="form-check"
-                                                                style={{
-                                                                    paddingLeft: '20px',
-                                                                    marginTop: '0.25em',
-                                                                    // paddingTop: '0.35em',
-                                                                    paddingBottom: '0px',
-                                                                    justifyContent: 'center',
-                                                                    alignItems: 'center',
-                                                                }}>
-                                                                <input
-                                                                    className="form-check-input"
-                                                                    type="radio"
-                                                                    name="flexRadioDefault"
-                                                                    id={`param-${parameter}`}
-                                                                    // onClick={() => changeGraphParamer(parameter)}
-                                                                    checked={graphPara === parameter}
-                                                                />
-                                                                <label
-                                                                    className="form-check-label"
-                                                                    htmlFor={`param-${parameter}`}>
-                                                                    {String(parameter)}
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })
-                                            ) : (
-                                                <LeanParallelSketon />
-                                            )}
+                                            <VerticalParametersGroup
+                                                parameters={Object.values(apiParams)}
+                                                selectedParameter={graphPara ?? ''}
+                                                onSelectFn={changeGraphParamer}
+                                            />
                                         </div>{' '}
                                     </div>
                                 </Col>

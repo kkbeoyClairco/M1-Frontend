@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CellFormatter, Table } from 'components';
 // import { data as Sites } from './data';
 
@@ -97,14 +97,15 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
             if (response?.data?.records?.length === 0) setIsEmpty(true);
             let filtered = response?.data?.records; //Unfiltered
             getBuildingAndFloorList(filtered); //Populates the building and floor list for Selection
-            ////Saved Filters
+            // console.log('IAQ device List', filtered); ////Saved Filters
+
             // const filtersSaved = getDataFromSession(sessionKeys.IAQFilterKey);
 
             // if (filtersSaved) {
             //     filtered = filterData(filtersSaved, filtered);
             //     console.log('filtered', filtered);
             // }
-            setTableData(response?.data?.records || []);
+            setTableData(response?.data?.records ?? []);
             setDeviceExists(response?.data?.records?.length > 0 ? true : false);
             setIsLoading(false);
             setTotalDevices(response?.data?.records?.length);
@@ -318,12 +319,6 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
         },
 
         {
-            Header: 'Location',
-            accessor: 'buildingId.location',
-            defaultCanSort: false,
-        },
-
-        {
             Header: 'Device',
             accessor: 'name',
             defaultCanSort: true,
@@ -377,6 +372,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
             storeDataToSession(sessionKeys.IAQFilterKey, JSON.stringify(filter));
         }
     }, [filter]);
+
     return (
         <>
             {downloadModal && (

@@ -8,6 +8,7 @@ import { Button, ButtonGroup, Card, Col, Row } from 'react-bootstrap';
 // import { convertUnixToIST } from 'utils/timeFunctions';
 import LevelChartsWrapper from './LevelChartsWrapper';
 import PercentageTrendsWrapper from './PercentageTrendsWrapper';
+import HorizontalButtonGroup1 from 'components/ClaircoButtons/HorizontalButtonGroup1';
 
 const graphOptions = {
     Trends: 'Trends',
@@ -15,12 +16,12 @@ const graphOptions = {
 };
 const AnalyticsCharts = ({ sensorName }: any) => {
     const [graphState, setGraphState] = useState<string>(graphOptions.Trends);
-    const changeGraphState = (newGraphState: string) => {
-        setGraphState(newGraphState);
+    const changeGraphState = (newGraphState?: string | number) => {
+        if (newGraphState) setGraphState(String(newGraphState));
     };
 
     return (
-        <Card>
+        <Card style={{ color: 'black' }}>
             <Card.Body>
                 <Row>
                     {' '}
@@ -30,24 +31,49 @@ const AnalyticsCharts = ({ sensorName }: any) => {
                 </Row>
                 <Row style={{ justifyContent: 'end' }}>
                     <Col lg={3} xs={12} style={{ justifyContent: 'end' }}>
-                        <ButtonGroup className="w-100 mb-2">
+                        <HorizontalButtonGroup1
+                            choices={Object.keys(graphOptions)}
+                            currentState={graphState}
+                            onSelectFn={changeGraphState}
+                        />
+                        {/* <ButtonGroup className="w-100 mb-2">
                             {(Object.keys(graphOptions) as Array<keyof typeof graphOptions>).map((option) => {
+                                const isActive = graphState === graphOptions[option];
+
                                 return (
-                                    <Button // disabled={key !== 'a'}
-                                        // variant="primary"
-                                        // className="btn btn-outline-info"
+                                    <Button
+                                        active={isActive}
                                         key={option}
                                         //  active={graphState === option}
                                         onClick={() => changeGraphState(option)}
                                         style={{
-                                            background: graphState === graphOptions[option] ? '#00695C' : '#008675',
-                                            border: '0px',
+                                            background: isActive ? '#00695C' : '#008675',
+                                            color: '#fff',
+
+                                            // borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            border: isActive ? '2px solid #008675' : '1px solid #eee', // colored border
+                                            fontWeight: isActive ? 'bold' : 500,
+                                            boxShadow: isActive ? '0 2px 8px rgba(0,105,92,0.08)' : 'none',
+                                            outline: 'none',
+                                            marginRight: 0,
+                                            transition: 'background 0.2s, border 0.2s',
+                                        }}
+                                        onMouseOver={(e) => {
+                                            (e.currentTarget as HTMLButtonElement).style.background = isActive
+                                                ? '#00564d'
+                                                : '#009688';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            (e.currentTarget as HTMLButtonElement).style.background = isActive
+                                                ? '#00695C'
+                                                : '#008675';
                                         }}>
                                         {graphOptions[option]}
                                     </Button>
                                 );
                             })}
-                        </ButtonGroup>{' '}
+                        </ButtonGroup>{' '} */}
                     </Col>
                 </Row>
                 <Row className=" d-flex justify-content-end">

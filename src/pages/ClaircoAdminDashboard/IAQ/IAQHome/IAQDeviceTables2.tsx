@@ -92,7 +92,7 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
         navigate(url);
     };
     //API Call
-    const getIAQData = async (buildingId: string) => {
+    const getIAQData = async (buildingId?: string) => {
         try {
             if (!buildingId) return;
             setIsLoading(true);
@@ -288,12 +288,6 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
         },
 
         {
-            Header: 'Location',
-            accessor: 'buildingId.location',
-            defaultCanSort: false,
-        },
-
-        {
             Header: 'Device',
             accessor: 'name',
             defaultCanSort: true,
@@ -335,7 +329,7 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
         const defaultBuilding = data?.buildings?.[0];
         if (!defaultBuilding) return;
         setBuildingSelected(defaultBuilding);
-        getIAQData('6749af13981e4477ca8adecb');
+        getIAQData();
         const filteredFloors = data?.floors?.filter((doc: any) => doc.buildingId === defaultBuilding?.value);
         const buildingsList = data?.buildings;
         const floorsList = filteredFloors;

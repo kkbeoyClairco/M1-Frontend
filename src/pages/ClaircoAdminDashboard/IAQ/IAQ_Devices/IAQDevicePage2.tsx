@@ -1,6 +1,6 @@
 import PageHeading from 'components/ClaircoCustomerDashboard/Headings/PageHeading';
 import UnitSelectedWidget from 'components/ClaircoCustomerDashboard/Widgets/UnitSelectedWidget';
-import { useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Card, Col, Row } from 'react-bootstrap';
 import GaugeChartIAQ from 'components/ClaircoGauges/AQI/NewGauges/GaugeChartIAQ';
 import GaugeChartVOC from 'components/ClaircoGauges/AQI/NewGauges/GaugeChartVOC';
@@ -9,12 +9,12 @@ import Alerts from './Alerts';
 import TempeartureIcon from 'assets/icons/thermometer.png';
 import Humidity from 'assets/icons/weather.png';
 import CarbonDioxide from 'assets/icons/co2-cloud.png';
-import lodash from 'lodash';
+import lodash, { divide } from 'lodash';
 
 import Select from 'react-select';
 
 // import InteractiveBackgroundWidget from 'components/ClaircoCustomerDashboard/Widgets/InteractiveBackgroundWidget';
-import TrendsChart from './TrendsChart';
+// import TrendsChart from './TrendsChart';
 import { getIaqData } from 'helpers/api/services/Clairco/customerSide/iaq';
 import { deviceTypeId, deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 import { convertUnixToIST } from 'utils/timeFunctions';
@@ -32,8 +32,10 @@ import InteractiveBackgroundWidgetB from 'components/ClaircoCustomerDashboard/Wi
 import PlainWidgetWithTwoParameters2 from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithTwoParameters2';
 import CardLoadingSkelton from 'components/ClaircoSkeltonLoaders/CardLoadingSkelton';
 import ErrorComponent from './ErrorComponent';
-import AnalyticsWrapper from '../Analytics/AnalyticsChart';
-
+import SimpleLoadingIndicator from 'components/ClaircoSkeltonLoaders/SimpleLoadingIndicator';
+import SpinningLoader from 'components/ClaircoSkeltonLoaders/SpinningLoader';
+const AnalyticsWrapper = React.lazy(() => import('../Analytics/AnalyticsChart'));
+const TrendsChart = React.lazy(() => import('./TrendsChart'));
 interface CardData {
     aqi?: number;
     temp?: number;
@@ -86,7 +88,9 @@ const IAQDevicePage = () => {
     const [buildingId, setBuildingId] = useState<string>('');
     const [error, setError] = useState<boolean>(false);
     const [columnSize, setColumnSize] = useState<number>(3);
-
+    const [isVisible, setIsVisible] = useState<Record<string, boolean>>({ a: false, b: false });
+    const chartRefA = useRef<HTMLDivElement>(null);
+    const chartRefB = useRef<HTMLDivElement>(null);
     let timerId: ReturnType<typeof setTimeout>;
     const { buildingId: buildingId1 = '' } = getUserIdFromSession();
 
@@ -196,7 +200,7 @@ const IAQDevicePage = () => {
                 sensorName,
                 deviceTypeId: Id,
             });
-            console.log('Response', response);
+            // console.log('Response', response);
 
             const data = response?.data?.[0] ?? {};
             // const data = sampleTableTestData[0] as any;
@@ -464,9 +468,39 @@ const IAQDevicePage = () => {
         setBuildingId(buildingId);
         setLocationInfo({ floor, location: locationName, sensorName: name, building });
     }, [location]);
-    // useEffect(() => {
-    //     // console.log('Filter status', showFilters);
-    // }, [showFilters]);
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                console.log('Observer entries', entries);
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        if (entry.target === chartRefA.current) {
+                            setIsVisible((prev) => ({ ...prev, a: true }));
+                        }
+                        if (entry.target === chartRefB.current) {
+                            setIsVisible((prev) => ({ ...prev, b: true }));
+                        }
+                    }
+                });
+                if (chartRefA.current) observer.observe(chartRefA.current);
+                if (chartRefB.current) observer.observe(chartRefB.current);
+
+                // if (entry.isIntersecting) {
+                //     setIsVisible((prev) => ({ ...prev, b: true }));
+                // }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (chartRefA.current) {
+            observer.observe(chartRefA.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+    useEffect(() => {
+        console.log('Chart Visible State', isVisible);
+    }, [isVisible]);
     return (
         <>
             {/* {toolTipState &&  */}
@@ -531,8 +565,8 @@ const IAQDevicePage = () => {
                 {isLoading
                     ? Array(7)
                           .fill(0)
-                          .map(() => (
-                              <Col xxl={3} md={6}>
+                          .map((_, idx) => (
+                              <Col key={idx} xxl={3} md={6}>
                                   <CardLoadingSkelton />
                               </Col>
                           ))
@@ -628,49 +662,20 @@ const IAQDevicePage = () => {
                         />
                     </Col>
                 ) : null}
-                {/* Playground */}
-                {/* <Col xxl={3} md={6}>
-                    <Card
-                        style={{ width: '100%', height: '50%', maxHeight: '23.5em', margin: '0px', overflow: 'clip' }}>
-                        {' '}
-                        <Card.Body style={{ padding: '0' }}>
-                            <div
-                                className="h-25"
-                                style={{
-                                    display: 'flex',
-                                    padding: '0px',
-                                    justifyContent: 'center',
-                                    alignItems: 'start',
-                                }}>
-                                <h5 style={{ padding: '10px', paddingLeft: '15px' }}>{'name'}</h5>{' '}
-                                <div
-                                    // className="mt-2"
-                                    style={{ display: 'flex', alignItems: 'center', marginTop: '18px' }}>
-                                    {' '}
-                                    ji{' '}
-                                </div>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Col> */}
             </Row>
-            {/* <Row>
-                {' '}
-                <InteractiveBackgroundWidgetB
-                    name={'CO₂'}
-                    value={cardData.co2 ?? '-'}
-                    unit={'ppm'}
-                    lastUpdated={lastUpdated ?? ''}
-                    icon={CarbonDioxide}
-                    infoClickFn={handleOnHover}
-                    infoClickName={'CO2'}
-                />
-            </Row> */}{' '}
-            <Row style={{ marginLeft: '10px' }}>
-                <AnalyticsWrapper sensorName={sensorName} />
+
+            <Row style={{ marginLeft: '10px' }} ref={chartRefA}>
+                {/* <AnalyticsWrapper sensorName={sensorName} /> */}
+                <Suspense fallback={<SpinningLoader />}>
+                    {isVisible.a && <AnalyticsWrapper sensorName={sensorName} />}{' '}
+                </Suspense>
             </Row>
-            <Row style={{ marginLeft: '10px' }}>
-                <TrendsChart sensorName={sensorName} deviceId={deviceId} buildingId={buildingId} />
+            <Row style={{ marginLeft: '10px' }} ref={chartRefB}>
+                {/* <TrendsChart sensorName={sensorName} deviceId={deviceId} buildingId={buildingId} /> */}
+
+                <Suspense fallback={<SpinningLoader />}>
+                    {isVisible.b && <TrendsChart sensorName={sensorName} deviceId={deviceId} buildingId={buildingId} />}{' '}
+                </Suspense>
             </Row>
         </>
     );
