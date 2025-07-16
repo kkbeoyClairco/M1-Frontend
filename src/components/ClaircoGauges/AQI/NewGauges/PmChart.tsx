@@ -277,7 +277,7 @@ const PMChart = ({ data, lastUpdated, infoClickFn }: any) => {
         [data]
     );
     return (
-        <Card style={{ width: '100%' }}>
+        <Card style={{ width: '100%', color: 'black' }}>
             {/* style={{ height: '417px' }} */}
             <Card.Body style={{ padding: '0' }}>
                 <div style={{ display: 'flex', padding: '0px', justifyContent: 'center', alignItems: 'center' }}>

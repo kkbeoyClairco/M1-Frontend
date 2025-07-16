@@ -49,7 +49,7 @@ const PlainWidgetWithTwoParameters2 = ({
         }
     };
     return (
-        <Card className="h-100" style={{ maxHeight: '23.5em' }}>
+        <Card className="h-100" style={{ maxHeight: '23.5em', color: 'black' }}>
             <Card.Body className="pb-2">
                 <Row className="h-25">
                     <div

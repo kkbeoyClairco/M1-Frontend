@@ -169,7 +169,7 @@ const GaugeChartVOC: React.FC<GaugeChartProps> = ({ property, value, deviceName,
     };
 
     return (
-        <Card style={{ width: '100%' }}>
+        <Card style={{ width: '100%', color: 'black' }}>
             {/* style={{ height: '417px' }} */}
             <Card.Body style={{ padding: '0' }}>
                 <div

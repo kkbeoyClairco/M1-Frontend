@@ -128,7 +128,7 @@ const GaugeChartIAQ: React.FC<GaugeChartProps> = ({ property, value, deviceName,
     //     if (fanSpeed !== value) setFanSpeed(value);
     // }, [value]);
     return (
-        <Card style={{ width: '100%', height: '23.5em' }}>
+        <Card style={{ width: '100%', height: '23.5em', color: 'black' }}>
             {/* style={{ height: '417px' }} */}
             <Card.Body style={{ padding: '0' }}>
                 <div style={{ display: 'flex', padding: '0px', justifyContent: 'center', alignItems: 'center' }}>

@@ -32,6 +32,7 @@ const InteractiveBackgroundWidgetB: React.FC<InteractiveBackgroundWidgetProps> =
                 margin: '0px',
                 minHeight: '10em',
                 flexGrow: '1',
+                color: 'black',
             }}>
             {/* style={{ height: '417px' }} */}
             <Card.Body style={{ padding: '0' }}>
