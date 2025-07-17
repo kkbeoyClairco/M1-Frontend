@@ -17,7 +17,6 @@ import { getDevices } from 'redux/actions';
 import { iconConstant } from 'appConstants/claircoConstants';
 import { getUserDetailsFromSession, getUserIdFromSession, isAdmin } from 'utils/storageFunctions';
 import AlertsModal from './AlertsModal';
-import { dummyData } from '../IAQ_Devices/test';
 import { selectTagType } from 'types/selectTagType';
 
 const IAQDetailsPage = () => {
@@ -88,10 +87,10 @@ const IAQDetailsPage = () => {
         }
     };
     useEffect(() => {
-        const data = dummyData?.access?.[0] ?? {};
-        const { buildings, floors } = extractBuildings(data);
-        // console.log('building data', buildings, floors);
-        setUserAssignedAssets({ buildings, floors });
+        // const data = dummyData?.access?.[0] ?? {};
+        // const { buildings, floors } = extractBuildings(data);
+        // // console.log('building data', buildings, floors);
+        // setUserAssignedAssets({ buildings, floors });
         fetchAlerts();
     }, []);
 

@@ -61,34 +61,34 @@ const MENU_ITEMS: MenuItemType[] = [
 ];
 
 const CUSTOMER_MENU_ITEMS: MenuItemType[] = [
-    {
-        key: 'Dashboard',
-        label: 'Dashboard',
-        isTitle: false,
-        icon: ' uil-home-alt',
-        url: 'dashboard',
-    },
-    {
-        key: 'Energy Meter',
-        label: 'Energy Meter',
-        isTitle: false,
-        icon: 'uil-tachometer-fast',
-        url: 'energymeter',
-    },
-    {
-        key: 'outdoor',
-        label: 'Outdoor Units',
-        isTitle: false,
-        icon: 'uil-exchange-alt',
-        url: 'outdoor-devices',
-    },
-    {
-        key: 'indoor',
-        label: 'Indoor Units',
-        isTitle: false,
-        icon: 'uil-exchange-alt',
-        url: 'indoor-devices',
-    },
+    // {
+    //     key: 'Dashboard',
+    //     label: 'Dashboard',
+    //     isTitle: false,
+    //     icon: ' uil-home-alt',
+    //     url: 'dashboard',
+    // },
+    // {
+    //     key: 'Energy Meter',
+    //     label: 'Energy Meter',
+    //     isTitle: false,
+    //     icon: 'uil-tachometer-fast',
+    //     url: 'energymeter',
+    // },
+    // {
+    //     key: 'outdoor',
+    //     label: 'Outdoor Units',
+    //     isTitle: false,
+    //     icon: 'uil-exchange-alt',
+    //     url: 'outdoor-devices',
+    // },
+    // {
+    //     key: 'indoor',
+    //     label: 'Indoor Units',
+    //     isTitle: false,
+    //     icon: 'uil-exchange-alt',
+    //     url: 'indoor-devices',
+    // },
     {
         key: 'IAQ',
         label: 'IAQ',
@@ -96,28 +96,28 @@ const CUSTOMER_MENU_ITEMS: MenuItemType[] = [
         icon: 'uil-refresh',
         url: 'iaq',
     },
-    {
-        key: 'Occupancy',
-        label: 'Occupancy',
-        isTitle: false,
-        icon: 'uil-sitemap',
-        url: 'occupancy',
-    },
-    {
-        key: 'AHU',
-        label: 'AHU',
-        isTitle: false,
-        icon: 'uil-wind',
-        url: 'ahu',
-    },
+    // {
+    //     key: 'Occupancy',
+    //     label: 'Occupancy',
+    //     isTitle: false,
+    //     icon: 'uil-sitemap',
+    //     url: 'occupancy',
+    // },
+    // {
+    //     key: 'AHU',
+    //     label: 'AHU',
+    //     isTitle: false,
+    //     icon: 'uil-wind',
+    //     url: 'ahu',
+    // },
 
-    {
-        key: 'Control-Logs',
-        label: 'Control-Logs',
-        isTitle: false,
-        icon: 'uil-list-ul',
-        url: 'control-logs',
-    },
+    // {
+    //     key: 'Control-Logs',
+    //     label: 'Control-Logs',
+    //     isTitle: false,
+    //     icon: 'uil-list-ul',
+    //     url: 'control-logs',
+    // },
 ];
 
 export { MENU_ITEMS, CUSTOMER_MENU_ITEMS };
