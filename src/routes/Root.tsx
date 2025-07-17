@@ -1,26 +1,28 @@
+import { checkIAQCustomer, checkUVCustomer, getAssignedDeviceType } from 'helpers/user';
 import { useUser } from 'hooks';
 import { useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 const Root = () => {
     const [loggedInUser] = useUser();
-    // console.log('Logged in user', loggedInUser);
-    const deviceTypes = loggedInUser?.user?.assignedDeviceTypes?.map(({ deviceTypeName }: any) => deviceTypeName);
-    const isAdmin = loggedInUser?.user?.globalAdmin === true && loggedInUser?.user?.type === 'Admin';
-    const iaqUser = useMemo(() => deviceTypes?.includes('IAQ') || isAdmin, [deviceTypes, isAdmin]);
-    const getRootUrl = () => {
+    const deviceTypes = useMemo(() => getAssignedDeviceType(loggedInUser), [loggedInUser]);
+    const isAdmin = loggedInUser?.user?.type === 'Admin';
+    const iaqUser = useMemo(
+        () => checkIAQCustomer(deviceTypes) || checkUVCustomer(deviceTypes) || isAdmin,
+        [deviceTypes, isAdmin]
+    );
+    const getRootUrl = (): string => {
         if (!loggedInUser || !iaqUser) {
             return 'login';
         }
-        // else if (iaqOnlyUser) return `/customer/iaq`;
         switch (loggedInUser?.user?.type) {
-            // case 'Admin':
-            //     return '/admin/pages/admindashboard';
-            // case 'Customer':
-            //     return '/customer/dashboard';
-            default:
-                // console.log('No user');
+            case 'Admin':
                 return '/customer/iaq-home';
-            // '/customer/dashboard';
+            case 'Customer':
+                return '/customer/iaq-home';
+            case 'uvCustomer':
+                return '/customer/uv';
+            default:
+                return '/customer/iaq-home';
         }
     };
 
