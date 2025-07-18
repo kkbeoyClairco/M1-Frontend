@@ -19,6 +19,8 @@ const Root = () => {
                 return '/customer/iaq-home';
             case 'Customer':
                 return '/customer/iaq-home';
+            case 'Building Manager':
+                return '/customer/iaq-home';
             case 'uvCustomer':
                 return '/customer/uv';
             default:

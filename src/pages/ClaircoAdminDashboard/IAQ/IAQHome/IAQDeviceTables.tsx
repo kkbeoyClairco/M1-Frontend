@@ -392,7 +392,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
                     onClose={() => setDeviceCreationModal(false)}
                 />
             )}
-            <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 ">
+            <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 " style={{ color: 'black' }}>
                 <Card.Body>
                     <Row style={{ marginBottom: '1em' }}>
                         <Col xxl={8}>

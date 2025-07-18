@@ -215,10 +215,12 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
             const res = await getIaqAggregate(sensorName, buildingId, deviceId);
             // console.log('Res', res);
             const data = res?.data ?? [];
-            const timeArray = Object.keys(data)
-                ?.reverse()
-                ?.map((time: string | number) => convertUnixToIST(time));
-            const values = Object.values(data)?.reverse();
+            const keys = Object.keys(data ?? [])
+                .map(Number)
+                .sort((a, b) => a - b);
+            const timeArray = keys.map((time) => convertUnixToIST(time));
+            const values = keys.map((key) => data?.[key]);
+
             const tempArray = values.map((doc: any) => roundToOneDecimal(doc?.TEMP)).filter((val: any) => !isNaN(val));
             const humArray = values.map((doc: any) => roundToOneDecimal(doc?.HUM)).filter((val: any) => !isNaN(val));
             const pm25Array = values.map((doc: any) => roundToOneDecimal(doc?.PM25)).filter((val: any) => !isNaN(val));
@@ -245,6 +247,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                 outdoorPm10Array: 'Outdoor PM 10',
                 outdoorPm25Array: 'Outdoor PM 2.5',
             };
+            // console.log("Time array",timeArray)
             const arr = [
                 // { key: 'pm1Array', value: pm1Array },
                 { key: 'pm25Array', value: pm25Array },
@@ -281,7 +284,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
             setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
-            console.log('Error Fetching Agrregate1', error);
+            console.log('Error Fetching Aggregate', error);
             setXAxis([]);
             setTemperature([]);
             sethumidity([]);
@@ -420,7 +423,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
     return (
         <>
             <DownloadModal modalState={downloadModal} modalControlFn={handleDownloadModal} deviceId={deviceId} />
-            <Card style={{ minHeight: '400px' }}>
+            <Card style={{ minHeight: '400px', color: 'black' }}>
                 <Card.Body>
                     <Row>
                         <Tab.Container defaultActiveKey="live">
@@ -461,9 +464,9 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                 <Col lg={3} xs={12} style={{ justifyContent: 'end' }}>
                                     <HorizontalButtonGroup1
                                         choices={Object.keys(graphOptions)}
-                                        currentState={graphState}
+                                        currentState={graphState === 'live' ? 'a' : 'b'}
                                         onSelectFn={changeGraphState}
-                                        choicesDisplayNames={graphOptions}
+                                        choicesDisplayNames={{ a: 'Live', b: 'Aggregate' }}
                                     />
 
                                     {/* <ButtonGroup className="w-100 mb-2">

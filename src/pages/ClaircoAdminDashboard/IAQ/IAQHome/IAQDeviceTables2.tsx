@@ -327,9 +327,10 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
     ];
     useEffect(() => {
         const defaultBuilding = data?.buildings?.[0];
+
         if (!defaultBuilding) return;
         setBuildingSelected(defaultBuilding);
-        getIAQData();
+        getIAQData(defaultBuilding?.value ?? '');
         const filteredFloors = data?.floors?.filter((doc: any) => doc.buildingId === defaultBuilding?.value);
         const buildingsList = data?.buildings;
         const floorsList = filteredFloors;
@@ -345,6 +346,7 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
             storeDataToSession(sessionKeys.IAQFilterKey, JSON.stringify(filter));
         }
     }, [filter]);
+
     return (
         <>
             {downloadModal && (
@@ -357,7 +359,7 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
                 />
             )}
 
-            <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 ">
+            <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 " style={{ color: 'black' }}>
                 <Card.Body>
                     <Row style={{ marginBottom: '1em' }}>
                         <Col xxl={8}>

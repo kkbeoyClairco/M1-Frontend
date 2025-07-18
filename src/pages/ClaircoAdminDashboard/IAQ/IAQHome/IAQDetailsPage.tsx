@@ -36,11 +36,13 @@ const IAQDetailsPage = () => {
     const [alerts, setAlerts] = useState<any>([]);
     const extractBuildings = (data: any) => {
         try {
-            const buildings = data?.buildings?.map((doc: any) => ({
-                label: doc.name,
-                value: doc.id,
-                customerId: data?.customerId,
-            }));
+            const buildings = data?.flatMap((customer: any) =>
+                customer?.buildings?.map((building: any) => ({
+                    label: building.name,
+                    value: building.buildingId,
+                    customerId: customer?.customerId,
+                }))
+            );
 
             const floors = data?.buildings?.reduce((floors: any, current: any) => {
                 const data1 = current?.floors?.map((docF: any) => ({
@@ -87,10 +89,11 @@ const IAQDetailsPage = () => {
         }
     };
     useEffect(() => {
+        const data = getUserDetailsFromSession();
         // const data = dummyData?.access?.[0] ?? {};
-        // const { buildings, floors } = extractBuildings(data);
-        // // console.log('building data', buildings, floors);
-        // setUserAssignedAssets({ buildings, floors });
+        const { buildings, floors } = extractBuildings(data?.access ?? []);
+        // console.log('building data', buildings, floors);
+        setUserAssignedAssets({ buildings, floors });
         fetchAlerts();
     }, []);
 
