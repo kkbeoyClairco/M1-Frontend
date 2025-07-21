@@ -427,9 +427,6 @@ const IAQDevicePage = () => {
         return () => observer.disconnect();
     }, []);
 
-    useEffect(() => {
-        console.log('ocaiton info', locationInfo);
-    }, [locationInfo]);
     return (
         <>
             {/* {toolTipState &&  */}
