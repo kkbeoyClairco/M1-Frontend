@@ -25,9 +25,9 @@ export const getUserIdFromSession = () => {
 export const getUserInfoFromSession = () => {
     try {
         const sessionData = getDataFromSession('USER_DATA');
-        const id = sessionData?.user.id;
-        const type = sessionData.user.type;
-        const customerId = sessionData.user.customerId;
+        const id = sessionData?.user?.id;
+        const type = sessionData?.user?.type;
+        const customerId = sessionData?.user?.customerId;
         return { type, id, customerId };
     } catch (error) {
         return { isAdmin: null, id: null };
@@ -87,5 +87,24 @@ export const storeDataToSession = (key: string, data: any) => {
         sessionStorage.setItem(key, data);
     } catch (error) {
         console.log(error);
+    }
+};
+export const getUserType = () => {
+    try {
+        const data = JSON.parse(sessionStorage?.getItem('USER_DATA') ?? '');
+        const userType = data?.user?.type ?? null;
+        return userType;
+    } catch (error) {
+        return null;
+    }
+};
+
+export const getCurrentUserId = () => {
+    try {
+        const sessionData = sessionStorage.getItem('USER_DATA');
+        return JSON.parse(sessionData ?? '')?.user?.id ?? '';
+    } catch (error) {
+        console.log(error);
+        return '';
     }
 };

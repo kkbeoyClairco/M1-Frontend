@@ -4,11 +4,10 @@ import { CellFormatter, Table } from 'components';
 
 import { Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { deviceTypeId, deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
+import { deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
-import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import { convertUnixToIST } from 'utils/timeFunctions';
-import { getDataFromSession, getUserIdFromSession, isAdmin, storeDataToSession } from 'utils/storageFunctions';
+import { getUserIdFromSession, getUserType, storeDataToSession } from 'utils/storageFunctions';
 // import { URLSearchParams } from 'url';
 // import alertIcon from 'assets/icons/caution.png';
 
@@ -18,9 +17,10 @@ import { sessionKeys } from 'appConstants/sessionKeys';
 import downloadIcon from 'assets/icons/downloads.png';
 import DownloadModal from './DownloadModal';
 import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
-import IAQDeviceCreation from './IAQDeviceCreation';
-import { building } from 'helpers/api/services/Clairco/customer';
-const addIcon = `https://res.cloudinary.com/dlulq6hny/image/upload/v1741001702/plus_u1czew.png`;
+
+import { userType } from 'appConstants/claircoConstants';
+import { getBuidinglListForSelect, getFloorsListForSelect } from 'utils/device/filters';
+// const addIcon = `https://res.cloudinary.com/dlulq6hny/image/upload/v1741001702/plus_u1czew.png`;
 // import { sampleTableTestData } from '../test';
 const placeHolder = {
     customer: 'Select Customer',
@@ -86,9 +86,7 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
         searchParam.append('customerId', customerId);
         searchParam.append('building', buildingName);
         searchParam.append('buildingId', buildingId);
-
         let url = `${searchParam.toString()}`;
-        // console.log('Nav data', data, buildingId, url);
         navigate(url);
     };
     //API Call
@@ -96,102 +94,29 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
         try {
             if (!buildingId) return;
             setIsLoading(true);
+            const currentUserType = getUserType();
+            const isCustomer = currentUserType === userType.Customer;
+            if (isCustomer) buildingId = '';
             const deviceType = deviceTypesConstant.IAQ;
             const response = await fetchDevicesList(deviceType, customerId, '', buildingId ?? '');
-            setIaqList(response?.data?.records); //Sets data as a referece for the filter
-            if (response?.data?.records?.length === 0) setIsEmpty(true);
-            setTableData(response?.data?.records || []);
-            setDeviceExists(response?.data?.records?.length > 0 ? true : false);
+            const data1 = response?.data?.records ?? [];
+            if (data1?.length === 0) setIsEmpty(true);
+            const floors = getFloorsListForSelect(data1);
+
+            setFloorList(floors ?? []);
+            setIaqList(data1);
+            setTableData(data1 || []);
+            //Check this state
+            setDeviceExists(data1?.length > 0 ? true : false);
             setIsLoading(false);
-            setTotalDevices(response?.data?.records?.length);
+            setTotalDevices(data1?.length ?? 0);
         } catch (error) {
             console.log(error);
             setTableData([]);
             setIsLoading(false);
         }
     };
-    // Creates floorList in a format that can be used in the select component
-    const getFloorsListForSelect = (data: any) => {
-        try {
-            const floorMap = new Map();
-            floorMap.set('Others', {
-                value: '',
-                label: 'All',
-            });
-            for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.floorId?.id)
-                    floorMap.set(data?.[i]?.floorId?.id, {
-                        value: data?.[i]?.floorId?.id,
-                        label: data?.[i]?.floorId?.name,
-                    });
-            }
-            const floorList = Array.from(floorMap.values());
-            return floorList;
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
-    // Creates buildingList in a format that can be used in the select component
-    const getBuidinglListForSelect = (data: any) => {
-        try {
-            const buildingMap = new Map();
-            buildingMap.set('Others', {
-                value: '',
-                label: 'All',
-            });
-            for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.buildingId?.id)
-                    buildingMap.set(data?.[i]?.buildingId?.id, {
-                        label: data?.[i]?.buildingId?.name ?? '',
-                        value: data?.[i]?.buildingId?.id ?? '',
-                    });
-            }
-            const buildingList = Array.from(buildingMap.values());
-            return buildingList;
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const getBuildingAndFloorList = (data: any) => {
-        try {
-            // let customerList;
-            // if (isAdminOrNot) {
-            //     customerList = getCustomersListForSelect(data);
-            //     setCutomersList(customerList);
-            // }
-            const buildingList = getBuidinglListForSelect(data);
-            const floorList = getFloorsListForSelect(data);
-
-            setBuildingList(buildingList);
-            setFloorList(floorList);
-            setInfotoModal({
-                // customerList,
-                buildingList,
-                floorList,
-            });
-        } catch (error) {
-            console.log(error);
-            setBuildingList([]);
-            setFloorList([]);
-        }
-    };
-    const filterBuildingsBasedOnCustomer = (customerId: string) => {
-        try {
-            if (!customerId) {
-                const buildingList = getBuidinglListForSelect(iaqList);
-                // console.log('customerId', buildingList);
-                setBuildingList(buildingList ?? []);
-                return;
-            }
-            const filterdBuildings = iaqList.filter((item: any) => item?.customerId?.id === customerId);
-            const buildingList = getBuidinglListForSelect(filterdBuildings);
-            setBuildingList(buildingList ?? []);
-        } catch (error) {
-            console.log(error);
-        }
-    };
     const filterFloorsBasedOnBuilding = (buildingId: string) => {
         try {
             if (!buildingId) {
@@ -208,18 +133,13 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
     };
     const handleFilterSelection = (e: any, state: string) => {
         try {
-            console.log('Fileters', e);
             switch (state) {
                 case 'building':
                     setFilter((currentFilter: any) => ({
                         customerId: e?.customerId,
                         buildingId: { ...e },
                     }));
-                    const filteredFloors = data?.floors?.filter((floor: any) => floor?.buildingId === e?.value);
-                    console.log('Floor Filtered', filteredFloors);
-                    // filterFloorsBasedOnBuilding(e.value);
-                    setFloorList(filteredFloors);
-                    getIAQData(e.value ?? '');
+                    if (e.value !== buildingSelected?.value) getIAQData(e.value ?? '');
                     setBuildingSelected(e);
                     setFloorSelected({});
                     break;
@@ -326,13 +246,15 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
         },
     ];
     useEffect(() => {
-        const defaultBuilding = data?.buildings?.[0];
+        if (!data) return;
+        const defaultBuilding = data?.buildings?.[0] ?? {};
 
-        if (!defaultBuilding) return;
-        setBuildingSelected(defaultBuilding);
+        if (defaultBuilding) setBuildingSelected(defaultBuilding);
+
         getIAQData(defaultBuilding?.value ?? '');
+        if (!defaultBuilding) return;
         const filteredFloors = data?.floors?.filter((doc: any) => doc.buildingId === defaultBuilding?.value);
-        const buildingsList = data?.buildings;
+        const buildingsList = data?.buildings ?? [];
         const floorsList = filteredFloors;
         // buildingsList?.unshift(selectTagAll);
         floorsList?.unshift(selectTagAll);

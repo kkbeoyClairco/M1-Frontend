@@ -24,11 +24,12 @@ import TrendsChart from './TrendsChart';
 import { getIaqData } from 'helpers/api/services/Clairco/customerSide/iaq';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
 import { convertUnixToIST } from 'utils/timeFunctions';
-import { getUserIdFromSession } from 'utils/storageFunctions';
+import { getUserIdFromSession, getUserType } from 'utils/storageFunctions';
 import { roundToDecimal, roundToOneDecimal } from 'utils/maths';
 // Constants
 import { deviceTypeId, deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 import { toast } from 'sonner';
+import { getBuidinglListForSelect, getDeviceListForSelection, getFloorsListForSelect } from 'utils/device/filters';
 interface CardData {
     aqi: number;
     temp: number;
@@ -86,69 +87,73 @@ const IAQDevicePage = () => {
     const location = useLocation();
     // const parentRef = useRef(null);
     const navigate = useNavigate();
-    const getBuidinglListForSelect = (data: any) => {
-        try {
-            const buildingMap = new Map();
-            buildingMap.set('Others', {
-                value: '',
-                label: 'None',
-            });
-            for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.buildingId?.id)
-                    buildingMap.set(data?.[i]?.buildingId?.id, {
-                        label: data?.[i]?.buildingId?.name ?? '',
-                        value: data?.[i]?.buildingId?.id ?? '',
-                    });
-            }
-            const buildingList = Array.from(buildingMap.values());
-            // console.log('Building map', buildingList);
-            return buildingList;
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const getFloorsListForSelect = (data: any) => {
-        try {
-            const floorMap = new Map();
-            floorMap.set('Others', {
-                value: '',
-                label: 'None',
-            });
-            for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.floorId?.id)
-                    floorMap.set(data?.[i]?.floorId?.id, {
-                        value: data?.[i]?.floorId?.id,
-                        label: data?.[i]?.floorId?.name,
-                    });
-            }
-            const floorList = Array.from(floorMap.values());
-            return floorList;
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const getDeviceListForSelection = (data: any) => {
-        try {
-            const deviceList = data?.map((doc: any) => ({
-                label: `${doc?.buildingId?.name + ' / ' + doc?.floorId?.name + ' / ' + doc?.name}`,
-                value: {
-                    name: doc?.name,
-                    buildingName: doc?.buildingId?.name,
-                    locationName: doc?.locationId?.name,
-                    floorName: doc?.floorId?.name,
-                    deviceId: doc?.id,
-                    customerId: doc?.customerId?.id,
-                    buildingId: doc?.buildingId?.id,
-                },
-            }));
-            return deviceList;
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    // const getBuidinglListForSelect = (data: any) => {
+    //     try {
+    //         const buildingMap = new Map();
+    //         buildingMap.set('Others', {
+    //             value: '',
+    //             label: 'None',
+    //         });
+    //         for (let i = 0; i < data.length; i++) {
+    //             if (data?.[i]?.buildingId?.id)
+    //                 buildingMap.set(data?.[i]?.buildingId?.id, {
+    //                     label: data?.[i]?.buildingId?.name ?? '',
+    //                     value: data?.[i]?.buildingId?.id ?? '',
+    //                 });
+    //         }
+    //         const buildingList = Array.from(buildingMap.values());
+    //         // console.log('Building map', buildingList);
+    //         return buildingList;
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+    // const getFloorsListForSelect = (data: any) => {
+    //     try {
+    //         const floorMap = new Map();
+    //         floorMap.set('Others', {
+    //             value: '',
+    //             label: 'None',
+    //         });
+    //         for (let i = 0; i < data.length; i++) {
+    //             if (data?.[i]?.floorId?.id)
+    //                 floorMap.set(data?.[i]?.floorId?.id, {
+    //                     value: data?.[i]?.floorId?.id,
+    //                     label: data?.[i]?.floorId?.name,
+    //                 });
+    //         }
+    //         const floorList = Array.from(floorMap.values());
+    //         return floorList;
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+    // const getDeviceListForSelection = (data: any) => {
+    //     try {
+    //         const deviceList = data?.map((doc: any) => ({
+    //             label: `${doc?.buildingId?.name + ' / ' + doc?.floorId?.name + ' / ' + doc?.name}`,
+    //             value: {
+    //                 name: doc?.name,
+    //                 buildingName: doc?.buildingId?.name,
+    //                 locationName: doc?.locationId?.name,
+    //                 floorName: doc?.floorId?.name,
+    //                 deviceId: doc?.id,
+    //                 customerId: doc?.customerId?.id,
+    //                 buildingId: doc?.buildingId?.id,
+    //             },
+    //         }));
+    //         return deviceList;
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
     // console.log('Sensor Name:', sensorName);
     const getBuildingAndDeviceList = async (customerId: string) => {
         try {
+            if (!customerId) return;
+
+            const userType = getUserType();
+            console.log('Building Id', userType, buildingId1);
             const device = deviceTypesConstant.IAQ;
             const response = await fetchDevicesList(device, customerId, '', buildingId1 ?? '');
             const buildingsList = getBuidinglListForSelect(response?.data ?? []);

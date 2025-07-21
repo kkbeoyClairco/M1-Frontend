@@ -19,6 +19,7 @@ import downloadIcon from 'assets/icons/downloads.png';
 import DownloadModal from './DownloadModal';
 import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 import IAQDeviceCreation from './IAQDeviceCreation';
+import { getBuidinglListForSelect, getCustomersListForSelect, getFloorsListForSelect } from 'utils/device/filters';
 const addIcon = `https://res.cloudinary.com/dlulq6hny/image/upload/v1741001702/plus_u1czew.png`;
 // import { sampleTableTestData } from '../test';
 const placeHolder = {
@@ -113,70 +114,6 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
             console.log(error);
             setTableData([]);
             setIsLoading(false);
-        }
-    };
-    // Creates floorList in a format that can be used in the select component
-    const getFloorsListForSelect = (data: any) => {
-        try {
-            const floorMap = new Map();
-            floorMap.set('Others', {
-                value: '',
-                label: 'All',
-            });
-            for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.floorId?.id)
-                    floorMap.set(data?.[i]?.floorId?.id, {
-                        value: data?.[i]?.floorId?.id,
-                        label: data?.[i]?.floorId?.name,
-                    });
-            }
-            const floorList = Array.from(floorMap.values());
-            return floorList;
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const getCustomersListForSelect = (data: any) => {
-        try {
-            const customerMap = new Map();
-            customerMap.set('Others', {
-                value: '',
-                label: 'All',
-            });
-
-            for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.customerId?.id)
-                    customerMap.set(data?.[i]?.customerId?.id, {
-                        label: data?.[i]?.customerId?.name ?? '',
-                        value: data?.[i]?.customerId?.id ?? '',
-                    });
-            }
-            const customerList = Array.from(customerMap.values());
-            return customerList;
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    // Creates buildingList in a format that can be used in the select component
-    const getBuidinglListForSelect = (data: any) => {
-        try {
-            const buildingMap = new Map();
-            buildingMap.set('Others', {
-                value: '',
-                label: 'All',
-            });
-            for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.buildingId?.id)
-                    buildingMap.set(data?.[i]?.buildingId?.id, {
-                        label: data?.[i]?.buildingId?.name ?? '',
-                        value: data?.[i]?.buildingId?.id ?? '',
-                    });
-            }
-            const buildingList = Array.from(buildingMap.values());
-            return buildingList;
-        } catch (error) {
-            console.log(error);
         }
     };
 
@@ -284,7 +221,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
     };
     const handleAddClick = async () => {
         try {
-            console.log('Add new Click');
+            // console.log('Add new Click');
             setDeviceCreationModal((prev) => !prev);
         } catch (error) {
             console.log(error);
@@ -365,7 +302,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
         }
     }, []);
     useEffect(() => {
-        console.log('Fileters', filter);
+        // console.log('Fileters', filter);
         if (filter.buildingId || filter.floorId || filter.customerId) {
             const filteredData = filterData(filter, iaqList);
             setTableData(filteredData ?? []);

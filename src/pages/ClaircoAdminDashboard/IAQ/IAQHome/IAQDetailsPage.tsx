@@ -14,8 +14,8 @@ import activeIcon from 'assets/icons/check.png';
 
 import alertIcon from 'assets/icons/caution.png';
 import { getDevices } from 'redux/actions';
-import { iconConstant } from 'appConstants/claircoConstants';
-import { getUserDetailsFromSession, getUserIdFromSession, isAdmin } from 'utils/storageFunctions';
+import { iconConstant, userType } from 'appConstants/claircoConstants';
+import { getUserDetailsFromSession, getUserIdFromSession, getUserType, isAdmin } from 'utils/storageFunctions';
 import AlertsModal from './AlertsModal';
 import { selectTagType } from 'types/selectTagType';
 
@@ -32,7 +32,7 @@ const IAQDetailsPage = () => {
 
     const { buildingId = '' } = getUserIdFromSession();
     const isAdmin1 = isAdmin();
-
+    const isTypeCustomer = getUserType() === userType.Customer;
     const [alerts, setAlerts] = useState<any>([]);
     const extractBuildings = (data: any) => {
         try {
@@ -114,7 +114,7 @@ const IAQDetailsPage = () => {
                 </Col>
             </Row>
             <Row className="mx-2 rounded-lg">
-                {isAdmin1 ? (
+                {isAdmin1 || isTypeCustomer ? (
                     <IAQDeviseTable setTotalDevices={setTotalDevices} />
                 ) : (
                     <IAQDeviseTable2

@@ -27,7 +27,6 @@ const Logout = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     useLogout();
-    sessionStorage.removeItem('USER_DATA');
     useEffect(() => {
         const timerId = setTimeout(() => {
             navigate('/login');

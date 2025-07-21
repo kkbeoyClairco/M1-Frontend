@@ -25,3 +25,23 @@ export const checkUVCustomer = (deviceTypes: string[] | undefined | null): boole
         return false;
     }
 };
+
+export const getAssignedBuildings = (data: any) => {
+    try {
+        if (!data || !Array.isArray(data)) return [];
+        const builldings = data?.flatMap((customer: any) =>
+            Array.isArray(customer?.buildings)
+                ? customer?.buildings
+                      .filter(
+                          (building: any) =>
+                              Array.isArray(building?.deviceType) &&
+                              building.deviceType.some((device: any) => device.type === 'IAQ')
+                      )
+                      .map((building: any) => ({ lable: building?.name, value: building?.buildingId }))
+                : []
+        );
+        return builldings;
+    } catch (error) {
+        return [];
+    }
+};

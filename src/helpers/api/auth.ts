@@ -8,15 +8,15 @@ function login(params: { email: string; password: string }) {
 }
 function sensiablelogin(params: { email: string; password: string }) {
     const baseUrl = '/login';
-    console.log(baseUrl);
+    // console.log(baseUrl);
     return api.create(`${baseUrl}`, params);
 }
 function claircoCustomerlogin(credentials: { email: string; password: string }) {
     return api.create(`${endPoints.ADMIN_lOGIN}`, credentials);
 }
-function logout() {
-    const baseUrl = '/logout/';
-    return api.create(`${baseUrl}`, {});
+function logout(id?: string) {
+    const baseUrl = '/logout';
+    return api.create(`${baseUrl}`, { userId: id });
 }
 
 function signup(params: { fullname: string; email: string; password: string }) {

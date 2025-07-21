@@ -26,7 +26,7 @@ import { IAQToolTip } from 'components/ClaircoCustomerDashboard/ToolTip/IAQToolT
 // import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
 // import { searchOptions } from 'layouts/Topbar/data';
-import { getUserIdFromSession } from 'utils/storageFunctions';
+import { getUserDetailsFromSession, getUserIdFromSession, getUserType } from 'utils/storageFunctions';
 // import InteractiveBackgroundWidgetTEST from 'components/ClaircoCustomerDashboard/Widgets/InteractiveBackgroundWidgetB';
 import InteractiveBackgroundWidgetB from 'components/ClaircoCustomerDashboard/Widgets/InteractiveBackgroundWidgetB';
 import PlainWidgetWithTwoParameters2 from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithTwoParameters2';
@@ -34,6 +34,15 @@ import CardLoadingSkelton from 'components/ClaircoSkeltonLoaders/CardLoadingSkel
 import ErrorComponent from './ErrorComponent';
 import SimpleLoadingIndicator from 'components/ClaircoSkeltonLoaders/SimpleLoadingIndicator';
 import SpinningLoader from 'components/ClaircoSkeltonLoaders/SpinningLoader';
+import {
+    filterDataWithBuildingIds,
+    getBuidinglListForSelect,
+    getDeviceListForSelection,
+    getFloorsListForSelect,
+} from 'utils/device/filters';
+import { userType } from 'appConstants/claircoConstants';
+import { getAssignedBuildings } from 'helpers/user';
+import { useUser } from 'hooks';
 const AnalyticsWrapper = React.lazy(() => import('../Analytics/AnalyticsChart'));
 const TrendsChart = React.lazy(() => import('./TrendsChart'));
 interface CardData {
@@ -93,86 +102,27 @@ const IAQDevicePage = () => {
     const chartRefB = useRef<HTMLDivElement>(null);
     let timerId: ReturnType<typeof setTimeout>;
     const { buildingId: buildingId1 = '' } = getUserIdFromSession();
-
+    const [loggedInUser] = useUser();
     const location = useLocation();
-    // const parentRef = useRef(null);
     const navigate = useNavigate();
-    const getBuidinglListForSelect = (data: any) => {
-        try {
-            const buildingMap = new Map();
-            buildingMap.set('Others', {
-                value: '',
-                label: 'All',
-            });
-            for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.buildingId?.id)
-                    buildingMap.set(data?.[i]?.buildingId?.id, {
-                        label: data?.[i]?.buildingId?.name ?? '',
-                        value: data?.[i]?.buildingId?.id ?? '',
-                    });
-            }
-            const buildingList = Array.from(buildingMap.values());
-            // console.log('Building map', buildingList);
-            return buildingList;
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const getFloorsListForSelect = (data: any) => {
-        try {
-            const floorMap = new Map();
-            floorMap.set('Others', {
-                value: '',
-                label: 'All',
-            });
-            for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.floorId?.id)
-                    floorMap.set(data?.[i]?.floorId?.id, {
-                        value: data?.[i]?.floorId?.id,
-                        label: data?.[i]?.floorId?.name,
-                    });
-            }
-            const floorList = Array.from(floorMap.values());
-            return floorList;
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const getDeviceListForSelection = (data: any) => {
-        try {
-            const deviceList = data?.map((doc: any) => ({
-                label: `${doc?.buildingId?.name + ' / ' + doc?.floorId?.name + ' / ' + doc?.name}`,
-                value: {
-                    name: doc?.name,
-                    buildingName: doc?.buildingId?.name,
-                    locationName: doc?.locationId?.name,
-                    floorName: doc?.floorId?.name,
-                    deviceId: doc?.id,
-                    customerId: doc?.customerId?.id,
-                    buildingId: doc?.buildingId?.id,
-                },
-            }));
-            return deviceList;
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    // console.log('Sensor Name:', sensorName);
+
     const getBuildingAndDeviceList = async (customerId: string) => {
         try {
-            // const name = data?.name ?? '';
-            // const buildingName = data?.buildingId?.name ?? '';
-            // const locationName = data?.locationId?.name ?? '';
-            // const floorName = data?.floorId?.name ?? '';
-            // const deviceId = data?._id ?? '';
-            // const customerId = data?.customerId?._id;
+            const userType1 = getUserType();
+            const isBuildingManager = userType1 === userType.BuildingManager;
+            if (!customerId) return;
             const deviceId = deviceTypesConstant['IAQ'];
             const response = await fetchDevicesList(deviceId, customerId, '', buildingId1 ?? '');
-            const buildingsList = getBuidinglListForSelect(response?.data?.records ?? []);
-            const floorList = getFloorsListForSelect(response?.data?.records ?? []);
-            const deviceList = getDeviceListForSelection(response?.data?.records ?? []);
-            // console.log('Device List', buildingsList, floorList);
-            setStoredData(response?.data?.records ?? []);
+            let filteredData: any[] = Array.isArray(response?.data?.records) ? response?.data?.records : [];
+            const assignedBuildings = getAssignedBuildings(loggedInUser?.user?.access ?? []);
+            const assignedBuildingIds = assignedBuildings.map((building: any) => building?.value);
+            if (isBuildingManager) {
+                filteredData = filterDataWithBuildingIds(filteredData, assignedBuildingIds);
+            }
+            const buildingsList = getBuidinglListForSelect(filteredData ?? []);
+            const floorList = getFloorsListForSelect(filteredData ?? []);
+            const deviceList = getDeviceListForSelection(filteredData ?? []);
+            setStoredData(filteredData ?? []);
             setBuidingList(buildingsList ?? []);
             setFloorList(floorList ?? []);
             setDeviceList(deviceList);
@@ -347,7 +297,6 @@ const IAQDevicePage = () => {
             }
             filterdFloors = storedData?.filter((item: any) => item?.buildingId?.id === buildingId);
             const floorList1 = getFloorsListForSelect(filterdFloors);
-            console.log('Floor Selection', storedData, buildingId);
             setFloorList(floorList1 ?? []);
         } catch (error) {
             console.log(error);
@@ -355,30 +304,25 @@ const IAQDevicePage = () => {
     };
     const filterDeviceBasedOnFloorSelection = (e: any) => {
         try {
-            // console.log('FLoors:', e);
             if (e.value) {
                 const filterdFloors = storedData.filter((item: any) => item?.floorId?.id === e.value);
                 const deviceList = getDeviceListForSelection(filterdFloors);
                 setDeviceList(deviceList);
                 return;
             } else {
-                // const filterdFloors = storedData.filter((item: any) => item?.floorId?._id === e.value);
                 const filterdFloors = storedData.filter(
                     (item: any) => item?.buildingId?.id === buildingSelected?.value
                 );
-                // console.log('Fileterd floor', filterdFloors);
                 const deviceList = getDeviceListForSelection(filterdFloors);
                 setDeviceList(deviceList ?? []);
                 return;
             }
-            // console.log('Filterd Floors', deviceList, filterdFloors);
         } catch (error) {
             console.log(error);
         }
     };
     const handleFilterSelection = (e: any, state: string) => {
         try {
-            console.log('Filters', e, state);
             switch (state) {
                 case 'building':
                     filterFloorsBasedOnBuilding(e?.value);
@@ -471,7 +415,6 @@ const IAQDevicePage = () => {
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
-                console.log('Observer entries', entries);
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         if (entry.target === chartRefA.current) {
@@ -484,10 +427,6 @@ const IAQDevicePage = () => {
                 });
                 if (chartRefA.current) observer.observe(chartRefA.current);
                 if (chartRefB.current) observer.observe(chartRefB.current);
-
-                // if (entry.isIntersecting) {
-                //     setIsVisible((prev) => ({ ...prev, b: true }));
-                // }
             },
             { threshold: 0.1 }
         );
@@ -498,9 +437,7 @@ const IAQDevicePage = () => {
 
         return () => observer.disconnect();
     }, []);
-    useEffect(() => {
-        console.log('Chart Visible State', isVisible);
-    }, [isVisible]);
+
     return (
         <>
             {/* {toolTipState &&  */}

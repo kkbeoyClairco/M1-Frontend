@@ -50,3 +50,10 @@ export const iconConstant = {
 export const serverDomains = {
     flask: `https://flask.claircoair.com/api/v1`,
 };
+
+export const userType = {
+    Admin: 'Admin',
+    ClaircoAdmin: 'ClaircoAdmin',
+    Customer: 'Customer',
+    BuildingManager: 'Building Manager',
+};

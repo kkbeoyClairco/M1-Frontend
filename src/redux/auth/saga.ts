@@ -10,6 +10,7 @@ import {
 import { claircoCustomerlogin as claircoCustomerloginApi } from 'helpers/api/auth';
 import { authApiResponseSuccess, authApiResponseError } from './actions';
 import { AuthActionTypes } from './constants';
+import { getCurrentUserId, getUserInfoFromSession } from 'utils/storageFunctions';
 
 type UserData = {
     payload: {
@@ -65,9 +66,12 @@ function* claircoCustomerlogin({ payload: { email, password }, type }: UserData)
  */
 function* logout(): SagaIterator {
     try {
-        yield call(logoutApi);
+        const userId = getCurrentUserId();
+        yield call(logoutApi, userId);
         api.setLoggedInUser(null);
         setAuthorization(null);
+        sessionStorage.removeItem('USER_DATA');
+
         yield put(authApiResponseSuccess(AuthActionTypes.LOGOUT_USER, {}));
     } catch (error: any) {
         yield put(authApiResponseError(AuthActionTypes.LOGOUT_USER, error));
