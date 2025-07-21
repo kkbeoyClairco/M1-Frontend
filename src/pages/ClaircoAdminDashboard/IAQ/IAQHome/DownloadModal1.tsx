@@ -1,16 +1,14 @@
 import { HyperDatepicker } from 'components';
-import { downloadExcel, getCsvdownload, getCsvdownload1 } from 'helpers/api/services/Clairco/customerSide/iaq';
+import { getCsvdownload1 } from 'helpers/api/services/Clairco/customerSide/iaq';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Col, Modal, Row } from 'react-bootstrap';
 import { getDateOnly } from 'utils/timeFunctions';
 import Select from 'react-select';
 
 import { getUserDetailsFromSession, getUserIdFromSession } from 'utils/storageFunctions';
-// import ExcelJS from 'exceljs';
 // import XLSX from 'xlsx';
-
+// import * as XLSX from 'xlsx';
 import { toast } from 'sonner';
-// import { getIAQColorARGB, getPM10ColorARGB, getPM25Color, getPM25ColorARGB } from 'utils/AQI/colorUtils';
 type DownloadModalProps = {
     modalState?: boolean;
     modalControlFn?: any;
@@ -19,7 +17,7 @@ type DownloadModalProps = {
     dataArray?: [];
     floorsData?: [];
 };
-const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlFn, dataArray, floorsData }) => {
+const DownloadModal1: React.FC<DownloadModalProps> = ({ modalState, modalControlFn, dataArray, floorsData }) => {
     const [startDate, setStartDate] = useState<Date>(new Date(new Date().setDate(new Date().getDate() - 1)));
     const [endDate, setEndDate] = useState<Date>(new Date());
     const [isLoading, setIsLoading] = useState(false);
@@ -152,6 +150,35 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
             console.log(error);
         }
     };
+    const parseData = (dataString: any) => {
+        const lines = dataString.split('\r\n');
+        let meta: { [key: string]: string } = {};
+        let rows: string[][] = [];
+        let headers = [];
+
+        lines.forEach((line: any, index: number) => {
+            if (line.includes(':')) {
+                // Extract metadata (key-value pairs)
+                const [key, value] = line.split(':').map((item: any) => item.trim());
+                meta[key] = value;
+            } else if (index === Object.keys(meta).length) {
+                // Extract headers (assumed to be right after metadata lines)
+                headers = line.split(',').map((item: any) => item.trim());
+                rows.push(headers); // Add headers as first row
+            } else if (line) {
+                // Extract table data rows
+                const row = line.split(',').map((item: any) => item.trim());
+                rows.push(row);
+            }
+        });
+        const result = {
+            sheetName: meta.Device || `ClaircoIAQ-${Date.now()}`,
+            meta,
+            rows,
+        };
+
+        return result;
+    };
     //Fetch Data from Backend
     const handleSubmit = async () => {
         try {
@@ -243,13 +270,11 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
 
     const filterBuildingsBasedOnCustomer = (customerId: string, data: any) => {
         try {
-            // console.log('customerId', customerId);
             let filterdBuildings = data.filter((item: any) => item?.customerId?.id === customerId);
             if (customerId) {
                 const buildingList = getBuidinglListForSelect(filterdBuildings);
                 setBuildingList(buildingList ?? []);
             } else setBuildingList(getBuidinglListForSelect(data));
-            // console.log('Filtered Building List', Object.keys(buildingList ?? []).length);
         } catch (error) {
             console.log(error);
         }
@@ -268,11 +293,10 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
     useEffect(() => {
         if (buildingSelected) {
             const filteredFloors = filterFloorsBasedOnBuilding(buildingSelected.value, dataArray);
-            // console.log('Filtered Floors', filteredFloors);
             setFloorsList(filteredFloors);
             setFloorSelected({});
         }
-    }, [buildingSelected]);
+    }, [buildingSelected, dataArray]);
 
     useEffect(() => {
         // console.log('Floor Selected', floorSelected);
@@ -285,12 +309,17 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
                 </Modal.Title>{' '}
             </Modal.Header>
             <Modal.Body>
+                {' '}
+                {/* <Row style={{ padding: '2em' }}> */}
+                {/* <form style={{ padding: '1em' }}> */}
                 {isAdminOrNot ? (
                     <Row>
+                        {/* <Col xxl={3}></Col> */}
+
                         <Col xxl={3}>
                             {' '}
                             <label htmlFor="" style={{ padding: '1em' }}>
-                                Customer
+                                Customer{' '}
                             </label>
                         </Col>
                         <Col xxl={9}>
@@ -433,4 +462,4 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
     );
 };
 
-export default DownloadModal;
+export default DownloadModal1;

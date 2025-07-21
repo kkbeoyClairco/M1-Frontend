@@ -1,7 +1,8 @@
 import { HyperDatepicker } from 'components';
-import { getCsvdownload } from 'helpers/api/services/Clairco/customerSide/iaq';
+import { getCsvdownload, getCsvdownload1 } from 'helpers/api/services/Clairco/customerSide/iaq';
 import React, { useState } from 'react';
 import { Button, Col, Modal, Row } from 'react-bootstrap';
+import { toast } from 'sonner';
 import { getDateOnly } from 'utils/timeFunctions';
 type DownloadModalProps = {
     modalState?: boolean;
@@ -18,43 +19,46 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
 
     const handleDateSubmission = async () => {
         try {
+            setIsLoading(true);
             const startDateFormatted = getDateOnly(startDate);
             const endDateFormatted = getDateOnly(endDate);
-            const csvData = await getCsvdownload(deviceId, startDateFormatted, endDateFormatted, interval);
-            if (typeof csvData !== 'string' || csvData?.trim() === '') {
-                window.alert('No data found for the selected date range.');
-                return;
-            }
+            // const csvData = await getCsvdownload(deviceId, startDateFormatted, endDateFormatted, interval);
+            // if (typeof csvData !== 'string' || csvData.trim() === '') {
+            //     toast.error('No data found for the selected date range.');
+            //     return;
+            // }
 
-            const blob = new Blob([csvData], { type: 'text/csv' });
+            const csvData = await getCsvdownload1({
+                deviceId,
+                start_time: startDateFormatted,
+                end_time: endDateFormatted,
+                interval,
+            });
+
+            const blob = new Blob([csvData?.data], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            });
             const url = window.URL.createObjectURL(blob);
-
             const a = document.createElement('a');
+            const disposition = csvData?.headers?.['content-disposition'];
+            let filename = '';
+            // `${customerSelected?.label ?? 'IAQ_Data'}_${start_time}-${end_time}_${interval}.xlsx`;
+            if (disposition && disposition.includes('filename=')) {
+                filename = disposition.split('filename=')[1].replace(/['"]/g, '').trim();
+            }
             a.href = url;
-            a.download = `${'IAQ_Data'}_${startDateFormatted}-${endDateFormatted}_${interval}.csv`;
-
+            a.download = filename;
+            //  `${customerSelected?.label ?? 'IAQ_Data'}_${start_time}-${end_time}_${interval}.xlsx`;
             document.body.appendChild(a);
             a.click();
-
-            window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-            console.log(csvData?.[0]);
-            // setIsLoading(true);
-            // const epochStart = convertDateToEpoch(startDate);
-            // const endEpoch = convertDateToEpoch(endDate);
-            // const res = await fetchZoneWiseOccupancyData(
-            //     Math.floor(epochStart / 1000),
-            //     Math.floor(endEpoch / 1000),
-            //     zoneId
-            // );
-            // const occupantsCount = res?.data.map((doc: any) => doc.totalOccupancy);
-            // const timeArray = res?.data.map((doc: any) => convertUnixToIST(doc.latestEpochTime));
-            // setXAxis(timeArray);
-            // setOccupantsArray(occupantsCount);
-            // setIsLoading(false);
+            window.URL.revokeObjectURL(url);
+            modalControlFn();
         } catch (error) {
-            setIsLoading(false);
             console.log(error);
+            toast.error('Oops! Something went wrong. Please try again later. We appreciate your understanding!');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -134,31 +138,36 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ modalState, modalControlF
                     </Row>
                     {/* </Row>{' '} */}
                 </form>
-                <Row>
-                    <Col sm={6}></Col>
-                    <Col sm={6} style={{ display: 'flex', justifyContent: 'end' }}>
-                        {' '}
-                        <Button
-                            onClick={handleDateSubmission}
-                            style={{ margin: '1em', marginTop: '0px', background: '#008675', borderWidth: '0px' }}>
-                            Submit
-                        </Button>
-                        <Button
-                            className="btn btn-outline-dark"
-                            onClick={modalControlFn}
-                            style={{
-                                margin: '1em',
-                                marginTop: '0px',
-                                borderWidth: '0px',
-                                background: 'grey',
-                                // color: 'black',
-                            }}>
-                            Cancel
-                        </Button>
-                    </Col>
-                </Row>
             </Modal.Body>
-            <Modal.Footer></Modal.Footer>
+            <Modal.Footer>
+                <Col xs={12} md={3} className="d-flex justify-content-end">
+                    {' '}
+                    <Button
+                        className="w-100"
+                        onClick={handleDateSubmission}
+                        style={{ margin: '1em', marginTop: '0px', background: '#008675', borderWidth: '0px' }}>
+                        {isLoading && (
+                            <span className="spinner-grow spinner-grow-sm mx-1" role="status" aria-hidden="true"></span>
+                        )}
+                        {isLoading ? 'Fetching...' : ' Download'}
+                    </Button>
+                </Col>{' '}
+                <Col xs={12} md={3} className="d-flex justify-content-end">
+                    {' '}
+                    <Button
+                        className="btn btn-outline-dark w-100"
+                        onClick={modalControlFn}
+                        style={{
+                            margin: '1em',
+                            marginTop: '0px',
+                            borderWidth: '0px',
+                            background: 'grey',
+                            // color: 'black',
+                        }}>
+                        Cancel
+                    </Button>
+                </Col>
+            </Modal.Footer>
         </Modal>
     );
 };

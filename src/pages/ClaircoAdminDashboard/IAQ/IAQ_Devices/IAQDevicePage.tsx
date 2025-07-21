@@ -152,8 +152,6 @@ const IAQDevicePage = () => {
         try {
             if (!customerId) return;
 
-            const userType = getUserType();
-            console.log('Building Id', userType, buildingId1);
             const device = deviceTypesConstant.IAQ;
             const response = await fetchDevicesList(device, customerId, '', buildingId1 ?? '');
             const buildingsList = getBuidinglListForSelect(response?.data ?? []);
@@ -389,9 +387,9 @@ const IAQDevicePage = () => {
         setBuildingId(buildingId);
         setLocationInfo({ floor, location: locationName, sensorName: name, building });
     }, [location]);
-    // useEffect(() => {
-    //     // console.log('Filter status', showFilters);
-    // }, [showFilters]);
+    useEffect(() => {
+        console.log('Filter status', locationInfo);
+    }, [locationInfo]);
     return (
         <>
             {/* {toolTipState &&  */}
@@ -434,9 +432,9 @@ const IAQDevicePage = () => {
                     {' '}
                     <UnitSelectedWidgetWithoutSwitch
                         unitName={sensorName ?? ''}
-                        location={locationInfo?.location ?? ''}
-                        floor={locationInfo?.floor}
-                        building={locationInfo?.building}
+                        location={locationInfo?.location ?? 'Location'}
+                        floor={locationInfo?.floor ?? 'Floor'}
+                        building={locationInfo?.building ?? 'Building'}
                         deviceState={true}
                         swithDisabled={true}
                     />

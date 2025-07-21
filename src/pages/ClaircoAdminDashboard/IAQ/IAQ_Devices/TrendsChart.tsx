@@ -419,7 +419,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
     useEffect(() => {
         if (graphState === graphOptions.b) getAggregateData();
         else getLiveDataAPI(sensorName, timeGroup);
-    }, [getLiveDataAPI, graphState, timeGroup, sensorName, getAggregateData]);
+    }, [graphState, timeGroup, sensorName]);
     return (
         <>
             <DownloadModal modalState={downloadModal} modalControlFn={handleDownloadModal} deviceId={deviceId} />
@@ -491,8 +491,8 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                 </Col>
                             </Row>
 
-                            <Row>
-                                <Col md={3} xs={12}>
+                            <Row className="d-flex">
+                                <Col className="my-auto" sm={12} lg={3}>
                                     {/* Time Period Selection Area */}
                                     <ButtonGroup className="" style={{ display: 'flex', flexWrap: 'wrap' }}>
                                         {graphState === graphOptions?.a ? (

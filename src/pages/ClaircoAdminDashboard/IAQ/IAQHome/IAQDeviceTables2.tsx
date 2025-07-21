@@ -15,11 +15,11 @@ import Select from 'react-select';
 import { sessionKeys } from 'appConstants/sessionKeys';
 
 import downloadIcon from 'assets/icons/downloads.png';
-import DownloadModal from './DownloadModal';
 import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 
 import { userType } from 'appConstants/claircoConstants';
-import { getBuidinglListForSelect, getFloorsListForSelect } from 'utils/device/filters';
+import { getFloorsListForSelect } from 'utils/device/filters';
+import DownloadModal1 from './DownloadModal1';
 // const addIcon = `https://res.cloudinary.com/dlulq6hny/image/upload/v1741001702/plus_u1czew.png`;
 // import { sampleTableTestData } from '../test';
 const placeHolder = {
@@ -272,7 +272,7 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
     return (
         <>
             {downloadModal && (
-                <DownloadModal
+                <DownloadModal1
                     modalState={downloadModal}
                     modalControlFn={handleDownloadModal}
                     // deviceId={deviceId}

@@ -9,7 +9,7 @@ import Alerts from './Alerts';
 import TempeartureIcon from 'assets/icons/thermometer.png';
 import Humidity from 'assets/icons/weather.png';
 import CarbonDioxide from 'assets/icons/co2-cloud.png';
-import lodash, { divide } from 'lodash';
+import lodash from 'lodash';
 
 import Select from 'react-select';
 
@@ -26,13 +26,12 @@ import { IAQToolTip } from 'components/ClaircoCustomerDashboard/ToolTip/IAQToolT
 // import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
 // import { searchOptions } from 'layouts/Topbar/data';
-import { getUserDetailsFromSession, getUserIdFromSession, getUserType } from 'utils/storageFunctions';
+import { getUserIdFromSession, getUserType } from 'utils/storageFunctions';
 // import InteractiveBackgroundWidgetTEST from 'components/ClaircoCustomerDashboard/Widgets/InteractiveBackgroundWidgetB';
 import InteractiveBackgroundWidgetB from 'components/ClaircoCustomerDashboard/Widgets/InteractiveBackgroundWidgetB';
 import PlainWidgetWithTwoParameters2 from 'components/ClaircoCustomerDashboard/Widgets/PlainWidgetWithTwoParameters2';
 import CardLoadingSkelton from 'components/ClaircoSkeltonLoaders/CardLoadingSkelton';
 import ErrorComponent from './ErrorComponent';
-import SimpleLoadingIndicator from 'components/ClaircoSkeltonLoaders/SimpleLoadingIndicator';
 import SpinningLoader from 'components/ClaircoSkeltonLoaders/SpinningLoader';
 import {
     filterDataWithBuildingIds,
@@ -60,9 +59,9 @@ interface CardData {
 }
 // import GaugeChartIAQ from './GaugeChartIAQ.tsx';
 const IAQDevicePage = () => {
-    const [pmData, setPmData] = useState<any>([]);
+    // const [pmData, setPmData] = useState<any>([]);
     const [sensorName, setSensorName] = useState<any>('');
-    const [showFilters, setShowFilters] = useState<boolean>(false);
+    // const [showFilters, setShowFilters] = useState<boolean>(false);
     const [locationInfo, setLocationInfo] = useState<any>({ floor: '', location: '', sensorName: '', building: '' });
     const [deviceId, setDeviceId] = useState<any>('');
 
@@ -289,8 +288,6 @@ const IAQDevicePage = () => {
         try {
             let filterdFloors = [];
             if (!buildingId) {
-                // const floorList = getFloorsListForSelect(floorList);
-                // setFloorList(floorList ?? []);
                 const floorList1 = getFloorsListForSelect(storedData);
                 setFloorList(floorList1 ?? []);
                 return;
@@ -343,14 +340,6 @@ const IAQDevicePage = () => {
         }
     };
 
-    const handleFilters = (e: any) => {
-        try {
-            console.log(e);
-            setShowFilters((current) => !current);
-        } catch (error) {
-            console.log(error);
-        }
-    };
     //Floor Selection Navigation Function
     const handleDeviceSelection = (e: any) => {
         setDeviceSelected(e);
@@ -412,7 +401,7 @@ const IAQDevicePage = () => {
         setBuildingId(buildingId);
         setLocationInfo({ floor, location: locationName, sensorName: name, building });
     }, [location]);
-    useEffect(() => {
+    useEffect(function addObserver() {
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -438,6 +427,9 @@ const IAQDevicePage = () => {
         return () => observer.disconnect();
     }, []);
 
+    useEffect(() => {
+        console.log('ocaiton info', locationInfo);
+    }, [locationInfo]);
     return (
         <>
             {/* {toolTipState &&  */}
@@ -489,9 +481,9 @@ const IAQDevicePage = () => {
                     {' '}
                     <UnitSelectedWidget
                         unitName={sensorName}
-                        location={locationInfo?.location ?? ''}
-                        floor={locationInfo?.floor}
-                        building={locationInfo?.building}
+                        location={locationInfo?.location || 'Location'}
+                        floor={locationInfo?.floor || 'Floor'}
+                        building={locationInfo?.building || 'Building'}
                         deviceState={true}
                         swithDisabled={true}
                     />

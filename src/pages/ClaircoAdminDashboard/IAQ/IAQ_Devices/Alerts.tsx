@@ -1,7 +1,7 @@
 import { Button, Card, Modal, Table } from 'react-bootstrap';
 // import { TableRecord } from './types';
 import { useToggle } from 'hooks';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 // import AlertsTable from './AlertTable';
 type TableRecord = {
@@ -80,4 +80,4 @@ const Alerts = () => {
     );
 };
 
-export default Alerts;
+export default React.memo(Alerts);

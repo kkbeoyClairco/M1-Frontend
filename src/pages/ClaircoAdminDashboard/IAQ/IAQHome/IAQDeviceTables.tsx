@@ -4,11 +4,10 @@ import { CellFormatter, Table } from 'components';
 
 import { Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { deviceTypeId, deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
+import { deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
-import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import { convertUnixToIST } from 'utils/timeFunctions';
-import { getDataFromSession, getUserIdFromSession, isAdmin, storeDataToSession } from 'utils/storageFunctions';
+import { getDataFromSession, getUserIdFromSession, storeDataToSession } from 'utils/storageFunctions';
 // import { URLSearchParams } from 'url';
 // import alertIcon from 'assets/icons/caution.png';
 
@@ -16,10 +15,10 @@ import Select from 'react-select';
 import { sessionKeys } from 'appConstants/sessionKeys';
 
 import downloadIcon from 'assets/icons/downloads.png';
-import DownloadModal from './DownloadModal';
 import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 import IAQDeviceCreation from './IAQDeviceCreation';
 import { getBuidinglListForSelect, getCustomersListForSelect, getFloorsListForSelect } from 'utils/device/filters';
+import DownloadModal1 from './DownloadModal1';
 const addIcon = `https://res.cloudinary.com/dlulq6hny/image/upload/v1741001702/plus_u1czew.png`;
 // import { sampleTableTestData } from '../test';
 const placeHolder = {
@@ -313,7 +312,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
     return (
         <>
             {downloadModal && (
-                <DownloadModal
+                <DownloadModal1
                     modalState={downloadModal}
                     modalControlFn={handleDownloadModal}
                     // deviceId={deviceId}
