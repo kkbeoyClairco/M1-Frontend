@@ -1,5 +1,5 @@
 const config = {
-    API_URL: process.env.REACT_APP_API_URL_LOCAL,
+    API_URL: process.env.REACT_APP_API_URL,
     // REACT_APP_API_URL,
     // REACT_APP_API_URL_LOCAL,
     // process.env.REACT_APP_API_URL,
