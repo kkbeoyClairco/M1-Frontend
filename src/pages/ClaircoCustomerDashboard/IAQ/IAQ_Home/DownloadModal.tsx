@@ -12,9 +12,9 @@ import { getUserDetailsFromSession, getUserIdFromSession, getUserInfoFromSession
 import { customer } from 'pages/Sensiable-Dashboard/OccupancyTrends/data';
 // import ExcelJS from 'exceljs';
 // import XLSX from 'xlsx';
-import * as XLSX from 'xlsx';
+// import * as XLSX from 'xlsx';
 import { toast } from 'sonner';
-import { getIAQColorARGB, getPM10ColorARGB, getPM25Color, getPM25ColorARGB } from 'utils/AQI/colorUtils';
+// import { getIAQColorARGB, getPM10ColorARGB, getPM25Color, getPM25ColorARGB } from 'utils/AQI/colorUtils';
 type DownloadModalProps = {
     modalState?: boolean;
     modalControlFn?: any;
