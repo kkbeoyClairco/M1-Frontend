@@ -1,13 +1,17 @@
 import { floor } from 'helpers/api/services/Clairco/customer';
+// import {
+//     getBuildingListWithCustomerId,
+//     getFloorListWithBuildingId,
+// } from 'helpers/api/services/Clairco/maintenanceLogs';
 import {
-    getBuildingListWithCustomerId,
     getFloorListWithBuildingId,
-} from 'helpers/api/services/Clairco/maintenanceLogs';
+    getBuildingListWithCustomerId,
+} from 'helpers/api/services/Clairco/customerSide/maintenance';
 import React, { Fragment, useState } from 'react';
 import { Col, Form } from 'react-bootstrap';
-import { Prev } from 'react-bootstrap/esm/PageItem';
-import { act } from 'react-dom/test-utils';
-import { Provider } from 'react-redux';
+// import { Prev } from 'react-bootstrap/esm/PageItem';
+// import { act } from 'react-dom/test-utils';
+// import { Provider } from 'react-redux';
 import Select, { ActionMeta, SingleValue } from 'react-select';
 import { selectTagType } from 'types/selectTagType';
 interface CommonSelectionsInterface {
@@ -34,7 +38,7 @@ const CommonSelections: React.FC<CommonSelectionsInterface> = ({ customersList, 
             if (!customerSelected?.value) return;
             // setSelected({ customer: customerSelected });
             const res = await getBuildingListWithCustomerId(customerSelected?.value); // Function Imported from Maintenance logs
-            const list = res?.data?.map((item: any) => ({ label: item.name, value: item.id }));
+            const list = res?.data?.map((item: any) => ({ label: item?.name, value: item?.id }));
             setBuildingsList(list ?? []);
             handlerFn('building', null);
             handlerFn('floor', null);
@@ -44,7 +48,6 @@ const CommonSelections: React.FC<CommonSelectionsInterface> = ({ customersList, 
     };
 
     const fetchFloorsList = async (buildingSelected: SingleValue<selectTagType>, customer: string | null) => {
-        console.log('Floor', customer, buildingSelected);
         try {
             if (!buildingSelected?.value || !customer) return;
             // setSelected((prev) => ({ ...prev, building: buildingSelected }));
@@ -62,7 +65,6 @@ const CommonSelections: React.FC<CommonSelectionsInterface> = ({ customersList, 
     const handleSelection = async (valueSelected: SingleValue<selectTagType>, actionMeta: ActionMeta<any>) => {
         try {
             if (!valueSelected) return;
-            console.log('Action meta', actionMeta);
             // setSelected((prev) => ({ ...prev, floor: floorSelected }));
             handlerFn(actionMeta?.name, valueSelected);
         } catch (error) {
@@ -72,7 +74,7 @@ const CommonSelections: React.FC<CommonSelectionsInterface> = ({ customersList, 
 
     return (
         <Fragment>
-            <Form.Label>Customer</Form.Label>
+            <Form.Label>Customer *</Form.Label>
             <Select
                 // defaultInputValue={}
 
@@ -89,8 +91,8 @@ const CommonSelections: React.FC<CommonSelectionsInterface> = ({ customersList, 
                 // isDisabled={true}
                 isClearable={false}
             />
-            {error?.customer && <div className="text-danger">{error?.customer ?? ''}</div>}
-            <Form.Label>Building</Form.Label>
+            {error?.customerId && <div className="text-danger">{error?.customerId ?? ''}</div>}
+            <Form.Label>Building *</Form.Label>
             <Select
                 name="building"
                 placeholder="Select Building"
@@ -108,8 +110,8 @@ const CommonSelections: React.FC<CommonSelectionsInterface> = ({ customersList, 
                 value={data?.building ? data?.building : null}
                 // isDisabled={true}
             />
-            {error?.building && <div className="text-danger">{error?.building ?? ''}</div>}
-            <Form.Label>Floor</Form.Label>
+            {error?.buildingId && <div className="text-danger">{error?.buildingId ?? ''}</div>}
+            <Form.Label>Floor *</Form.Label>
             <Select
                 name="floor"
                 placeholder="Select floor"
@@ -117,9 +119,9 @@ const CommonSelections: React.FC<CommonSelectionsInterface> = ({ customersList, 
                 classNamePrefix="react-select"
                 options={floorsList}
                 onChange={handleSelection}
-                value={data.floor ? data.floor : null}
+                value={data?.floor ? data?.floor : null}
             />{' '}
-            {error?.floor && <div className="text-danger">{error?.floor ?? ''}</div>}
+            {error?.floorId && <div className="text-danger">{error?.floorId ?? ''}</div>}
             {/* <Form.Label>Zone</Form.Label>
             <Select
                 name="zoneId"

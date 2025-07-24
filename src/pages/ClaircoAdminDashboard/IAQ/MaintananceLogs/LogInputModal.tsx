@@ -97,7 +97,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
         try {
             const res = await getCustomersList();
             // console.log('Custoemrs List', res);
-            const list = res?.data?.map((item: any) => ({ label: item.name, value: item.id }));
+            const list = res?.data?.records?.map((item: any) => ({ label: item.name, value: item.id }));
 
             setCustomersList(list ?? []);
         } catch (error) {

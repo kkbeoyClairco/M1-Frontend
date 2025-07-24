@@ -1,26 +1,12 @@
 import React, { useState, useContext, useCallback, useEffect } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-import { ActionMeta } from 'react-select';
-import { useRedux } from 'hooks';
-import { ToastContext } from 'context/ToastContext';
-import { getDeviceTypes } from 'redux/actions';
-import { getZonesListAttachedToFloor } from 'helpers/api/services/Clairco/adminSide/zones';
-// import { BTUModule } from './BTUModule';
-// import { OccupancyModule } from './OccupancyModule';
-// import { AHUModule } from './AHUModule';
-// import { OutdoorModule } from './OutdoorModule';
 // import { IndoorModule } from './IndoorModule';
 import { IAQModule } from './IAQModule';
-// import { SwitchesModule } from './SwitchesModule';
-// import { DptModule } from './DptModule';
-// import { EnergymeterModule } from './EnergymeterModule';
-import { customer } from 'helpers/api/services/Clairco/customer';
 import CommonSelections from './CommonSelections';
-import { btuFormValidator, occupancyFormValidator } from 'validators/btuFormValidator';
 import { toast } from 'sonner';
 import { selectTagType } from 'types/selectTagType';
-import { param } from './deviceCreationConstants';
 import { iaqFormValidator } from 'validators/iaqDeviceCreationValidator';
+import { createIAQDevice } from 'helpers/api/services/Clairco/customerSide/iaq';
 // import { userValidationSchema } from 'pages/CalircoAdminSettings/utils/validations';
 // const transformArray = (array: any) => {
 //     const transformedArray = array?.map((item: any) => {
@@ -41,6 +27,19 @@ import { iaqFormValidator } from 'validators/iaqDeviceCreationValidator';
 //     if (!item) return item;
 //     return item.replace(/\s+/g, '').split(',').filter(Boolean);
 // };
+const activeParameters = ['PM1', 'PM25', 'PM4', 'PM10', 'CO2', 'HUM', 'TEMP'];
+type IAQParameterKey = 'PM1' | 'PM25' | 'PM4' | 'PM10' | 'CO2' | 'HUM' | 'TEMP';
+interface parameterType {
+    name: IAQParameterKey;
+    low: string | number;
+    high: number;
+    calib: string | number;
+    isActive: boolean;
+}
+// type IAQParameters = {
+//     [key in IAQParameterKey]?: parameterType;
+// };
+type IAQParameters = parameterType[];
 interface dataInterface {
     customer?: selectTagType;
     building?: selectTagType;
@@ -50,22 +49,17 @@ interface dataInterface {
     outdoorDevice?: selectTagType;
     stationId?: string;
     subscriptionEndsOn?: Date;
-    parameters?: {
-        parameter?: selectTagType;
-        lowerLimit?: number | string;
-        upperLimit?: string | number;
-        calibrationValue?: string | number;
-    }[];
+    parameters?: IAQParameters;
 }
 const IAQDeviceCreation = (props: any) => {
     const [isApiLoading, setIsApiLoading] = useState(false);
-    const [newData, setNewData] = useState<dataInterface>({ parameters: [param] });
+    const [newData, setNewData] = useState<dataInterface>();
     const [error, setError] = useState({
         name: null,
         customer: null,
         floor: null,
         building: null,
-        outdoorDevice: null,
+        // outdoorDevice: null,
     });
 
     const validateSubmitData = async (
@@ -80,8 +74,14 @@ const IAQDeviceCreation = (props: any) => {
             if (error.inner) {
                 const validationErrors: Record<string, string> = {};
                 error.inner.forEach((validationError: any) => {
-                    validationErrors[validationError.path] = validationError.message;
-                    console.log(validationError.message);
+                    if (validationError.path.includes('parameters')) {
+                        const parameterName = validationError.path?.split('.')?.[1] ?? '';
+
+                        validationErrors[parameterName] = validationError.message;
+                        return;
+                    } else validationErrors[validationError.path] = validationError.message;
+                    // console.log(validationError.path);
+                    toast.error(`Please recheck the form inputs`);
                 });
                 setError((prev: any) => ({
                     ...prev,
@@ -127,9 +127,6 @@ const IAQDeviceCreation = (props: any) => {
     };
     const handleChildInputChanges = async (key: string, value: any) => {
         try {
-            // console.log('INput change', value, key);
-            // Object.entries(value).forEach(([key, value]) => {});
-
             setNewData((prev) => ({ ...prev, [key]: value }));
         } catch (error) {
             console.error(error);
@@ -141,22 +138,38 @@ const IAQDeviceCreation = (props: any) => {
             setIsApiLoading(true);
             const data = {
                 ...newData,
-                customer: newData?.customer?.value,
-                building: newData?.building?.value,
-                floor: newData?.floor?.value,
+                customerId: newData?.customer?.value,
+                buildingId: newData?.building?.value,
+                floorId: newData?.floor?.value,
                 outdoorDeviceType: newData?.outdoorDeviceType?.value,
             };
-            validateSubmitData(data, iaqFormValidator, setError);
+            const parametersFromUI = newData?.parameters;
+            const newParameter = parametersFromUI?.reduce((accu: any, parameter: any) => {
+                if (!activeParameters.includes(parameter.name ?? '')) return accu;
+                accu[parameter?.name] = {
+                    ...parameter,
+                };
+                delete accu[parameter?.name]['name'];
+                return accu;
+            }, {});
+            data.parameters = newParameter;
+            await validateSubmitData(data, iaqFormValidator, setError);
+            const res = await createIAQDevice(data);
+            if (res?.status === 201) {
+                toast.success(`Successfully added the IAQ ${res?.data?.device?.name ?? ''} device.`);
+                props?.onClose();
+            } else {
+                console.error(res);
+                toast.warning('Something went wrong, Please check console');
+            }
+            // console.log('Device Creation Res', res);
+            //API Call
         } catch (error: any) {
             toast.error('Oops! Something went wrong. Please try again in a moment.');
         } finally {
             setIsApiLoading(false);
         }
     };
-
-    useEffect(() => {
-        console.log('Error', error);
-    }, [error]);
 
     return (
         <Modal

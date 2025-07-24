@@ -7,7 +7,7 @@ const api = new APICore();
 //Fetch Maintenance logs for Tables
 export const fetchMaintenanceLogs = async (customerId?: string) => {
     try {
-        let url = 'https://apiv2.claircoair.com/api/v1/maintenanceLogs/all';
+        let url = '/maintenanceLogs/all';
         if (customerId) {
             const searchParams = new URLSearchParams();
             searchParams.append('customerId', customerId);
@@ -24,7 +24,7 @@ export const fetchMaintenanceLogs = async (customerId?: string) => {
 
 export const getTechnicianList = async () => {
     try {
-        const res = await api.get('https://apiv2.claircoair.com/api/v1/technician', null);
+        const res = await api.get('/technician', null);
         return res;
     } catch (error) {
         console.error(error);
@@ -33,7 +33,7 @@ export const getTechnicianList = async () => {
 
 export const getCustomersList = async () => {
     try {
-        const res = await api.get('https://apiv2.claircoair.com/api/v1/customers/all', null);
+        const res = await api.get('/customers/all', null);
         return res;
     } catch (error) {
         console.log(error);
@@ -42,7 +42,7 @@ export const getCustomersList = async () => {
 
 export const getBuildingListWithCustomerId = async (customerId: string) => {
     try {
-        const res = await api.get(`https://apiv2.claircoair.com/api/v1/buildings/customer/${customerId}`, null);
+        const res = await api.get(`/customers/${customerId}/buildings`, null);
         return res;
     } catch (error) {
         console.log(error);
@@ -51,10 +51,7 @@ export const getBuildingListWithCustomerId = async (customerId: string) => {
 
 export const getFloorListWithBuildingId = async (customerId: string, buildingId: string) => {
     try {
-        const res = await api.get(
-            `https://apiv2.claircoair.com/api/v1/customers/${customerId}/buildings/${buildingId}/floors/`,
-            null
-        );
+        const res = await api.get(`/customers/${customerId}/buildings/${buildingId}/floors/`, null);
         return res;
     } catch (error) {
         console.log(error);
@@ -63,7 +60,7 @@ export const getFloorListWithBuildingId = async (customerId: string, buildingId:
 
 export const getDeviceTypeList = async () => {
     try {
-        const res = await api.get(`https://apiv2.claircoair.com/api/v1/deviceType/all`, null);
+        const res = await api.get(`/deviceType/all`, null);
         return res;
     } catch (error) {
         console.log(error);
@@ -72,18 +69,7 @@ export const getDeviceTypeList = async () => {
 
 export const createNewMaintenanceLog = async (data: any) => {
     try {
-        // const bodyValues = {
-        //     technicianId: data.technician,
-        //     clientSupervisor: data.clientSupervisor,
-        //     customerId: data.customer,
-        //     buildingId: data.building,
-        //     floorId: data.floor,
-        //     deviceType: data.device,
-        //     workDescription: data.description,
-        //     workDoneImg: data.file,
-        // };
-        const url = `https://apiv2.claircoair.com/api/v1/maintenanceLogs`;
-        // const url = `http://192.168.29.7:4446/api/v1/maintenanceLogs/`;
+        const url = `/maintenanceLogs`;
         const res = await axios.post(url, data, {
             headers: {
                 // 'Content-Type': 'multipart/form-data',

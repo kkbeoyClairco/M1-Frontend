@@ -149,3 +149,13 @@ export const getLevelTimeAnalytics = async (sensorName: string, startDate?: stri
         console.log(error);
     }
 };
+
+export const createIAQDevice = async (data: any) => {
+    try {
+        const url = `/devices?deviceType=IAQ`;
+        const res = api.create(url, data);
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
+};

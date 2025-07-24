@@ -9,9 +9,9 @@ import { ref } from 'yup';
 import ImageModal from './ImageModal';
 import { getUserDetailsFromSession } from 'utils/storageFunctions';
 import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
-import { fetchMaintenanceLogs } from 'helpers/api/services/Clairco/maintenanceLogs';
+// import { fetchMaintenanceLogs } from 'helpers/api/services/Clairco/maintenanceLogs';
 // import TableSkelton2 from 'components/ClaircoCustomer/Skeltons/TableSkelton2';
-
+import { fetchMaintenanceLogs } from 'helpers/api/services/Clairco/customerSide/maintenance';
 const MaintenanceTable = ({ refresh }: any) => {
     const [isLoading, setIsLoading] = useState(false);
     const [tableData, setTableData] = useState([]);

@@ -1,6 +1,9 @@
 export const param = {
-    parameter: { label: '', value: '' },
-    upperLimit: '',
-    lowerLimit: '',
-    calibrationValue: '',
+    parameter: {
+        name: '',
+        high: '',
+        low: '',
+        calib: '',
+        isActive: true,
+    },
 };

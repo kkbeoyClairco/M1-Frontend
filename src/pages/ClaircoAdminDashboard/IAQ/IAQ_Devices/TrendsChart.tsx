@@ -8,10 +8,7 @@ import downloadIcon from 'assets/icons/downloads.png';
 import DownloadModal from './DownloadModal';
 import { getIaqAggregate, getIaqData } from 'helpers/api/services/Clairco/customerSide/iaq';
 import { deviceTypeId } from 'appConstants/DeviceMappingConstants';
-import { useLocation } from 'react-router-dom';
-import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
-import { iaqParameters } from 'appConstants/iaqConstants';
-import SkeltonLoader from 'components/ClaircoCustomer/Skeltons/SkeltonLoader';
+
 import LeanParallelSketon from 'components/ClaircoCustomer/Skeltons/LeanParallelSketon';
 import VerticalParametersGroup from 'components/ClaircoIterators/VerticalParametersGroup';
 import HorizontalButtonGroup1 from 'components/ClaircoButtons/HorizontalButtonGroup1';
