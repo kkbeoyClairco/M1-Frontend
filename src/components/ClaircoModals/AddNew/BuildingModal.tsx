@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Select from 'react-select';
 import { FormInput } from 'components';
+import { toast } from 'sonner';
 
 type BuildingModalProps = {
     data?: {
@@ -27,9 +28,13 @@ const BuildingModal: React.FC<BuildingModalProps> = (props) => {
     //     return { value: customer?.customerId ?? '', label: customer?.name ?? '' };
     // });
     const onSubmit = (event: any) => {
-        event.preventDefault();
-        props.onSubmit(event, 'Building');
-        props.onClose();
+        try {
+            event.preventDefault();
+            props.onSubmit(event, 'Building');
+            props.onClose();
+        } catch (error) {
+            toast.error('Building not added. Something went wrong.');
+        }
     };
 
     return (

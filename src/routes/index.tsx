@@ -11,6 +11,7 @@ const Logout = React.lazy(() => import('pages/account/Logout'));
 const MaintananceLogsPage = React.lazy(
     () => import('pages/ClaircoAdminDashboard/IAQ/MaintananceLogs/MaintananceLogsPage')
 );
+const treeView = React.lazy(() => import('pages/ClaircoAdminDashboard/FIleExploer/FIleExploer'));
 
 //Clairco Login
 const ClaircoAdminLogin = React.lazy(() => import('pages/ClaircoLogin/ClaircoAdminLogin'));
@@ -95,6 +96,10 @@ const AllRoutes = () => {
                 {
                     path: 'maintenance-logs',
                     element: <LoadComponent component={MaintananceLogsPage} />,
+                },
+                {
+                    path: 'tree',
+                    element: <LoadComponent component={treeView} />,
                 },
 
                 {

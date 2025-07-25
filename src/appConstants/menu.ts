@@ -36,6 +36,13 @@ const MENU_ITEMS: MenuItemType[] = [
         icon: 'uil-sitemap',
         url: 'maintenance-logs',
     },
+    {
+        key: 'Tree',
+        label: 'Client Tree',
+        isTitle: false,
+        icon: 'uil-list-ul',
+        url: 'tree',
+    },
     // {
     //     key: 'Settings',
     //     label: 'Settings',

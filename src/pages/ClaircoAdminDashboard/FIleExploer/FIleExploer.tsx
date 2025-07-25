@@ -17,6 +17,7 @@ import { sample } from './text';
 import { getDevices } from 'helpers/api/services/Clairco/adminSide/devices';
 import { deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 import DeviceCreation2 from 'components/ClaircoModals/AddNew/DeviceCreationComponents/DeviceCreation2';
+import IAQDeviceCreation from 'components/ClaircoModals/AddNew/IAQDeviceCreation2/IAQDeviceCreation';
 interface Customer {
     id: string;
     name: string;
@@ -34,6 +35,7 @@ const FIleExploer = () => {
         id: string;
         customerId?: string;
         buildingId?: string;
+        floorId?: string;
         zoneId?: string;
     }>({
         name: '',
@@ -50,7 +52,7 @@ const FIleExploer = () => {
         device: false,
         customer: false,
     });
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<Customer[]>([]);
 
     // Function that updates the Node. This works irrespective of the Level of the Node. ID is the unique identifier of the Node.
     const updateData = (node: any, id: string, inputData: any[]) => {
@@ -113,53 +115,52 @@ const FIleExploer = () => {
             const res = await floor.byCustomerId(customerId, buildingId);
 
             const extractedData = res.data.map((data: any) => {
-                // Define the children dynamically based on the array in res.data
                 const children = [];
-                //DUMMY data
                 children.push({
-                    name: 'AHU',
-                    id: 17447108687003,
+                    name: 'IAQ',
+                    id: `IAQDeviceId${buildingId}`,
                     type: 'DeviceType',
                     isFolder: true,
                     floorId: data.id,
                     customerId: data.customerId ?? '',
                     buildingId: data.buildingId ?? '',
+                    isExpanded: false,
                 });
-                if (data.deviceTypes?.includes('AHU')) {
-                    children.push({
-                        name: 'AHU',
-                        id: 17447108687003,
-                        type: 'DeviceType',
-                        isFolder: true,
-                        floorId: data.id,
-                        customerId: data.customerId ?? '',
-                        buildingId: data.buildingId ?? '',
-                    });
-                }
+                // if (data.deviceTypes?.includes('AHU')) {
+                //     children.push({
+                //         name: 'AHU',
+                //         id: 17447108687003,
+                //         type: 'DeviceType',
+                //         isFolder: true,
+                //         floorId: data.id,
+                //         customerId: data.customerId ?? '',
+                //         buildingId: data.buildingId ?? '',
+                //     });
+                // }
 
-                if (data.deviceTypes?.includes('IAQ')) {
-                    children.push({
-                        name: 'IAQ',
-                        id: 17447108687002,
-                        type: 'DeviceType',
-                        isFolder: true,
-                        floorId: data.id,
-                        customerId: data.customerId ?? '',
-                        buildingId: data.buildingId ?? '',
-                    });
-                }
+                // if (data.deviceTypes?.includes('IAQ')) {
+                //     children.push({
+                //         name: 'IAQ',
+                //         id: 17447108687002,
+                //         type: 'DeviceType',
+                //         isFolder: true,
+                //         floorId: data.id,
+                //         customerId: data.customerId ?? '',
+                //         buildingId: data.buildingId ?? '',
+                //     });
+                // }
 
-                if (data.deviceTypes?.includes('OCCUPANCY')) {
-                    children.push({
-                        name: 'OCCUPANCY',
-                        id: 17447108687001,
-                        type: 'DeviceType',
-                        isFolder: true,
-                        floorId: data.id,
-                        customerId: data.customerId ?? '',
-                        buildingId: data.buildingId ?? '',
-                    });
-                }
+                // if (data.deviceTypes?.includes('OCCUPANCY')) {
+                //     children.push({
+                //         name: 'OCCUPANCY',
+                //         id: 17447108687001,
+                //         type: 'DeviceType',
+                //         isFolder: true,
+                //         floorId: data.id,
+                //         customerId: data.customerId ?? '',
+                //         buildingId: data.buildingId ?? '',
+                //     });
+                // }
 
                 return {
                     name: data.name,
@@ -184,8 +185,10 @@ const FIleExploer = () => {
     const getIAQDevices = async (floorId: string) => {
         try {
             const deviceType = deviceTypesConstant.IAQ;
+            // const res=await getIaqD
+            // console.log('IAQ Device Data', floorId);
             const res = await getDevices(deviceType, floorId);
-            const extractedData = res?.data?.map((data: any) => {
+            const extractedData = res?.data?.records?.map((data: any) => {
                 return {
                     name: data?.name ?? '',
                     isFolder: false,
@@ -193,7 +196,7 @@ const FIleExploer = () => {
                     id: data.id,
                     customerId: data?.customerId?.id ?? '',
                     buildingId: data?.buildingId?.id ?? '',
-                    isExpanded: true,
+                    isExpanded: false,
                 };
             });
             return extractedData;
@@ -233,7 +236,7 @@ const FIleExploer = () => {
                     id: data.id,
                     customerId: data?.customerId?.id ?? '',
                     buildingId: data?.buildingId?.id ?? '',
-                    isExpanded: true,
+                    isExpanded: false,
                 };
             });
             return extractedData;
@@ -245,17 +248,18 @@ const FIleExploer = () => {
     const fetchDevicesWithFloorId = async (floorId: string, id: string, type: string) => {
         try {
             let data: any = [];
-            // console.log('Type', type);
+            // console.log('Type', floorId, type);
             if (type === 'IAQ') {
                 data = await getIAQDevices(floorId);
+                // console.log('IAQ Devices ', data);
             }
             if (type === 'AHU') {
                 data = await getAHUDevices(floorId);
-                console.log('AHU API CALL', data);
+                // console.log('AHU API CALL', data);
             }
             if (type === 'OCCUPANCY') {
                 data = await getOccupancyDevices(floorId);
-                console.log('OCCUPANY API Call', data);
+                // console.log('OCCUPANY API Call', data);
             }
             // if(type==="IAQ") console.log("IAQ API Call")
 
@@ -286,16 +290,18 @@ const FIleExploer = () => {
     const fetchCustomers = async () => {
         try {
             const customers = await customer.all();
-            const customersList = customers?.data?.records?.map((data: any) => {
-                return {
-                    name: data.name,
-                    isFolder: true,
-                    type: 'Customer',
-                    id: data.id,
-                    isExpanded: false,
-                    children: [],
-                };
-            });
+            const customersList = customers?.data?.records
+                // ?.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                .map((data: any) => {
+                    return {
+                        name: data.name,
+                        isFolder: true,
+                        type: 'Customer',
+                        id: data.id,
+                        isExpanded: false,
+                        children: [],
+                    };
+                });
             setCustomers(customersList);
             setData(customersList);
         } catch (error) {
@@ -315,10 +321,12 @@ const FIleExploer = () => {
                     fetchFloorsData(data?.customerId, data?.id);
                     break;
                 case 'Floor': ///Fetch Device Data for a Floor
-                    // fetchDevicesWithFloorId(data?.id);
+                    // console.log('Device type clicked', data);
+                    // fetchDevicesWithFloorId(data?.floorId, data?.id, 'IAQ');
                     break;
                 case 'DeviceType': ///Fetch Device Data for a Floor
-                    fetchDevicesWithFloorId(data?.floorId, data?.id, data.name ?? '');
+                    // console.log('Device type clicked');
+                    fetchDevicesWithFloorId(data?.floorId, data?.id, 'IAQ');
                     break;
             }
         } catch (error) {
@@ -366,6 +374,18 @@ const FIleExploer = () => {
                 buildingId: buildingId ?? '',
                 floorId: res.data?.id,
                 isExpanded: false,
+                // childrens: [
+                //     {
+                //         name: 'IAQ',
+                //         id: `IAQDeviceId${buildingId}`,
+                //         type: 'DeviceType',
+                //         isFolder: true,
+                //         floorId: data.id,
+                //         customerId: data.customerId ?? '',
+                //         buildingId: data.buildingId ?? '',
+                //         isExpanded: false,
+                //     },
+                // ],
             };
             setData((prev) => updateData(prev, buildingId, [extractedData]));
         } catch (error) {
@@ -403,7 +423,7 @@ const FIleExploer = () => {
                     setInfotoModal((prev) => ({ ...prev, customerId: data.customerId }));
                     break;
                 case 'Floor': // Device Addtion
-                    console.log('Device data', data);
+                    // console.log('Device data', data);
                     setModalState({ building: false, floor: false, device: true, customer: false });
                     setInfotoModal((prev) => ({
                         ...prev,
@@ -427,7 +447,7 @@ const FIleExploer = () => {
         try {
             const res = await customer.create(formData);
             if (res.status === 201) {
-                toast.success('Customer has been created');
+                toast.success('New customer has been created.');
                 const newCustomer: Customer = {
                     id: res?.data?.id ?? '',
                     name: res?.data?.name ?? '',
@@ -436,19 +456,21 @@ const FIleExploer = () => {
                     isExpanded: false,
                     children: [],
                 };
-                // setData((prev:) => [...prev, newCustomer]);
+                const dataC = data;
+                dataC?.unshift(newCustomer);
+                setData(() => [...dataC]);
             } else throw new Error('Customer Creation Failed');
         } catch (error) {
-            toast.error('Customer has not been created');
+            toast.error('Customer not added. Something went wrong.');
             console.log(error);
         }
     };
 
     // Function that Orchastrates the Building/Floor/Device Addition
     const handleSubimit = (e: any, type: string) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const formData = new FormData(e.target);
+        e?.preventDefault();
+        e?.stopPropagation();
+        const formData = new FormData(e?.target);
         const payload: any = {};
         payload.id = infoToModal.id;
         formData.forEach((value, key) => {
@@ -462,16 +484,25 @@ const FIleExploer = () => {
                     // console.log('Customer ', formData);
                     break;
                 case 'Building':
+                    if (!payload?.name) throw new Error();
                     handleBuildingAddition(payload.id, payload);
                     break;
                 case 'Floor':
+                    if (!payload?.name) throw new Error();
                     handleFloorAddition(payload.id, payload);
+                    break;
+                case 'Device':
+                    // console.log('Info', infoToModal);
+                    // fetchDevicesWithFloorId(e.floorId, payload);
                     break;
             }
         } catch (error) {
+            // toast.error('Something went wrong.');
             console.log(error);
+            throw error;
         }
     };
+
     useEffect(() => {
         fetchCustomers();
     }, []);
@@ -502,10 +533,14 @@ const FIleExploer = () => {
                 />
             )}
             {modalState.device && (
-                <DeviceCreation2
+                <IAQDeviceCreation
+                    preSelected={{
+                        customer: { label: '', value: infoToModal?.customerId ?? '' },
+                        building: { label: '', value: infoToModal?.buildingId ?? '' },
+                        floor: { label: '', value: infoToModal?.floorId ?? '' },
+                    }}
+                    onSubmit={handleSubimit}
                     show={modalState.device}
-                    data={infoToModal}
-                    onSubmit={handleDeviceCreation}
                     onClose={() => setModalState((prev: any) => ({ ...prev, device: !prev.device }))}
                 />
             )}

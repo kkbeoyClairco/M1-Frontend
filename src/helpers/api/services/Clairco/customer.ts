@@ -64,7 +64,7 @@ export const building = {
         return await api.create(baseUrl, params);
     },
     createNew: async (customerId: string, params: any) => {
-        const baseUrl = `customers/${customerId}/buildings`;
+        const baseUrl = `/customers/${customerId}/buildings`;
         return await api.create(baseUrl, params);
     },
     update: async (payload: any) => {

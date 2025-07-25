@@ -118,7 +118,7 @@ export const getAlerts = (customerId?: string, buildingId?: string) => {
         if (customerId) {
             searchParam.append('customerId', customerId);
         }
-        url = `https://apiv1.claircoair.com/api/v1/devices/offdevices?${searchParam.toString()}`;
+        url = `/devices/offdevices?${searchParam.toString()}`;
         return api.get(url, null);
     } catch (error) {
         console.log(error);

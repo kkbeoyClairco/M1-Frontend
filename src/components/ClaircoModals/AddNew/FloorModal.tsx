@@ -7,6 +7,7 @@ import * as yup from 'yup';
 import Select from 'react-select';
 import { useForm } from 'react-hook-form';
 import { FormInput } from 'components';
+import { toast } from 'sonner';
 
 type FloorModalProps = {
     customerlist?: Array<{
@@ -42,9 +43,13 @@ const FloorModal: React.FC<FloorModalProps> = (props) => {
     // });
 
     const onSubmit = (event: any) => {
-        event.preventDefault();
-        props.onSubmit(event, 'Floor');
-        props.onClose();
+        try {
+            event.preventDefault();
+            props.onSubmit(event, 'Floor');
+            props.onClose();
+        } catch (error) {
+            toast.error('Floor not added. Something went wrong.');
+        }
     };
 
     return (
