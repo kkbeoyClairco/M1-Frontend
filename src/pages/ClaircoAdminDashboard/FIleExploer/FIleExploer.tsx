@@ -339,20 +339,20 @@ const FIleExploer = () => {
         try {
             data.customerId = data.id;
             delete data.id;
-
+            console.log('Building INput data', data);
             //API ERROR ALERT
             const res = await building.createNew(customerId, data);
 
-            const extractedData = {
-                name: res?.data?.name ?? '',
-                isFolder: true,
-                type: 'Building',
-                id: res.data.id ?? '',
-                customerId: customerId,
-                buildingId: res.data.id ?? '',
-                isExpanded: false,
-            };
-            setData((prev) => updateData(prev, customerId, [extractedData]));
+            // const extractedData = {
+            //     name: res?.data?.name ?? '',
+            //     isFolder: true,
+            //     type: 'Building',
+            //     id: res.data.id ?? '',
+            //     customerId: customerId,
+            //     buildingId: res.data.id ?? '',
+            //     isExpanded: false,
+            // };
+            // setData((prev) => updateData(prev, customerId, [extractedData]));
         } catch (error) {
             console.log(error);
         }
@@ -361,9 +361,10 @@ const FIleExploer = () => {
     //  Function handling Floor addition
     const handleFloorAddition = async (buildingId: string, data: any) => {
         try {
-            data.buildingId = buildingId;
-            data.customerId = infoToModal.customerId ?? '';
-            const res = await floor.create(data);
+            const customerId = infoToModal.customerId ?? '';
+            data.append('buildingId', buildingId);
+            data.append('customerId', customerId);
+            const res = await floor.createFloorWithIds(data, customerId, buildingId);
             if (res.status !== 201) return alert('Error creating floor');
             const extractedData = {
                 name: res?.data?.name ?? '',
@@ -467,14 +468,18 @@ const FIleExploer = () => {
     };
 
     // Function that Orchastrates the Building/Floor/Device Addition
-    const handleSubimit = (e: any, type: string) => {
-        e?.preventDefault();
-        e?.stopPropagation();
-        const formData = new FormData(e?.target);
+    const handleSubimit = (formData: any, type: string) => {
+        // e?.preventDefault();
+        // e?.stopPropagation();
+        // const formData = new FormData(e?.target);
         const payload: any = {};
-        payload.id = infoToModal.id;
-        formData.forEach((value, key) => {
+        payload.id = infoToModal?.id;
+        formData.append('id', infoToModal?.id ?? '');
+        // formData.append('customerId', infoToModal?.id ?? '');
+
+        formData.forEach((value: any, key: string | number) => {
             payload[key] = value;
+            console.log(`Form data key - ${key} - ${value}`);
         });
 
         try {
@@ -485,11 +490,11 @@ const FIleExploer = () => {
                     break;
                 case 'Building':
                     if (!payload?.name) throw new Error();
-                    handleBuildingAddition(payload.id, payload);
+                    handleBuildingAddition(payload.id, formData);
                     break;
                 case 'Floor':
                     if (!payload?.name) throw new Error();
-                    handleFloorAddition(payload.id, payload);
+                    handleFloorAddition(payload.id, formData);
                     break;
                 case 'Device':
                     // console.log('Info', infoToModal);

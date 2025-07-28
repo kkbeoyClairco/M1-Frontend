@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { selectTagType } from 'types/selectTagType';
 import { iaqFormValidator } from 'validators/iaqDeviceCreationValidator';
 import { createIAQDevice } from 'helpers/api/services/Clairco/customerSide/iaq';
+import { getCustomersList } from 'helpers/api/services/Clairco/customerSide/maintenance';
 // import { userValidationSchema } from 'pages/CalircoAdminSettings/utils/validations';
 // const transformArray = (array: any) => {
 //     const transformedArray = array?.map((item: any) => {
@@ -54,6 +55,7 @@ interface dataInterface {
 const IAQDeviceCreation = (props: any) => {
     const [isApiLoading, setIsApiLoading] = useState(false);
     const [newData, setNewData] = useState<dataInterface>();
+    const [customers, setCustomers] = useState([]);
     const [error, setError] = useState({
         name: null,
         customer: null,
@@ -170,7 +172,21 @@ const IAQDeviceCreation = (props: any) => {
             setIsApiLoading(false);
         }
     };
+    const fetchCustomersList = async () => {
+        try {
+            const res = await getCustomersList();
+            // console.log('Custoemrs List', res);
+            const list = res?.data?.records?.map((item: any) => ({ label: item.name, value: item.id }));
 
+            setCustomers(list ?? []);
+        } catch (error) {
+            console.log(error);
+            setCustomers([]);
+        }
+    };
+    useEffect(function initialApiCall() {
+        fetchCustomersList();
+    }, []);
     return (
         <Modal
             size="xl"
@@ -191,7 +207,7 @@ const IAQDeviceCreation = (props: any) => {
                 <Row className="text-dark" style={{ marginLeft: '1em', marginTop: '0em', marginRight: '1em' }}>
                     <Row className="d-flex justify-content-end "></Row>
                     <CommonSelections
-                        customersList={props?.data?.customerList}
+                        customersList={customers ?? []}
                         handlerFn={handleChildInputChanges}
                         data={newData}
                         error={error}

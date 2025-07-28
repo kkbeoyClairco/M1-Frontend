@@ -102,6 +102,10 @@ export const floor = {
         const baseUrl = `/customers/${params.customerId}/buildings/${params.buildingId}/floors/${params.floorId}`;
         return await api.delete(baseUrl);
     },
+    createFloorWithIds: async (params: any, customerId: string, buildingId: string) => {
+        const baseUrl = `/customers/${customerId}/buildings/${buildingId}/floors/`;
+        return await api.create(baseUrl, params);
+    },
 };
 
 // zone apis

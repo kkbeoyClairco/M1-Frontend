@@ -15,9 +15,9 @@ export const getIaqData = (params: any) => {
 export const getIaqAggregate = (sensorName: string, buildingId: string, deviceId: string) => {
     try {
         const dateNow = getDateNow();
-        // http://3.7.82.174:4446/api/v1/devices
-        // MODIFY_ALERT
-        const url1 = `/devices/iaq/${sensorName}/data?date=${dateNow}&buildingId=${buildingId}&deviceId=${deviceId}`;
+
+        const url = `https://apiv2.claircoair.com/api/v1`; // MODIFY_ALERT
+        const url1 = `${url}/devices/iaq/${sensorName}/data?date=${dateNow}&buildingId=${buildingId}&deviceId=${deviceId}`;
         const params = new URLSearchParams();
         if (deviceId) params.append('deviceId', deviceId);
         if (buildingId) params.append('buildingId', buildingId);

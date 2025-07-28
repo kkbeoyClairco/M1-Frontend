@@ -28,6 +28,8 @@ type FloorModalProps = {
 };
 
 const FloorModal: React.FC<FloorModalProps> = (props) => {
+    const [floorImage, setFloorImage] = useState<File | null>(null);
+
     // const customerList = props.customerlist.map((customer: any) => {
     //     return {
     //         value: customer.customerId,
@@ -41,11 +43,21 @@ const FloorModal: React.FC<FloorModalProps> = (props) => {
     //         label: building.name,
     //     };
     // });
-
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setFloorImage(e.target.files[0]); // Store the selected file in state
+        }
+    };
     const onSubmit = (event: any) => {
         try {
             event.preventDefault();
-            props.onSubmit(event, 'Floor');
+            const formData = new FormData(event.target as HTMLFormElement);
+
+            if (floorImage) {
+                formData.append('file', floorImage);
+            }
+
+            props.onSubmit(formData, 'Floor');
             props.onClose();
         } catch (error) {
             toast.error('Floor not added. Something went wrong.');
@@ -97,11 +109,7 @@ const FloorModal: React.FC<FloorModalProps> = (props) => {
                     ) : null}
                     <Form.Group className="mb-3">
                         <Form.Label>Upload Layout Image</Form.Label>
-                        <Form.Control
-                            type="file"
-                            accept="image/*"
-                            //   onChange={handleFileChange}
-                        />
+                        <Form.Control type="file" accept="image/*" onChange={handleFileChange} />
                     </Form.Group>
                     <Row className="float-end">
                         <Col>

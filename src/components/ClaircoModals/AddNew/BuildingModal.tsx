@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { Col, Form, Row } from 'react-bootstrap';
@@ -24,13 +24,26 @@ type BuildingModalProps = {
 };
 
 const BuildingModal: React.FC<BuildingModalProps> = (props) => {
+    const [buildingImage, setBuildingImage] = useState<File | null>(null);
     // const customerList = props.customerlist?.map((customer: any) => {
     //     return { value: customer?.customerId ?? '', label: customer?.name ?? '' };
     // });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setBuildingImage(e.target.files[0]);
+        }
+    };
     const onSubmit = (event: any) => {
         try {
             event.preventDefault();
-            props.onSubmit(event, 'Building');
+            const formData = new FormData(event.target as HTMLFormElement);
+            if (props?.data) formData.append('customerId', props.data?.id);
+            // console.log('Building IMage', event.target, formData);
+            if (buildingImage) {
+                formData.append('file', buildingImage);
+            }
+            props.onSubmit(formData, 'Building');
             props.onClose();
         } catch (error) {
             toast.error('Building not added. Something went wrong.');
@@ -79,7 +92,7 @@ const BuildingModal: React.FC<BuildingModalProps> = (props) => {
 
                     <Form.Group className="mb-3">
                         <Form.Label>Upload Building Image</Form.Label>
-                        <Form.Control type="file" accept="image/*" />
+                        <Form.Control type="file" accept="image/*" onChange={handleFileChange} />
                     </Form.Group>
 
                     <Form.Group className="mb-1">

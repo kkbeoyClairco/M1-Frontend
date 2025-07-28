@@ -463,7 +463,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                         choices={Object.keys(graphOptions)}
                                         currentState={graphState === 'live' ? 'a' : 'b'}
                                         onSelectFn={changeGraphState}
-                                        choicesDisplayNames={{ a: 'Live', b: 'Aggregate' }}
+                                        choicesDisplayNames={{ a: 'Live', b: '7 Day' }}
                                     />
 
                                     {/* <ButtonGroup className="w-100 mb-2">
