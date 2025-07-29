@@ -12,16 +12,21 @@ export const getIaqData = (params: any) => {
     return api.get(baseUrl, params);
 };
 
-export const getIaqAggregate = (sensorName: string, buildingId: string, deviceId: string) => {
+export const getIaqAggregate = async (sensorName: string, buildingId: string, deviceId: string) => {
     try {
         const dateNow = getDateNow();
-
+        const jwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRjZTcwYjFiYjVhM2M1ZTBmMmEzNDc3IiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20ifSwiaWF0IjoxNzMxODcyMDUzfQ.9t4vX_lC9aVD9wSpTsxBHxpCmGbe17h_5webTp7BvNM`;
         const url = `https://apiv2.claircoair.com/api/v1`; // MODIFY_ALERT
         const url1 = `${url}/devices/iaq/${sensorName}/data?date=${dateNow}&buildingId=${buildingId}&deviceId=${deviceId}`;
-        const params = new URLSearchParams();
-        if (deviceId) params.append('deviceId', deviceId);
-        if (buildingId) params.append('buildingId', buildingId);
-        return api.get(url1, null);
+
+        return axios.get(url1, {
+            headers: {
+                Authorization: `Bearer ${jwt}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        // return response;
     } catch (error) {
         console.log('Error Fetching Agrregate', error);
     }

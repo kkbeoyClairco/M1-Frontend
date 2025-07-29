@@ -210,7 +210,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
         try {
             setIsLoading(true);
             const res = await getIaqAggregate(sensorName, buildingId, deviceId);
-            // console.log('Res', res);
+            // console.log('Aggregate res', res);
             const data = res?.data ?? [];
             const keys = Object.keys(data ?? [])
                 .map(Number)
