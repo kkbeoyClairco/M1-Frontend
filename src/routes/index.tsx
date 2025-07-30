@@ -139,6 +139,7 @@ const ThemopileDevicePage = React.lazy(
     () => import('pages/ClaircoAdminDashboard/Thermopile/ThermopileDevice/ThermopileDevicePage')
 );
 
+const WhiteBoardPage = React.lazy(() => import('pages/ClaircoAdminDashboard/Drawing/WhiteBoardPage'));
 // //UV
 
 const Uvbuilding = React.lazy(() => import('pages/ClaircoAdminDashboard/UV Devices/Uvbuilding'));
@@ -553,6 +554,10 @@ const AllRoutes = () => {
                         {
                             path: 'pcs/:device',
                             element: <LoadComponent component={PCSDevicePageAdmin} />,
+                        },
+                        {
+                            path: 'whiteboard',
+                            element: <LoadComponent component={WhiteBoardPage} />,
                         },
 
                         {
