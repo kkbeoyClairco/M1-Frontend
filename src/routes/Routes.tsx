@@ -5,7 +5,6 @@ const Routes = () => {
     return (
         <HashRouter>
             <Toaster richColors expand={true} />
-
             <AllRoutes />
         </HashRouter>
         // <BrowserRouter>

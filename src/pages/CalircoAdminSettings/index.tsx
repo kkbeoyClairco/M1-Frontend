@@ -9,7 +9,7 @@ const UserSettings1 = React.lazy(() => import('./settings/UserSet'));
 const ScheduleSet = React.lazy(() => import('./settings/ScheduleSet'));
 
 const Admin = () => {
-    const [activeTab, setActiveTab] = useState('CustomerSettings');
+    const [activeTab, setActiveTab] = useState('UserSettings');
     // CustomerSettings  DeviceSettings UserSettings
     const handleTabChange = (key: any) => {
         setActiveTab(key);
@@ -22,7 +22,7 @@ const Admin = () => {
                 <Col xs={12} md={6}>
                     {' '}
                     <Nav variant="tabs" justify className="mt-0 w-100 w-md-50">
-                        <Nav.Item>
+                        {/* <Nav.Item>
                             <Nav.Link
                                 eventKey="CustomerSettings"
                                 style={activeTab === 'CustomerSettings' ? { fontWeight: 'bold' } : {}}>
@@ -30,8 +30,8 @@ const Admin = () => {
                                     Customer
                                 </span>
                             </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
+                        </Nav.Item> */}
+                        {/* <Nav.Item>
                             <Nav.Link
                                 eventKey="DeviceSettings"
                                 style={activeTab === 'DeviceSettings' ? { fontWeight: 'bold' } : {}}>
@@ -39,7 +39,7 @@ const Admin = () => {
                                     Device
                                 </span>
                             </Nav.Link>
-                        </Nav.Item>
+                        </Nav.Item> */}
                         <Nav.Item>
                             <Nav.Link
                                 eventKey="UserSettings"
@@ -49,7 +49,7 @@ const Admin = () => {
                                 </span>
                             </Nav.Link>
                         </Nav.Item>
-                        <Nav.Item>
+                        {/* <Nav.Item>
                             <Nav.Link
                                 eventKey="ScheduleSettings"
                                 style={
@@ -64,12 +64,12 @@ const Admin = () => {
                                     Schedule
                                 </span>
                             </Nav.Link>
-                        </Nav.Item>
+                        </Nav.Item> */}
                     </Nav>
                 </Col>
                 {/* </Card> */}
                 <Tab.Content>
-                    {activeTab === 'CustomerSettings' && (
+                    {/* {activeTab === 'CustomerSettings' && (
                         <Tab.Pane eventKey="CustomerSettings" id="CustomerSettings">
                             <Suspense fallback={<div>Loading...</div>}>
                                 <CustomerSettings1 />
@@ -82,7 +82,7 @@ const Admin = () => {
                                 <DeviceSettings1 />
                             </Suspense>
                         </Tab.Pane>
-                    )}
+                    )} */}
                     {activeTab === 'UserSettings' && (
                         <Tab.Pane eventKey="UserSettings" id="UserSettings">
                             <Suspense fallback={<div>Loading...</div>}>
@@ -90,13 +90,13 @@ const Admin = () => {
                             </Suspense>
                         </Tab.Pane>
                     )}
-                    {activeTab === 'ScheduleSettings' && (
+                    {/* {activeTab === 'ScheduleSettings' && (
                         <Tab.Pane eventKey="ScheduleSettings" id="ScheduleSettings">
                             <Suspense fallback={<div>Loading...</div>}>
                                 <ScheduleSet />
                             </Suspense>
                         </Tab.Pane>
-                    )}
+                    )} */}
                 </Tab.Content>
             </Tab.Container>
         </div>

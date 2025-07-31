@@ -8,89 +8,62 @@ import { FormInput } from 'components';
 import { deviceTypeId } from 'appConstants/DeviceMappingConstants';
 import { building, customer } from 'helpers/api/services/Clairco/customer';
 import { selectTagType } from 'types/selectTagType';
-import { userValidationSchema } from 'pages/CalircoAdminSettings/utils/validations';
+import { user } from 'helpers/api/services/Clairco/user';
+import { userValidationSchema, CustomerTypevalidationSchema, BuildingTypevalidationSchema } from 'pages/CalircoAdminSettings/utils/validations';
 import { toast } from 'sonner';
 
 type ErrorState = {
     type: string | null;
     name: string | null;
-    phone: string | null;
     email: string | null;
     password: string | null;
     customerId: string | null;
-    buildingIds: string | null;
-    assignedDeviceTypes: string | null;
+    buildingId: string | null;
+    deviceType: string | null;
+    access: any
 };
 
 type UserModalProps = {
     show: boolean;
     onClose: () => void;
-    onSubmit: (
-        event: any,
-        data: any
-        //  type: string
-    ) => void;
+    setUserTableData: React.Dispatch<React.SetStateAction<any[]>>;
     data: [];
 };
 
 const UserModal: React.FC<UserModalProps> = (props) => {
     const [buildingsList, setBuildingsList] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
     const [userTypeSelected, setUserTypeSelected] = useState<string>();
     const [customersList, setCustomersList] = useState([]);
-    const [customerIdSelected, setCustomerIdSelected] = useState<string>();
-    const [deviceTypeIdsSelected, setDeviceTypeIdsSelected] = useState<string[]>([]);
-    // const [buildingIdsSelected, setBuildingIdsSelected] = useState<string[]>([]);
-    // const [selectedBuildingName, setSelectedBuildingName] = useState<string[]>([]);
-    const [buildingsSelected, setBuildingsSelected] = useState<selectTagType[] | null>();
-    const [userName, setUserName] = useState<string | undefined>(undefined);
-    const [password, setPassword] = useState<string | undefined>(undefined);
-    const [email, setEmail] = useState();
-    const [phoneNumber, setPhoneNumber] = useState();
+    const [customerSelected, setCustomerSelected] = useState<{ name: string; customerId: string }>({ name: '', customerId: '' });
+    const [deviceTypeIdsSelected, setDeviceTypeIdsSelected] = useState<{ type: string, id: string }[]>([]);
+    const [buildingsSelected, setBuildingsSelected] = useState<{ name: string, buildingId: string } | null>({ name: '', buildingId: '' });
+    const [userName, setUserName] = useState<string | null>(null);
+    const [password, setPassword] = useState<string | null>(null);
+    const [email, setEmail] = useState<string | null>(null);
     const [error, setError] = useState<ErrorState>({
         type: null,
         name: null,
-        phone: null,
         email: null,
         password: null,
         customerId: null,
-        buildingIds: null,
-        assignedDeviceTypes: null,
+        buildingId: null,
+        deviceType: null,
+        access: null
     });
-    // const { appSelector } = useRedux();
-    const deviceTypes = Object.keys(deviceTypeId).map((deviceNames) => ({
+    const deviceType = Object.keys(deviceTypeId).map((deviceNames) => ({
         label: deviceNames,
         value: deviceTypeId[deviceNames],
     }));
-    // const { customerMap, buildingMap, buildings } = appSelector((state) => ({
-    //     customerMap: state.Customer.customers,
-    //     buildingMap: state.Building.buildingMap,
-    //     buildings: state.Building.buildings ?? [],
-    // }));
-    // const customerlist = Array.from(customerMap, (doc: any) => ({ value: doc?.customerId, label: doc?.name }));
-    // const buildinglist = Array.from(buildingMap, ([key, value]) => ({ value: key, label: value }));
-    // console.log('Custoemr list', customerlist);
     const userType = [
         // { label: 'Admin', value: 'Admin' },
         { label: 'Customer', value: 'Customer' },
-        { label: 'Building Manager', value: 'BuildingManager' },
+        { label: 'Building Manager', value: 'Building Manager' },
     ];
-
-    // const validationSchema = yup.object().shape({
-    //     building: yup.string().required('Building selection is required'),
-    //     // floorNumber: yup.string().required('Floor selection is required'),
-    // });
-
-    // const methods = useForm({
-    //     resolver: yupResolver(validationSchema),
-    // });
-    // console.log('User methods', methods);
-    // const { handleSubmit } = methods;
 
     const getAllCustomers = async () => {
         try {
             const response = await customer.all();
-            const formattedData = response?.data?.map((customerData: { name: string; id: string }) => ({
+            const formattedData = response?.data?.records.map((customerData: { name: string; id: string }) => ({
                 label: customerData?.name ?? '',
                 value: customerData?.id ?? '',
             }));
@@ -114,42 +87,66 @@ const UserModal: React.FC<UserModalProps> = (props) => {
         }
     };
 
-    const onSubmit = (event: any) => {
+    async function validateForm(validationSchema: any, newUserDetails: any, event: any) {
+        await validationSchema
+            .validate(newUserDetails, { abortEarly: false })
+            .then((res: any) => {
+                Object.keys(res).forEach((field: string) => setError((prev) => ({ ...prev, [field]: null })));
+                props.onClose();
+            })
+            .catch((err: any) => {
+                err.inner?.forEach((validationError: yup.ValidationError) => {
+                    setError((prev) => ({
+                        ...prev,
+                        [validationError.path as keyof ErrorState]: validationError.message,
+                    }));
+                });
+            });
+    }
+
+    const onSubmit = async (event: any) => {
         event.preventDefault();
         event.stopPropagation();
 
         try {
             // console.log('Event', event);
-            const buildingsArray = buildingsSelected?.map((building) => building.value);
-            const newUserDetails = {
-                type: userTypeSelected ?? '',
-                name: userName ?? '',
-                phone: phoneNumber ?? '',
-                email: email ?? '',
-                password: password ?? '',
-                customerId: customerIdSelected ?? '',
-                buildingIds: buildingsArray ?? [],
-                assignedDeviceTypes: deviceTypeIdsSelected ?? '',
+            const newUserDetails: any = {
+                type: userTypeSelected?.trim() ?? '',
+                name: userName?.trim() ?? '',
+                email: email?.trim() ?? '',
+                password: password?.trim() ?? '',
+                customerId: customerSelected?.customerId ?? '',
+                access: [{
+                    customerId: customerSelected?.customerId ?? '',
+                    name: customerSelected?.name ?? '',
+                }]
             };
-            userValidationSchema
-                .validate(newUserDetails, { abortEarly: false })
-                .then((res: any) => {
-                    props.onSubmit(event, newUserDetails);
-                    Object.keys(res).forEach((field: string) => setError((prev) => ({ ...prev, [field]: null })));
-                    props.onClose();
-                })
-                .catch((err) => {
-                    console.log(err.inner);
-                    err.inner?.forEach((validationError: yup.ValidationError) => {
-                        setError((prev) => ({
-                            ...prev,
-                            [validationError.path as keyof ErrorState]: validationError.message,
-                        }));
-                    });
-                });
-            // console.log('Submit', newUserDetails);
-        } catch (error) {
-            console.log(error);
+            switch (newUserDetails.type) {
+                case 'Customer':
+                    newUserDetails.access[0].buildings = [];
+                    newUserDetails.access[0].deviceType = [...deviceTypeIdsSelected];
+                    // validateForm(CustomerTypevalidationSchema,newUserDetails,event);
+                    break;
+                case 'Building Manager':
+                    newUserDetails.buildingId = buildingsSelected?.buildingId ?? '';
+                    newUserDetails.access[0].buildings = [{
+                        buildingId: buildingsSelected?.buildingId ?? '',
+                        name: buildingsSelected?.name ?? '',
+                        deviceType: [...deviceTypeIdsSelected]
+                    }];
+                    // validateForm(BuildingTypevalidationSchema,newUserDetails,event);
+                    break;
+                default:
+                    break;
+            }
+            const newUserData = await user.create(newUserDetails);
+            if (newUserData) {
+                toast.success(newUserData?.data.message ?? 'User created successfully');
+                props.setUserTableData((prevData: any) => [{ ...newUserData.data.user }, ...prevData]);
+                props.onClose();
+            }
+        } catch (error: any) {
+            toast.error(error);
         }
     };
 
@@ -159,14 +156,15 @@ const UserModal: React.FC<UserModalProps> = (props) => {
             await userValidationSchema
                 .validateAt('customerId', { customerId: e.value ?? '' })
                 .then((res) => {
-                    console.log('Customer Id', res);
+
                     setError((prev) => ({ ...prev, customerId: null }));
                 })
                 .catch((error) => console.log(error));
-            // console.log('Validation Response', validateRes);
-            setCustomerIdSelected(e?.value);
-            getBuildingsWithCustomerId(e.value);
-            // setError;
+            setCustomerSelected({ "name": e?.label, "customerId": e?.value });
+            if (userTypeSelected === 'Building Manager') {
+                getBuildingsWithCustomerId(e.value);
+            }
+
         } catch (error) {
             console.log(error);
         }
@@ -175,18 +173,18 @@ const UserModal: React.FC<UserModalProps> = (props) => {
     // Building Selection
     const handleBuildingSelection = async (e: any) => {
         try {
-            const buildingIds = e.map((building: any) => building.value);
+
             await userValidationSchema
-                .validateAt('buildingIds', { buildingIds: buildingIds ?? [] })
+                .validateAt('buildingId', { buildingId: e?.value ?? '' })
                 .then((res) => {
-                    setError((prev) => ({ ...prev, buildingIds: null }));
+                    setError((prev) => ({ ...prev, buildingId: null }));
                 })
                 .catch((error) => {
-                    setError((prev) => ({ ...prev, buildingIds: error.message }));
+                    setError((prev) => ({ ...prev, buildingId: error.message }));
 
                     console.log(error);
                 });
-            setBuildingsSelected(e);
+            setBuildingsSelected({ "name": e?.label, "buildingId": e?.value });
         } catch (error) {
             console.log(error);
         }
@@ -196,14 +194,15 @@ const UserModal: React.FC<UserModalProps> = (props) => {
     const handleDeviceTypeSelection = async (e: MultiValue<selectTagType>) => {
         try {
             // const deviceIDs = e?.map((device) => device.value);
-            const deviceTypes = e?.map((doc: any) => doc?.value);
-            console.log('Device type selection', deviceTypes);
+            const deviceTypes: { type: string; id: string }[] = e?.map((doc: any) => {
+                return { type: doc.label, id: doc.value };
+            });
             await userValidationSchema
-                .validateAt('assignedDeviceTypes', { assignedDeviceTypes: deviceTypes })
+                .validateAt('deviceType', { deviceType: deviceTypes })
                 .then((res) => {
-                    setError((prev) => ({ ...prev, assignedDeviceTypes: null }));
+                    setError((prev) => ({ ...prev, deviceType: null }));
                 })
-                .catch((error) => setError((prev) => ({ ...prev, assignedDeviceTypes: error.message })));
+                .catch((error) => setError((prev) => ({ ...prev, deviceType: error.message })));
 
             setDeviceTypeIdsSelected([...deviceTypes]);
         } catch (error) {
@@ -264,13 +263,7 @@ const UserModal: React.FC<UserModalProps> = (props) => {
     };
     useEffect(() => {
         setBuildingsSelected(null);
-    }, [customerIdSelected]);
-    useEffect(
-        function testFn() {
-            console.log('Building Seelcted', buildingsSelected);
-        },
-        [buildingsSelected]
-    );
+    }, [customerSelected]);
     useEffect(function intialPageLoadApiCalls() {
         getAllCustomers();
     }, []);
@@ -308,19 +301,17 @@ const UserModal: React.FC<UserModalProps> = (props) => {
                         />{' '}
                         {error?.customerId && <p className="text-danger">{error.customerId}</p>}
                     </Form.Group>
-                    <Form.Group className="mb-1">
+                    {userTypeSelected === 'Building Manager' && (<Form.Group className="mb-1">
                         <Form.Label>Building</Form.Label>
                         <Select
-                            isMulti
                             name="buildingId"
-                            className="basic-multi-select"
                             placeholder="Select Building"
                             options={buildingsList}
-                            value={buildingsSelected}
                             onChange={handleBuildingSelection}
                         />{' '}
-                        {error?.buildingIds && <p className="text-danger">{error.buildingIds}</p>}
-                    </Form.Group>{' '}
+                        {error?.buildingId && <p className="text-danger">{error.buildingId}</p>}
+                    </Form.Group>)}
+
                     <Form.Group className="mb-1">
                         <Form.Label>Device types</Form.Label>
                         <Select
@@ -328,10 +319,10 @@ const UserModal: React.FC<UserModalProps> = (props) => {
                             name="deviceTypeIds"
                             className="basic-multi-select"
                             placeholder="Select DeviceType"
-                            options={deviceTypes}
+                            options={deviceType}
                             onChange={handleDeviceTypeSelection}
                         />{' '}
-                        {error?.assignedDeviceTypes && <p className="text-danger">{error.assignedDeviceTypes}</p>}
+                        {error?.deviceType && <p className="text-danger">{error.deviceType}</p>}
                     </Form.Group>
                     <Form.Group className="mb-1">
                         <Form.Label>Name</Form.Label>
@@ -343,23 +334,11 @@ const UserModal: React.FC<UserModalProps> = (props) => {
                             // register={register}
                             key="text"
                             onChange={handleNameInput}
-                            // autocomplete={'off'}
-                            // errors={errors}
-                            // control={control}
+                        // autocomplete={'off'}
+                        // errors={errors}
+                        // control={control}
                         />{' '}
                         {error?.name && <p className="text-danger">{error.name}</p>}
-                    </Form.Group>
-                    <Form.Group className="mb-1">
-                        <Form.Label>Phone Number</Form.Label>
-                        <FormInput
-                            name="phone"
-                            placeholder="Enter Phone Number"
-                            className="react-select"
-                            onChange={(e: any) => setPhoneNumber(e.target.value)}
-
-                            // classNamePrefix="react-select"
-                        />{' '}
-                        {error?.phone && <p className="text-danger">{error.phone}</p>}
                     </Form.Group>
                     <Form.Group className="mb-1">
                         <Form.Label>Email ID</Form.Label>
