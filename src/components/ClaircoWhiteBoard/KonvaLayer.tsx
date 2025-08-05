@@ -2,6 +2,9 @@ import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { Card, ButtonGroup, Button } from 'react-bootstrap';
 import { Layer, Rect, Stage, Transformer, Circle, Line, Image } from 'react-konva';
 import Konva from 'konva';
+import { data123 } from './fakeData';
+import Select, { SingleValue } from 'react-select';
+import { selectTagType } from 'types/selectTagType';
 
 // Types for drawing shapes
 interface Point {
@@ -9,10 +12,11 @@ interface Point {
     y: number;
 }
 
-interface Shape {
+export interface Shape {
     id: string;
     type: 'rectangle' | 'circle' | 'polygon';
     points: Point[];
+    deviceType: string;
     properties: {
         name: string;
         color: string;
@@ -28,10 +32,24 @@ interface KonvaLayerProps {
     onShapesChange?: (shapes: Shape[]) => void;
     initialShapes?: Shape[];
 }
-
+const deviceTypes = [
+    {
+        label: 'VRV/VRF',
+        value: 'VRV/VRF',
+    },
+    {
+        label: 'AHU',
+        value: 'AHU',
+    },
+    {
+        label: 'Occupancy',
+        value: 'Occupancy',
+    },
+];
 export const KonvaLayer: React.FC<KonvaLayerProps> = ({ floorPlanImage, onShapesChange, initialShapes = [] }) => {
     // State management
-    const [shapes, setShapes] = useState<Shape[]>(initialShapes);
+    const [shapes, setShapes] = useState<Shape[]>(data123);
+    const [deviceTypeSelected, setDeviceTypeSelected] = useState<selectTagType | null>(deviceTypes?.[0] ?? null);
     const [selectedTool, setSelectedTool] = useState<DrawingTool>('select');
     const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
     const [isDrawing, setIsDrawing] = useState(false);
@@ -47,7 +65,14 @@ export const KonvaLayer: React.FC<KonvaLayerProps> = ({ floorPlanImage, onShapes
         width: 800,
         height: 600,
     });
-
+    const handleDeviceTypeSelection = (e: SingleValue<selectTagType>) => {
+        try {
+            console.log('Slected Device type', e);
+            setDeviceTypeSelected(e);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     // Load floor plan image
     useEffect(() => {
         if (floorPlanImage) {
@@ -106,6 +131,7 @@ export const KonvaLayer: React.FC<KonvaLayerProps> = ({ floorPlanImage, onShapes
                 id: generateId(),
                 type: selectedTool as 'rectangle' | 'circle' | 'polygon',
                 points: [pointer],
+                deviceType: deviceTypeSelected?.value,
                 properties: {
                     name: `${selectedTool} ${shapes.length + 1}`,
                     color: '#007bff',
@@ -173,7 +199,58 @@ export const KonvaLayer: React.FC<KonvaLayerProps> = ({ floorPlanImage, onShapes
             setSelectedShapeId(null);
         }
     }, [selectedShapeId]);
+    // Ref for rectangle nodes (add at the top, near other refs)
+    const rectRefs = useRef<(Konva.Rect | null)[]>([]);
 
+    // Update rectangle position after drag
+    const handleRectDrag = (index: number, newX: number, newY: number, width: number, height: number) => {
+        setShapes((prevShapes) => {
+            const updated = [...prevShapes];
+            // Update both points based on new top-left
+            const shape = updated[index];
+            if (shape && shape.type === 'rectangle' && shape.points.length >= 2) {
+                const [, end] = shape.points;
+                updated[index] = {
+                    ...shape,
+                    points: [
+                        { x: newX, y: newY },
+                        { x: newX + width, y: newY + height },
+                    ],
+                };
+            }
+            return updated;
+        });
+    };
+
+    // Update rectangle position and size after transform
+    const handleRectTransform = (index: number, newX: number, newY: number, newWidth: number, newHeight: number) => {
+        setShapes((prevShapes) => {
+            const updated = [...prevShapes];
+            const shape = updated[index];
+            if (shape && shape.type === 'rectangle' && shape.points.length >= 2) {
+                updated[index] = {
+                    ...shape,
+                    points: [
+                        { x: newX, y: newY },
+                        { x: newX + newWidth, y: newY + newHeight },
+                    ],
+                };
+            }
+            return updated;
+        });
+    };
+
+    // Attach transformer to selected rectangle
+    useEffect(() => {
+        if (transformerRef.current && selectedShapeId) {
+            const selectedIndex = shapes.findIndex((s) => s.id === selectedShapeId);
+            const node = rectRefs.current[selectedIndex];
+            if (node) {
+                transformerRef.current.nodes([node]);
+                transformerRef.current.getLayer()?.batchDraw();
+            }
+        }
+    }, [selectedShapeId, shapes]);
     // Render shapes
     const renderShape = (shape: Shape, index: number) => {
         const { points, properties } = shape;
@@ -207,11 +284,38 @@ export const KonvaLayer: React.FC<KonvaLayerProps> = ({ floorPlanImage, onShapes
                     height={height}
                     fill={properties.color}
                     fillOpacity={0.3}
+                    draggable={selectedTool === 'select'}
+                    onDragEnd={(e) => {
+                        const newX = e.target.x();
+                        const newY = e.target.y();
+                        // Update the shape in your shapes array with new position
+                        handleRectDrag(index, newX, newY, width, height);
+                    }}
+                    onTransformEnd={(e) => {
+                        const node = e.target;
+                        const scaleX = node.scaleX();
+                        const scaleY = node.scaleY();
+                        // Calculate new width/height and position
+                        handleRectTransform(index, node.x(), node.y(), width * scaleX, height * scaleY);
+                        node.scaleX(1);
+                        node.scaleY(1);
+                    }}
+                    ref={selectedShapeId === shape.id ? (rect) => (rectRefs.current[index] = rect) : undefined}
                 />
+                // <Rect
+                //     {...commonProps}
+                //     x={Math.min(start.x, end.x)}
+                //     y={Math.min(start.y, end.y)}
+                //     width={width}
+                //     height={height}
+                //     fill={properties.color}
+                //     fillOpacity={0.3}
+                // />
             );
         }
 
         if (shape.type === 'circle' && points.length >= 2) {
+            return null;
             const [center, edge] = points;
             const radius = Math.sqrt(Math.pow(edge.x - center.x, 2) + Math.pow(edge.y - center.y, 2));
 
@@ -231,6 +335,7 @@ export const KonvaLayer: React.FC<KonvaLayerProps> = ({ floorPlanImage, onShapes
         }
 
         if (shape.type === 'polygon' && points.length >= 3) {
+            return null;
             const flatPoints = points.flatMap((p) => [p.x, p.y]);
             return <Line {...commonProps} points={flatPoints} closed fill={properties.color} fillOpacity={0.3} />;
         }
@@ -245,6 +350,31 @@ export const KonvaLayer: React.FC<KonvaLayerProps> = ({ floorPlanImage, onShapes
         const tempShape = currentShape as Shape;
         return renderShape(tempShape, -1); // Use -1 as index for current shape
     };
+    // const [shapes, setShapes] = useState<Shape[]>(initialShapes);
+    // const [selectedTool, setSelectedTool] = useState<DrawingTool>('select');
+    // const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
+    // const [isDrawing, setIsDrawing] = useState(false);
+    // const [currentShape, setCurrentShape] = useState<Partial<Shape> | null>(null);
+    // const [floorPlanImg, setFloorPlanImg] = useState<HTMLImageElement | null>(null);
+    useEffect(() => {
+        console.log('shapes', shapes);
+    }, [shapes]);
+    useEffect(() => {
+        console.log('selectedTool', selectedTool);
+    }, [selectedTool]);
+    useEffect(() => {
+        console.log('selectedShapeId', selectedShapeId);
+    }, [selectedShapeId]);
+
+    useEffect(() => {
+        console.log('isDrawing', isDrawing);
+    }, [isDrawing]);
+    useEffect(() => {
+        console.log('currentShape', currentShape);
+    }, [currentShape]);
+    useEffect(() => {
+        console.log('floorPlanImg', floorPlanImg);
+    }, [floorPlanImg]);
 
     return (
         <div className="floor-plan-editor">
@@ -262,17 +392,24 @@ export const KonvaLayer: React.FC<KonvaLayerProps> = ({ floorPlanImage, onShapes
                                 variant={selectedTool === 'rectangle' ? 'primary' : 'outline-primary'}
                                 onClick={() => setSelectedTool('rectangle')}>
                                 Rectangle
-                            </Button>
-                            <Button
+                            </Button>{' '}
+                            <Select
+                                options={deviceTypes ?? []}
+                                onChange={handleDeviceTypeSelection}
+                                placeholder={'Select Device Type'}
+                                value={deviceTypeSelected ?? null}
+                            />
+                            {/* <Button
                                 variant={selectedTool === 'circle' ? 'primary' : 'outline-primary'}
-                                onClick={() => setSelectedTool('circle')}>
+                                // onClick={() => setSelectedTool('circle')}
+                                >
                                 Circle
                             </Button>
                             <Button
                                 variant={selectedTool === 'polygon' ? 'primary' : 'outline-primary'}
                                 onClick={() => setSelectedTool('polygon')}>
                                 Polygon
-                            </Button>
+                            </Button> */}
                         </ButtonGroup>
 
                         <div>

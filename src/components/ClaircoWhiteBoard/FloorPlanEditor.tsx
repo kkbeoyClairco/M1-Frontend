@@ -1,70 +1,85 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, ListGroup, Badge } from 'react-bootstrap';
 import { KonvaLayer } from './KonvaLayer';
 import { KonvaErrorBoundary } from './KonvaErrorBoundary';
+import KonvaLayerRedux from './KonvaLayerRedux';
+import { Shape, Point } from 'types/whiteBoard/shapes';
+import ShapePropertiesEditor from './Modals/ShapePropertiesEditor';
+import { FloorPlan } from 'types/whiteBoard/entity';
+import { useAppSelector } from 'redux/hooks';
+import { roundToOneDecimal } from 'utils/maths';
 
 // Types for the system
-interface Point {
-    x: number;
-    y: number;
-}
+// interface Point {
+//     x: number;
+//     y: number;
+// }
 
-interface Shape {
-    id: string;
-    type: 'rectangle' | 'circle' | 'polygon';
-    points: Point[];
-    properties: {
-        name: string;
-        color: string;
-        strokeWidth: number;
-        opacity: number;
-    };
-}
+// interface Shape {
+//     id: string;
+//     type: 'rectangle' | 'circle' | 'polygon';
+//     points: Point[];
+//     deviceType: string;
 
-interface FloorPlan {
-    id: string;
-    name: string;
-    imageUrl: string;
-    shapes: Shape[];
-    metadata: {
-        building: string;
-        floor: string;
-        createdAt: string;
-        updatedAt: string;
-    };
-}
+//     properties: {
+//         name: string;
+//         color: string;
+//         strokeWidth: number;
+//         opacity: number;
+//     };
+// }
+
+// interface FloorPlan {
+//     id: string;
+//     name: string;
+//     imageUrl: string;
+//     deviceTypes: {
+//         [key: string, shapes: Shape[]];
+//     };
+//     metadata: {
+//         building: string;
+//         floor: string;
+//         createdAt: string;
+//         updatedAt: string;
+//     };
+// }
 
 // Mock data for demonstration
 const sampleFloorPlan: FloorPlan = {
     id: 'fp_001',
     name: 'Office Floor 1',
     imageUrl: 'https://via.placeholder.com/800x600/f0f0f0/999999?text=Floor+Plan+Image',
-    shapes: [],
-    metadata: {
-        building: 'Main Building',
-        floor: '1st Floor',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+
+    deviceTypes: {
+        AHU: { shapes: [] },
+    },
+    originalImageDimensions: {
+        width: 0,
+        height: 0,
     },
 };
 
 export const FloorPlanEditor: React.FC = () => {
-    const [floorPlan, setFloorPlan] = useState<FloorPlan>(sampleFloorPlan);
+    const [floorPlan, setFloorPlan] = useState<FloorPlan | null>(null);
     const [selectedShape, setSelectedShape] = useState<Shape | null>(null);
     const [isSaving, setIsSaving] = useState(false);
-
+    const floorPlanData = useAppSelector((state) => state?.floorPlan);
+    console.log('Floor Plan', floorPlanData);
     // Handle shape changes from KonvaLayer
-    const handleShapesChange = useCallback((shapes: Shape[]) => {
-        setFloorPlan((prev) => ({
-            ...prev,
-            shapes,
-            metadata: {
-                ...prev.metadata,
-                updatedAt: new Date().toISOString(),
-            },
-        }));
-    }, []);
+    // const handleShapesChange = useCallback((shapes: Shape[]) => {
+    //     setFloorPlan((prev) => ({
+    //         ...prev,
+    //         shapes,
+    //         metadata: {
+    //             ...prev.metadata,
+    //             updatedAt: new Date().toISOString(),
+    //         },
+    //     }));
+    // }, []);
 
+    useEffect(() => {
+        setFloorPlan(floorPlanData);
+    }, [floorPlanData]);
     // Save floor plan to backend
     const saveFloorPlan = async () => {
         setIsSaving(true);
@@ -87,36 +102,38 @@ export const FloorPlanEditor: React.FC = () => {
 
     // Handle shape selection for property editing
     const handleShapeSelect = (shapeId: string) => {
-        const shape = floorPlan.shapes.find((s) => s.id === shapeId);
-        setSelectedShape(shape || null);
+        // const shape = floorPlan.shapes.find((s) => s.id === shapeId);
+        // setSelectedShape(shape || null);
     };
 
     // Update shape properties
-    const updateShapeProperties = (updatedShape: Shape) => {
-        const updatedShapes = floorPlan.shapes.map((shape) => (shape.id === updatedShape.id ? updatedShape : shape));
+    // const updateShapeProperties = (updatedShape: Shape) => {
+    //     const updatedShapes = floorPlan.deviceType.shapes.map((shape) =>
+    //         shape.id === updatedShape.id ? updatedShape : shape
+    //     );
 
-        setFloorPlan((prev) => ({
-            ...prev,
-            shapes: updatedShapes,
-            metadata: {
-                ...prev.metadata,
-                updatedAt: new Date().toISOString(),
-            },
-        }));
+    //     setFloorPlan((prev) => ({
+    //         ...prev,
+    //         shapes: updatedShapes,
+    //         metadata: {
+    //             ...prev.metadata,
+    //             updatedAt: new Date().toISOString(),
+    //         },
+    //     }));
 
-        setSelectedShape(updatedShape);
-    };
+    //     setSelectedShape(updatedShape);
+    // };
 
     return (
         <Container fluid className="floor-plan-editor-container">
             <Row className="h-100">
                 {/* Main Canvas Area */}
-                <Col lg={8} className="p-3">
+                <Col lg={12} className="p-3">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                         <div>
-                            <h3 className="mb-1">{floorPlan.name}</h3>
+                            <h3 className="mb-1">{floorPlan?.name}</h3>
                             <small className="text-muted">
-                                {floorPlan.metadata.building} - {floorPlan.metadata.floor}
+                                {/* {floorPlan?.metadata?.building ?? ''} - {floorPlan.metadata.floor} */}
                             </small>
                         </div>
                         <Button variant="success" onClick={saveFloorPlan} disabled={isSaving}>
@@ -125,47 +142,57 @@ export const FloorPlanEditor: React.FC = () => {
                     </div>
 
                     <KonvaErrorBoundary>
-                        <KonvaLayer
-                            floorPlanImage={floorPlan.imageUrl}
-                            onShapesChange={handleShapesChange}
-                            initialShapes={floorPlan.shapes}
+                        <KonvaLayerRedux
+                            floorPlanImageUrl="https://res.cloudinary.com/dlulq6hny/image/upload/v1745837864/HCLlayout_4_k7jefr.svg"
+                            // floorPlanImage={floorPlan.imageUrl}
+                            // onShapesChange={handleShapesChange}
+                            // initialShapes={floorPlan.shapes}
                         />
                     </KonvaErrorBoundary>
                 </Col>
 
                 {/* Properties Panel */}
-                <Col lg={4} className="p-3 border-start">
+                <Col lg={12} className="p-3 border-start">
                     <Card className="h-100">
                         <Card.Header>
-                            <h5 className="mb-0">Shape Properties</h5>
+                            <h5 className="mb-0">Zones List</h5>
                         </Card.Header>
                         <Card.Body>
-                            {selectedShape ? (
-                                <ShapePropertiesEditor shape={selectedShape} onUpdate={updateShapeProperties} />
-                            ) : (
-                                <div className="text-center text-muted py-5">
-                                    <p>Select a shape to edit its properties</p>
-                                </div>
-                            )}
-
-                            <hr />
-
-                            <h6>Shapes List</h6>
+                            {/* <h6>Zones List</h6> */}
                             <ListGroup variant="flush">
-                                {floorPlan.shapes.map((shape) => (
-                                    <ListGroup.Item
-                                        key={shape.id}
-                                        action
-                                        onClick={() => handleShapeSelect(shape.id)}
-                                        className="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div className="fw-medium">{shape.properties.name}</div>
-                                            <small className="text-muted">Type: {shape.type}</small>
-                                        </div>
-                                        <Badge style={{ backgroundColor: shape.properties.color }}>&nbsp;</Badge>
-                                    </ListGroup.Item>
-                                ))}
-                                {floorPlan.shapes.length === 0 && (
+                                {Object.entries(floorPlan?.deviceTypes ?? {}).flatMap(([deviceType, deviceTypeObj]) =>
+                                    deviceTypeObj?.shapes?.map((shape: Shape) => (
+                                        <ListGroup.Item
+                                            key={shape?.id}
+                                            action
+                                            onClick={() => handleShapeSelect(shape.id)}
+                                            className="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <div className="fw-medium">{shape?.name}</div>{' '}
+                                                <small className="text-muted">
+                                                    Device Type: &nbsp;{deviceType ?? ''}
+                                                </small>{' '}
+                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                                <small className="text-muted">
+                                                    Zone Shape Type: &nbsp;{shape.type}
+                                                </small>{' '}
+                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                                <small className="text-muted">
+                                                    X: {shape?.x ? roundToOneDecimal(shape?.x) : 'N/A'}&nbsp;
+                                                </small>
+                                                <small className="text-muted">
+                                                    Y: {shape?.y ? roundToOneDecimal(shape?.y) : 'N/A'}&nbsp;
+                                                </small>
+                                                {/* <small className="text-muted">Type: {shape.type}</small>
+                                                <small className="text-muted">Type: {shape.type}</small>
+                                                <small className="text-muted">Type: {shape.type}</small>
+                                                <small className="text-muted">Type: {shape.type}</small> */}
+                                            </div>
+                                            {/* <Badge style={{ backgroundColor: shape?.properties?.color }}>&nbsp;</Badge> */}
+                                        </ListGroup.Item>
+                                    ))
+                                )}
+                                {Object.keys(floorPlan?.deviceTypes ?? {})?.length === 0 && (
                                     <ListGroup.Item className="text-muted text-center">
                                         No shapes created yet
                                     </ListGroup.Item>
@@ -176,79 +203,5 @@ export const FloorPlanEditor: React.FC = () => {
                 </Col>
             </Row>
         </Container>
-    );
-};
-
-// Component for editing shape properties
-interface ShapePropertiesEditorProps {
-    shape: Shape;
-    onUpdate: (shape: Shape) => void;
-}
-
-const ShapePropertiesEditor: React.FC<ShapePropertiesEditorProps> = ({ shape, onUpdate }) => {
-    const handlePropertyChange = (key: keyof Shape['properties'], value: any) => {
-        const updatedShape = {
-            ...shape,
-            properties: {
-                ...shape.properties,
-                [key]: value,
-            },
-        };
-        onUpdate(updatedShape);
-    };
-
-    return (
-        <div>
-            <h6 className="mb-3">Editing: {shape.properties.name}</h6>
-
-            <Form>
-                <Form.Group className="mb-3">
-                    <Form.Label>Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        value={shape.properties.name}
-                        onChange={(e) => handlePropertyChange('name', e.target.value)}
-                    />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <Form.Label>Color</Form.Label>
-                    <Form.Control
-                        type="color"
-                        value={shape.properties.color}
-                        onChange={(e) => handlePropertyChange('color', e.target.value)}
-                    />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <Form.Label>Stroke Width: {shape.properties.strokeWidth}px</Form.Label>
-                    <Form.Range
-                        min={1}
-                        max={10}
-                        value={shape.properties.strokeWidth}
-                        onChange={(e) => handlePropertyChange('strokeWidth', parseInt(e.target.value))}
-                    />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <Form.Label>Opacity: {Math.round(shape.properties.opacity * 100)}%</Form.Label>
-                    <Form.Range
-                        min={10}
-                        max={100}
-                        value={shape.properties.opacity * 100}
-                        onChange={(e) => handlePropertyChange('opacity', parseInt(e.target.value) / 100)}
-                    />
-                </Form.Group>
-
-                <div className="mt-4">
-                    <h6>Shape Info</h6>
-                    <small className="text-muted">
-                        <div>Type: {shape.type}</div>
-                        <div>ID: {shape.id}</div>
-                        <div>Points: {shape.points.length}</div>
-                    </small>
-                </div>
-            </Form>
-        </div>
     );
 };

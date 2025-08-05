@@ -6,8 +6,8 @@ import { KonvaErrorBoundary } from './KonvaErrorBoundary';
 export const KonvaTest: React.FC = () => {
     return (
         <Container className="py-4">
-            <h3>Konva Drawing Test</h3>
-            <p>This is a simple test component to verify Konva is working properly.</p>
+            <h3>Floor Plan Editor</h3>
+            {/* <p>This is a simple test component to verify Konva is working properly.</p> */}
 
             <KonvaErrorBoundary>
                 <KonvaLayer
