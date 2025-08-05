@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { CellFormatter, Table } from 'components';
 // import { data as Sites } from './data';
 
-import { Row, Col, Card } from 'react-bootstrap';
+import {Button, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
@@ -40,7 +40,7 @@ export type DeviseTables = {
     sensor_address: string;
 };
 
-const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
+const IAQDeviseTable = ({setBuildingHealth}:any) => {
     const [downloadModal, setDownloadModal] = useState(false);
     const [deviceCreationModal, setDeviceCreationModal] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
@@ -108,7 +108,6 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
             setTableData(response?.data?.records ?? []);
             setDeviceExists(response?.data?.records?.length > 0 ? true : false);
             setIsLoading(false);
-            setTotalDevices(response?.data?.records?.length);
         } catch (error) {
             console.log(error);
             setTableData([]);
@@ -333,6 +332,14 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
                     <Row style={{ marginBottom: '1em' }}>
                         <Col xxl={8}>
                             <h4 className="header-title mb-3">IAQ Device List</h4>
+                            {!isAdminOrNot && isAdmin === "Customer" && (
+                               <Button
+                            style={{ background: ' #008675', border: '0' }}
+                            onClick={setBuildingHealth}
+                            >
+                            Building Health
+                            </Button>
+                            )}
                         </Col>
                         <Col
                             xxl={4}

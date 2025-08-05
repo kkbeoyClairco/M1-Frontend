@@ -26,44 +26,24 @@ interface AlertsModalPropTypes {
     dataArray: [];
     // floorsData?: [];
 }
-const AlertsModal: React.FC<AlertsModalPropTypes> = ({ modalState, modalControlFn, dataArray }) => {
+const BuildingHealthModal: React.FC<AlertsModalPropTypes> = ({ modalState, modalControlFn, dataArray }) => {
     const columns = [
-        // {
-        //     Header: 'Customer',
-        //     accessor: 'customerName',
-        //     defaultCanSort: true,
-        // },
         {
             Header: 'Building',
-            accessor: 'building',
+            accessor: "buildingName",
             defaultCanSort: true,
         },
-        // {
-        //     Header: 'Floor',
-        //     accessor: 'floorName',
-        //     defaultCanSort: true,
-        // },
-
         {
-            Header: 'Device',
-            accessor: 'deviceId',
-            defaultCanSort: true,
-        },
-        // {
-        //     Header: 'Alert Time',
-        //     accessor: 'offSince',
-        //     defaultCanSort: false,
-        //     Cell: ({ value }: any) => {
-        //         const time = convertUnixToIST(value);
-        //         return time;
-        //     },
-        // },
+            Header : 'Status',
+            accessor : 'airQualityCategory',
+            defaultCanSort : true
+        }
     ];
     return (
         <Modal show={modalState} onHide={modalControlFn} animation={true} size="xl">
             <Modal.Header style={{ background: '#008675' }}>
                 <Modal.Title style={{ marginInline: 'auto', color: 'white' }}>
-                    <h5 className="modal-title"> Offline Devices</h5>
+                    <h5 className="modal-title"> Building Health </h5>
                     {/* <img src={alertIcon} alt="" height={'40em'} /> */}
                 </Modal.Title>
             </Modal.Header>
@@ -84,4 +64,4 @@ const AlertsModal: React.FC<AlertsModalPropTypes> = ({ modalState, modalControlF
     );
 };
 
-export default AlertsModal;
+export default BuildingHealthModal;

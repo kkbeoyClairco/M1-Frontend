@@ -109,7 +109,6 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
             //Check this state
             setDeviceExists(data1?.length > 0 ? true : false);
             setIsLoading(false);
-            setTotalDevices(data1?.length ?? 0);
         } catch (error) {
             console.log(error);
             setTableData([]);
