@@ -43,13 +43,13 @@ const MENU_ITEMS: MenuItemType[] = [
         icon: 'uil-list-ul',
         url: 'tree',
     },
-    // {
-    //     key: 'Settings',
-    //     label: 'Settings',
-    //     isTitle: false,
-    //     icon: 'dripicons-gear',
-    //     url: 'pages/claircosettings',
-    // },
+    {
+        key: 'Settings',
+        label: 'Settings',
+        isTitle: false,
+        icon: 'dripicons-gear',
+        url: 'settings',
+    },
     // {
     //     key: 'Clients Tree',
     //     label: 'Clients Tree',

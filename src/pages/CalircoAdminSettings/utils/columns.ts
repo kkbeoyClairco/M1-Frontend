@@ -63,10 +63,7 @@ export const columnConfig = {
     user: [
         { Header: 'User Name', accessor: 'name', defaultCanSort: false },
         { Header: 'Type', accessor: 'type', defaultCanSort: false },
-        { Header: 'Customer', accessor: 'customer', defaultCanSort: false },
-        { Header: 'Building', accessor: 'building', defaultCanSort: false },
         { Header: 'Email', accessor: 'email', defaultCanSort: false },
-        { Header: 'Phone Number', accessor: 'phone', defaultCanSort: false },
         { Header: 'Created On', accessor: 'createdAt', defaultCanSort: false },
         { Header: 'Edit', accessor: 'action', defaultCanSort: false, Cell: ActionColumn },
     ],

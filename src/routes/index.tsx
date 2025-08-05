@@ -25,6 +25,9 @@ const Uvbuilding = React.lazy(() => import('pages/ClaircoAdminDashboard/UV Devic
 const Uvfloor = React.lazy(() => import('pages/ClaircoAdminDashboard/UV Devices/Uvfloor'));
 const Uvlamps = React.lazy(() => import('pages/ClaircoAdminDashboard/UV Devices/Lamps'));
 
+//settings
+const Settings = React.lazy(() => import('pages/CalircoAdminSettings/index'));
+
 const loading = () => <div className=""></div>;
 
 type LoadComponentProps = {
@@ -96,6 +99,10 @@ const AllRoutes = () => {
                 {
                     path: 'maintenance-logs',
                     element: <LoadComponent component={MaintananceLogsPage} />,
+                },
+                {
+                    path: 'settings',
+                    element: <LoadComponent component={Settings} />,
                 },
                 {
                     path: 'tree',
