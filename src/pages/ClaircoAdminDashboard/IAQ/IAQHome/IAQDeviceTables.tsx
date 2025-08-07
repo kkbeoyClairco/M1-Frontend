@@ -40,7 +40,7 @@ export type DeviseTables = {
     sensor_address: string;
 };
 
-const IAQDeviseTable = ({setBuildingHealth}:any) => {
+const IAQDeviseTable = ({fetchOfflineIaqDevice}:any) => {
     const [downloadModal, setDownloadModal] = useState(false);
     const [deviceCreationModal, setDeviceCreationModal] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
@@ -298,6 +298,7 @@ const IAQDeviseTable = ({setBuildingHealth}:any) => {
             const { buildingId = {}, floorId = {} } = filterData ?? {};
             setFilter({ buildingId, floorId });
         }
+        fetchOfflineIaqDevice();
     }, []);
     useEffect(() => {
         // console.log('Fileters', filter);
@@ -332,14 +333,6 @@ const IAQDeviseTable = ({setBuildingHealth}:any) => {
                     <Row style={{ marginBottom: '1em' }}>
                         <Col xxl={8}>
                             <h4 className="header-title mb-3">IAQ Device List</h4>
-                            {!isAdminOrNot && isAdmin === "Customer" && (
-                               <Button
-                            style={{ background: ' #008675', border: '0' }}
-                            onClick={setBuildingHealth}
-                            >
-                            Building Health
-                            </Button>
-                            )}
                         </Col>
                         <Col
                             xxl={4}

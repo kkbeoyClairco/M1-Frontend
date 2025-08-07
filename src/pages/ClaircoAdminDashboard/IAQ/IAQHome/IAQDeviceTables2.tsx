@@ -45,7 +45,7 @@ const selectTagAll = {
     value: '',
     label: 'All',
 };
-const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
+const IAQDeviseTable2 = ({ fetchOfflineIaqDevice ,data }: any) => {
     const [downloadModal, setDownloadModal] = useState(false);
     // const [deviceCreationModal, setDeviceCreationModal] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
@@ -251,6 +251,7 @@ const IAQDeviseTable2 = ({ setTotalDevices, setOfflineCount, data }: any) => {
         if (defaultBuilding) setBuildingSelected(defaultBuilding);
 
         getIAQData(defaultBuilding?.value ?? '');
+        fetchOfflineIaqDevice(defaultBuilding?.value ?? '');
         if (!defaultBuilding) return;
         const filteredFloors = data?.floors?.filter((doc: any) => doc.buildingId === defaultBuilding?.value);
         const buildingsList = data?.buildings ?? [];

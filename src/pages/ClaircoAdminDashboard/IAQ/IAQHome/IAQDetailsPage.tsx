@@ -3,12 +3,13 @@ import { Row, Col } from 'react-bootstrap';
 import IAQDeviseTable from './IAQDeviceTables';
 import IAQDeviseTable2 from './IAQDeviceTables2';
 
-import { getAlerts, getBuildingHealth, getOfflineIaqDevices } from 'helpers/api/services/Clairco/customerSide/iaq';
+import { getAlerts, getOfflineIaqDevices } from 'helpers/api/services/Clairco/customerSide/iaq';
 
 // import { assignDeviceType, formatDateToLocalTime } from 'helpers/utils';
 // import { useRedux } from 'hooks';
 import PageHeading from 'components/ClaircoCustomerDashboard/Headings/PageHeading';
 import { TitleWidget } from 'components/ClaircoCustomerDashboard/Widgets/TitleWidget';
+import { BuildingWidget } from 'components/ClaircoCustomerDashboard/Widgets/BuildingWidget';
 
 import activeIcon from 'assets/icons/check.png';
 
@@ -37,7 +38,7 @@ const IAQDetailsPage = () => {
     const isAdmin1 = isAdmin();
     const isTypeCustomer = getUserType() === userType.Customer;
     const [alerts, setAlerts] = useState<any>([]);
-    const [buildingHealth , setBuildingHealth] = useState<any>([]);
+    const [buildingHealth, setBuildingHealth] = useState<any>([]);
     const [buildingHealthModalStatus, setBuildingHealthModalStatus] = useState(false);
     const extractBuildings = (data: any) => {
         try {
@@ -82,7 +83,7 @@ const IAQDetailsPage = () => {
         }
     };
 
-    const fetchOfflineIaqDevice = async () =>{
+    const fetchOfflineIaqDevice = async (buildingId?: string) => {
         try {
             const res = await getOfflineIaqDevices(customerId, buildingId ?? '');
             setOfflineCount(res?.data?.offline ?? 0);
@@ -94,19 +95,7 @@ const IAQDetailsPage = () => {
             console.log(error);
         }
     }
-
-    const fetchBuildingHealth = async () =>{
-        try {
-            if (!isTypeCustomer) return;
-            const res = await getBuildingHealth(customerId?? '');
-            setBuildingHealth(res?.data ?? []);
-            // console.log('building health', res);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    const handleBuildingHealth  = ()=>{
-        fetchBuildingHealth();
+    const handleBuildingHealth = () => {
         setBuildingHealthModalStatus((prev) => !prev)
     }
     const handleAlertsModal = () => {
@@ -125,7 +114,6 @@ const IAQDetailsPage = () => {
         // console.log('building data', buildings, floors);
         setUserAssignedAssets({ buildings, floors });
         // fetchAlerts();
-        fetchOfflineIaqDevice();
     }, []);
 
     return (
@@ -133,7 +121,7 @@ const IAQDetailsPage = () => {
             <PageHeading title={'IAQ Device'} />
             <Row className="mx-3">
                 <AlertsModal dataArray={alerts} modalControlFn={handleAlertsModal} modalState={alertsModalStatus} />
-                <BuildingHealthModal dataArray={buildingHealth} modalControlFn={setBuildingHealthModalStatus} modalState={buildingHealthModalStatus} />
+                <BuildingHealthModal modalControlFn={setBuildingHealthModalStatus} modalState={buildingHealthModalStatus} customerId={customerId} />
 
                 <Col lg={4}>
                     <TitleWidget title={' Devices'} value={totalDevices} icon={iconConstant.device} />
@@ -141,17 +129,24 @@ const IAQDetailsPage = () => {
                 <Col lg={4} onClick={handleAlertsModal} style={{ cursor: 'pointer' }}>
                     <TitleWidget icon={iconConstant.offline1 ?? ''} title={'Offline'} value={offlineCount} />
                 </Col>
-                <Col lg={4}>
-                    <TitleWidget icon={activeIcon ?? ''} title={'Online'} value={onlineCount} />
-                </Col>
+                {isAdmin1 && !isTypeCustomer && (
+
+                    <Col lg={4}>
+                        <TitleWidget icon={activeIcon ?? ''} title={'Online'} value={onlineCount} />
+                    </Col>
+                )}
+                {isTypeCustomer && (
+                    <Col onClick={handleBuildingHealth} style={{ cursor: 'pointer' }}>
+                        <BuildingWidget title={'Building Health'} icon={activeIcon} />
+                    </Col>
+                )}
             </Row>
             <Row className="mx-2 rounded-lg">
                 {isAdmin1 || isTypeCustomer ? (
-                    <IAQDeviseTable setBuildingHealth = {handleBuildingHealth} />
+                    <IAQDeviseTable fetchOfflineIaqDevice={fetchOfflineIaqDevice} />
                 ) : (
                     <IAQDeviseTable2
-                        setTotalDevices={setTotalDevices}
-                        setOfflineCount={setOfflineCount}
+                        fetchOfflineIaqDevice={fetchOfflineIaqDevice}
                         data={userAssignedAssets}
                     />
                 )}
