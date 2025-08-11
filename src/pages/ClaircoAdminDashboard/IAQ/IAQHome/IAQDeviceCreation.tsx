@@ -11,7 +11,7 @@ import { getCustomersList } from 'helpers/api/services/Clairco/customerSide/main
 // import { userValidationSchema } from 'pages/CalircoAdminSettings/utils/validations';
 // const transformArray = (array: any) => {
 //     const transformedArray = array?.map((item: any) => {
-//         return { value: item?.id, label: item?.name };
+//         return { value: item?._id, label: item?.name };
 //     });
 //     return transformedArray;
 // };
@@ -176,7 +176,7 @@ const IAQDeviceCreation = (props: any) => {
         try {
             const res = await getCustomersList();
             // console.log('Custoemrs List', res);
-            const list = res?.data?.records?.map((item: any) => ({ label: item.name, value: item.id }));
+            const list = res?.data?.records?.map((item: any) => ({ label: item.name, value: item._id }));
 
             setCustomers(list ?? []);
         } catch (error) {

@@ -38,7 +38,6 @@ const IAQDetailsPage = () => {
     const isAdmin1 = isAdmin();
     const isTypeCustomer = getUserType() === userType.Customer;
     const [alerts, setAlerts] = useState<any>([]);
-    const [buildingHealth, setBuildingHealth] = useState<any>([]);
     const [buildingHealthModalStatus, setBuildingHealthModalStatus] = useState(false);
     const extractBuildings = (data: any) => {
         try {

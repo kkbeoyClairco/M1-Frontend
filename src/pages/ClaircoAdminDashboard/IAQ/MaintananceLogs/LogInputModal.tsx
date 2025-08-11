@@ -97,7 +97,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
         try {
             const res = await getCustomersList();
             // console.log('Custoemrs List', res);
-            const list = res?.data?.records?.map((item: any) => ({ label: item.name, value: item.id }));
+            const list = res?.data?.records?.map((item: any) => ({ label: item.name, value: item._id }));
 
             setCustomersList(list ?? []);
         } catch (error) {
@@ -110,7 +110,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
         try {
             // console.log('Customer', customerSelected);
             const res = await getBuildingListWithCustomerId(customerSelected);
-            const list = res?.data?.map((item: any) => ({ label: item.name, value: item.id }));
+            const list = res?.data?.map((item: any) => ({ label: item.name, value: item._id }));
             setBuildingsList(list ?? []);
         } catch (error) {
             setBuildingsList([]);
@@ -120,7 +120,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
     const fetchFloorsLis = async (customer: string, buildingSelected: string) => {
         try {
             const res = await getFloorListWithBuildingId(customer, buildingSelected);
-            const list = res?.data?.map((item: any) => ({ label: item.name, value: item.id }));
+            const list = res?.data?.map((item: any) => ({ label: item.name, value: item._id }));
             setFloorsList(list ?? []);
         } catch (error) {
             console.log(error);
@@ -131,7 +131,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
     const fetchDeviceList = async () => {
         try {
             const res = await getDeviceTypeList();
-            const list = res?.data?.map((item: any) => ({ label: item.deviceTypeName, value: item.id }));
+            const list = res?.data?.map((item: any) => ({ label: item.deviceTypeName, value: item._id }));
             setDevicesList(list ?? []);
         } catch (error) {
             console.log(error);

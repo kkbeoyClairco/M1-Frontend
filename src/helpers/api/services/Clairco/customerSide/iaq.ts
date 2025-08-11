@@ -60,7 +60,7 @@ async function getCsvdownload(deviceId: any, start_time: any, end_time: any, int
 }
 
 export const getCsvdownload1 = async (params: any) => {
-    const url = `${config.DEVICE_CONTROL_API}/iaq/interval-csv`;
+    const url = `${serverDomains.flask}/iaq/interval-csv`;
 
     try {
         const response = await axios.post(url, params, { responseType: 'blob' });
