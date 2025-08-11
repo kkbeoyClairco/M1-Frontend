@@ -63,7 +63,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
     let timer: ReturnType<typeof setTimeout>;
     const createDataForSelectTag = (data: any) => {
         try {
-            const list = data?.map((item: any) => ({ label: item.name ?? '', value: item.id ?? '' }));
+            const list = data?.map((item: any) => ({ label: item.name ?? '', value: item._id ?? '' }));
             return list;
         } catch (error) {
             console.log(error);
