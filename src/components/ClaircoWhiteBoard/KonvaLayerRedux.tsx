@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { Card, ButtonGroup, Button } from 'react-bootstrap';
-import { Layer, Rect, Stage, Transformer, Circle, Image } from 'react-konva';
+import { Layer, Rect, Stage, Transformer, Circle, Image, Line } from 'react-konva';
 import Konva from 'konva';
 import Select, { SingleValue } from 'react-select';
 import { selectTagType } from 'types/selectTagType';
@@ -66,7 +66,7 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
     const canUndo = useAppSelector(selectCanUndo);
     const canRedo = useAppSelector(selectCanRedo);
     const activeDeviceType = useAppSelector(selectActiveDeviceType);
-    const availableDeviceTypes = useAppSelector(selectDeviceTypes);
+    // const availableDeviceTypes = useAppSelector(selectDeviceTypes);
 
     // Local state for UI-specific concerns
     const [currentShape, setCurrentShape] = useState<Partial<Shape> | null>(null);
@@ -130,33 +130,66 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
 
             const pointer = stage.getPointerPosition();
             if (!pointer) return;
+            if (drawingTool === 'polygon') {
+                // Handle polygon drawing (multi-click)
+                if (!isDrawing) {
+                    // Start new polygon
+                    dispatch(setIsDrawing(true));
+                    const newShape: Partial<Shape> = {
+                        id: generateId(),
+                        type: 'polygon',
+                        x: 0,
+                        y: 0,
+                        points: [{ x: pointer.x, y: pointer.y }],
+                        fill: '#007bff',
+                        stroke: '#0056b3',
+                        strokeWidth: 2,
+                        opacity: 0.7,
+                        draggable: true,
+                        name: `polygon ${shapes.length + 1}`,
+                        deviceId: activeDeviceType || 'unknown',
+                        sensorType: activeDeviceType || 'unknown',
+                    };
+                    setCurrentShape(newShape);
+                } else {
+                    // Add point to existing polygon
+                    if (currentShape && currentShape.points) {
+                        const newPoints = [...currentShape.points, { x: pointer.x, y: pointer.y }];
+                        setCurrentShape((prev) => ({
+                            ...prev,
+                            points: newPoints,
+                        }));
+                    }
+                }
+            } else {
+                dispatch(setIsDrawing(true));
 
-            dispatch(setIsDrawing(true));
+                const newShape: Partial<Shape> = {
+                    id: generateId(),
+                    type: drawingTool as 'rectangle' | 'circle' | 'polygon',
+                    x: pointer.x,
+                    y: pointer.y,
+                    width: 0,
+                    height: 0,
+                    fill: '#007bff',
+                    stroke: '#0056b3',
+                    strokeWidth: 2,
+                    opacity: 0.7,
+                    draggable: true,
+                    name: `${drawingTool} ${shapes.length + 1}`,
+                    deviceId: activeDeviceType || 'unknown',
+                    sensorType: activeDeviceType || 'unknown',
+                };
 
-            const newShape: Partial<Shape> = {
-                id: generateId(),
-                type: drawingTool as 'rectangle' | 'circle' | 'polygon',
-                x: pointer.x,
-                y: pointer.y,
-                width: 0,
-                height: 0,
-                fill: '#007bff',
-                stroke: '#0056b3',
-                strokeWidth: 2,
-                opacity: 0.7,
-                draggable: true,
-                name: `${drawingTool} ${shapes.length + 1}`,
-                deviceId: activeDeviceType || 'unknown',
-                sensorType: activeDeviceType || 'unknown',
-            };
-
-            setCurrentShape(newShape);
+                setCurrentShape(newShape);
+            }
         },
-        [drawingTool, shapes.length, activeDeviceType, dispatch]
+        [drawingTool, shapes.length, activeDeviceType, dispatch, isDrawing, currentShape]
     );
 
     const handleStageMouseMove = useCallback(
         (e: Konva.KonvaEventObject<MouseEvent>) => {
+            console.log('Mouse move');
             if (!isDrawing || !currentShape || !drawingTool) return;
 
             const stage = stageRef.current;
@@ -175,7 +208,42 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
                     x: width < 0 ? pointer.x : currentShape.x,
                     y: height < 0 ? pointer.y : currentShape.y,
                 }));
-            } else if (drawingTool === 'circle') {
+            }
+            // else if (drawingTool === 'polygon') {
+            //     if (!isDrawing) {
+            //         console.log('Polygon shape');
+            //         // Start new polygon
+            //         dispatch(setIsDrawing(true));
+            //         const newShape: Partial<Shape> = {
+            //             id: generateId(),
+            //             type: 'polygon',
+            //             x: 0,
+            //             y: 0,
+            //             points: [{ x: pointer.x, y: pointer.y }],
+            //             fill: '#007bff',
+            //             stroke: '#0056b3',
+            //             strokeWidth: 2,
+            //             opacity: 0.7,
+            //             draggable: true,
+            //             name: `polygon ${shapes.length + 1}`,
+            //             deviceId: activeDeviceType || 'unknown',
+            //             sensorType: activeDeviceType || 'unknown',
+            //         };
+            //         console.log('Polygon shape', newShape);
+            //         setCurrentShape(newShape);
+            //     }
+            //     else {
+            //         // Add point to existing polygon
+            //         if (currentShape && currentShape.points) {
+            //             const newPoints = [...currentShape.points, { x: pointer.x, y: pointer.y }];
+            //             setCurrentShape((prev) => ({
+            //                 ...prev,
+            //                 points: newPoints,
+            //             }));
+            //         }
+            //     }
+            // }
+            else if (drawingTool === 'circle') {
                 const radius = Math.sqrt(
                     Math.pow(pointer.x - currentShape.x!, 2) + Math.pow(pointer.y - currentShape.y!, 2)
                 );
@@ -191,9 +259,14 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
     const handleStageMouseUp = useCallback(() => {
         if (!isDrawing || !currentShape) return;
 
+        // For polygons, don't finish on mouse up - wait for double-click
+        if (currentShape.type === 'polygon') {
+            return; // Let polygon continue until double-click
+        }
+
         dispatch(setIsDrawing(false));
 
-        // Only add valid shapes
+        // Only add valid shapes for rectangle and circle
         if (currentShape.type === 'rectangle' && currentShape.width! > 5 && currentShape.height! > 5) {
             dispatch(addShape(currentShape as Shape));
         } else if (currentShape.type === 'circle' && currentShape.radius! > 5) {
@@ -219,6 +292,21 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
         [dispatch]
     );
 
+    const createPolygonWithRelativePoints = useCallback((absolutePoints: { x: number; y: number }[]) => {
+        if (absolutePoints.length === 0) return { x: 0, y: 0, points: [] };
+
+        const firstPoint = absolutePoints[0];
+        const relativePoints = absolutePoints.map((point) => ({
+            x: point.x - firstPoint.x,
+            y: point.y - firstPoint.y,
+        }));
+
+        return {
+            x: firstPoint.x, // Shape origin
+            y: firstPoint.y, // Shape origin
+            points: relativePoints, // Relative to origin
+        };
+    }, []);
     // Handle shape transform
     const handleShapeTransform = useCallback(
         (shapeId: string, newAttrs: Partial<Shape>) => {
@@ -226,8 +314,32 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
         },
         [dispatch]
     );
+    // Add polygon completion handler
+    const handleStageDoubleClick = useCallback(() => {
+        if (
+            isDrawing &&
+            currentShape &&
+            currentShape.type === 'polygon' &&
+            currentShape.points &&
+            currentShape.points.length >= 3
+        ) {
+            const relativePolygon = createPolygonWithRelativePoints(currentShape?.points);
+            const finalShape: Shape = {
+                ...currentShape,
+                x: relativePolygon.x,
+                y: relativePolygon.y,
+                points: relativePolygon.points,
+            } as Shape;
+            dispatch(setIsDrawing(false));
+            dispatch(addShape(finalShape));
+
+            // dispatch(addShape(currentShape as Shape));
+            setCurrentShape(null);
+        }
+    }, [isDrawing, currentShape, dispatch, createPolygonWithRelativePoints]); // Helper function to create polygon with relative points
 
     // Update transformer when selection changes
+
     useEffect(() => {
         const transformer = transformerRef.current;
         const stage = stageRef.current;
@@ -236,7 +348,9 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
 
         if (selectedShapeId) {
             const selectedNode = stage.findOne(`#${selectedShapeId}`);
-            if (selectedNode) {
+            const selectedShapeData = shapes.find((s) => s.id === selectedShapeId);
+
+            if (selectedNode && selectedShapeData?.type !== 'polygon') {
                 transformer.nodes([selectedNode]);
                 transformer.getLayer()?.batchDraw();
             }
@@ -256,17 +370,26 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
     }, []);
     // Render individual shape
     const renderShape = (shape: Shape) => {
+        const isSelected = selectedShapeId === shape.id;
+
         const commonProps = {
             id: shape.id,
             key: shape.id,
             x: shape.x,
             y: shape.y,
-            fill: shape.fill,
-            stroke: shape.stroke,
-            strokeWidth: shape.strokeWidth,
-            opacity: shape.opacity,
+            // fill: shape.fill,
+            // stroke: isSelected ? '#ff6b6b' : shape.stroke,
+            fill: isSelected ? `${shape.fill}CC` : shape.fill, // Add transparency suffix
+            stroke: isSelected ? '#ff6b6b' : shape.stroke,
+            strokeWidth: isSelected ? 4 : shape.strokeWidth,
+            opacity: isSelected ? 0.9 : shape.opacity,
+            shadowColor: isSelected ? '#ff6b6b' : undefined,
+            shadowBlur: isSelected ? 10 : 0,
+            shadowOpacity: isSelected ? 0.6 : 0,
+            // strokeWidth: shape.strokeWidth,
+            // opacity: shape.opacity,
             draggable: shape.draggable,
-            ondblclick: () => handleShapeDoubleClick(),
+            onDblClick: () => handleShapeDoubleClick(),
             onClick: () => handleShapeClick(shape.id),
             onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => {
                 handleShapeDragEnd(shape.id, { x: e.target.x(), y: e.target.y() });
@@ -292,6 +415,11 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
             return <Rect {...commonProps} width={shape.width} height={shape.height} />;
         } else if (shape.type === 'circle') {
             return <Circle {...commonProps} radius={shape.radius} />;
+        } else if (shape.type === 'polygon' && shape.points) {
+            // Convert Point[] to flat number array for Konva
+            const flatPoints = shape.points.flatMap((point) => [point.x, point.y]);
+
+            return <Line {...commonProps} points={flatPoints} closed={true} tension={0} />;
         }
         return null;
     };
@@ -390,6 +518,13 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
                                     <i className="fas fa-circle" />
                                     Circle{' '}
                                 </Button>
+                                <Button
+                                    variant={drawingTool === 'polygon' ? 'primary' : 'outline-primary'}
+                                    onClick={() => handleToolChange('polygon')}
+                                    title="Polygon Tool">
+                                    <i className="fas fa-draw-polygon" />
+                                    Polygon{' '}
+                                </Button>
                             </ButtonGroup>
 
                             {/* Action Buttons */}
@@ -442,6 +577,7 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
                             onMouseDown={handleStageMouseDown}
                             onMouseMove={handleStageMouseMove}
                             onMouseUp={handleStageMouseUp}
+                            onDblClick={handleStageDoubleClick}
                             style={{ cursor: !drawingTool ? 'default' : 'crosshair' }}>
                             <Layer>
                                 {/* Floor plan background image */}
@@ -478,6 +614,23 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
                                                 opacity={currentShape.opacity}
                                             />
                                         )}
+                                        {currentShape?.type === 'polygon' &&
+                                            currentShape?.points &&
+                                            currentShape?.points?.length > 0 && (
+                                                <Line
+                                                    points={currentShape.points.flatMap((point) => [point.x, point.y])}
+                                                    stroke={currentShape.stroke}
+                                                    strokeWidth={currentShape.strokeWidth}
+                                                    fill={
+                                                        currentShape.points.length > 2
+                                                            ? currentShape.fill
+                                                            : 'transparent'
+                                                    }
+                                                    opacity={currentShape.opacity}
+                                                    closed={currentShape.points.length > 2}
+                                                    tension={0}
+                                                />
+                                            )}
                                     </>
                                 )}
 

@@ -61,10 +61,10 @@ const sampleFloorPlan: FloorPlan = {
 
 export const FloorPlanEditor: React.FC = () => {
     const [floorPlan, setFloorPlan] = useState<FloorPlan | null>(null);
-    const [selectedShape, setSelectedShape] = useState<Shape | null>(null);
+    // const [selectedShape, setSelectedShape] = useState<Shape | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const floorPlanData = useAppSelector((state) => state?.floorPlan);
-    console.log('Floor Plan', floorPlanData);
+    // console.log('Floor Plan', floorPlanData);
     // Handle shape changes from KonvaLayer
     // const handleShapesChange = useCallback((shapes: Shape[]) => {
     //     setFloorPlan((prev) => ({
