@@ -51,10 +51,10 @@ const DownloadModal1: React.FC<DownloadModalProps> = ({ modalState, modalControl
             });
 
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.customerId?._id)
-                    customerMap.set(data?.[i]?.customerId._id, {
+                if (data?.[i]?.customerId?.id)
+                    customerMap.set(data?.[i]?.customerId.id, {
                         label: data?.[i]?.customerId?.name ?? '',
-                        value: data?.[i]?.customerId._id ?? '',
+                        value: data?.[i]?.customerId.id ?? '',
                     });
             }
             const customerList = Array.from(customerMap.values());
@@ -72,10 +72,10 @@ const DownloadModal1: React.FC<DownloadModalProps> = ({ modalState, modalControl
                 label: 'None',
             });
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.buildingId?._id)
-                    buildingMap.set(data?.[i]?.buildingId._id, {
+                if (data?.[i]?.buildingId?.id)
+                    buildingMap.set(data?.[i]?.buildingId.id, {
                         label: data?.[i]?.buildingId?.name ?? '',
-                        value: data?.[i]?.buildingId._id ?? '',
+                        value: data?.[i]?.buildingId.id ?? '',
                     });
             }
             const buildingList = Array.from(buildingMap.values());
@@ -94,9 +94,9 @@ const DownloadModal1: React.FC<DownloadModalProps> = ({ modalState, modalControl
                 label: 'None',
             });
             for (let i = 0; i < data.length; i++) {
-                if (data?.[i]?.floorId?._id)
-                    floorMap.set(data?.[i]?.floorId?._id, {
-                        value: data?.[i]?.floorId?._id,
+                if (data?.[i]?.floorId?.id)
+                    floorMap.set(data?.[i]?.floorId?.id, {
+                        value: data?.[i]?.floorId?.id,
                         label: data?.[i]?.floorId?.name,
                     });
             }
@@ -110,7 +110,7 @@ const DownloadModal1: React.FC<DownloadModalProps> = ({ modalState, modalControl
     const filterFloorsBasedOnBuilding = (buildingId: string, data: any) => {
         try {
             let filterdFloors = data;
-            if (buildingId) filterdFloors = data.filter((item: any) => item?.buildingId?._id === buildingId);
+            if (buildingId) filterdFloors = data.filter((item: any) => item?.buildingId?.id === buildingId);
             const floorList = getFloorsListForSelect(filterdFloors);
             // setFloorList(floorList ?? []);
             return floorList;
@@ -271,7 +271,7 @@ const DownloadModal1: React.FC<DownloadModalProps> = ({ modalState, modalControl
 
     const filterBuildingsBasedOnCustomer = (customerId: string, data: any) => {
         try {
-            let filterdBuildings = data.filter((item: any) => item?.customerId?._id === customerId);
+            let filterdBuildings = data.filter((item: any) => item?.customerId?.id === customerId);
             if (customerId) {
                 const buildingList = getBuidinglListForSelect(filterdBuildings);
                 setBuildingList(buildingList ?? []);

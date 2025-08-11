@@ -69,9 +69,9 @@ const IAQDeviseTable = ({fetchOfflineIaqDevice}:any) => {
         const buildingName = data?.buildingId?.name ?? '';
         const locationName = data?.locationId?.name ?? '';
         const floorName = data?.floorId?.name ?? '';
-        const buildingId = data?.buildingId?._id ?? '';
-        const deviceId = data?._id ?? '';
-        const customerId = data?.customerId?._id;
+        const buildingId = data?.buildingId?.id ?? '';
+        const deviceId = data?.id ?? '';
+        const customerId = data?.customerId?.id;
         const searchParam = new URLSearchParams();
         searchParam.append('name', name);
         searchParam.append('building', buildingName);
@@ -146,7 +146,7 @@ const IAQDeviseTable = ({fetchOfflineIaqDevice}:any) => {
                 setBuildingList(buildingList ?? []);
                 return;
             }
-            const filterdBuildings = iaqList.filter((item: any) => item?.customerId?._id === customerId);
+            const filterdBuildings = iaqList.filter((item: any) => item?.customerId?.id === customerId);
             const buildingList = getBuidinglListForSelect(filterdBuildings);
             setBuildingList(buildingList ?? []);
         } catch (error) {
@@ -160,7 +160,7 @@ const IAQDeviseTable = ({fetchOfflineIaqDevice}:any) => {
                 setFloorList(floorList ?? []);
                 return;
             }
-            const filterdFloors = iaqList.filter((item: any) => item?.buildingId?._id === buildingId);
+            const filterdFloors = iaqList.filter((item: any) => item?.buildingId?.id === buildingId);
             const floorList = getFloorsListForSelect(filterdFloors);
             setFloorList(floorList ?? []);
         } catch (error) {
@@ -203,10 +203,10 @@ const IAQDeviseTable = ({fetchOfflineIaqDevice}:any) => {
         const buildingId = filter?.buildingId?.value ?? '';
         const floorId = filter?.floorId?.value ?? '';
         let filteredData = data;
-        if (customerId) filteredData = filteredData.filter((item: any) => item?.customerId._id === customerId);
+        if (customerId) filteredData = filteredData.filter((item: any) => item?.customerId.id === customerId);
 
-        if (buildingId) filteredData = filteredData.filter((item: any) => item?.buildingId._id === buildingId);
-        if (floorId) filteredData = filteredData.filter((item: any) => item?.floorId?._id === floorId);
+        if (buildingId) filteredData = filteredData.filter((item: any) => item?.buildingId.id === buildingId);
+        if (floorId) filteredData = filteredData.filter((item: any) => item?.floorId?.id === floorId);
         return filteredData;
     };
     const handleDownloadModal = async () => {

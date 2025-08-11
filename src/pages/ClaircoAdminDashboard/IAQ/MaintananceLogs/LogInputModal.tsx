@@ -63,7 +63,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
     let timer: ReturnType<typeof setTimeout>;
     const createDataForSelectTag = (data: any) => {
         try {
-            const list = data?.map((item: any) => ({ label: item.name ?? '', value: item._id ?? '' }));
+            const list = data?.map((item: any) => ({ label: item.name ?? '', value: item.id ?? '' }));
             return list;
         } catch (error) {
             console.log(error);
@@ -85,7 +85,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
         try {
             const res = await getTechnicianList();
             const list = createDataForSelectTag(res?.data);
-            // ?.map((item: any) => ({ label: item.name, value: item._id }));
+            // ?.map((item: any) => ({ label: item.name, value: item.id }));
             setTechniciansList(list ?? []);
         } catch (error) {
             console.log(error);
@@ -97,7 +97,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
         try {
             const res = await getCustomersList();
             // console.log('Custoemrs List', res);
-            const list = res?.data?.records?.map((item: any) => ({ label: item.name, value: item._id }));
+            const list = res?.data?.records?.map((item: any) => ({ label: item.name, value: item.id }));
 
             setCustomersList(list ?? []);
         } catch (error) {
@@ -110,7 +110,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
         try {
             // console.log('Customer', customerSelected);
             const res = await getBuildingListWithCustomerId(customerSelected);
-            const list = res?.data?.map((item: any) => ({ label: item.name, value: item._id }));
+            const list = res?.data?.map((item: any) => ({ label: item.name, value: item.id }));
             setBuildingsList(list ?? []);
         } catch (error) {
             setBuildingsList([]);
@@ -120,7 +120,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
     const fetchFloorsLis = async (customer: string, buildingSelected: string) => {
         try {
             const res = await getFloorListWithBuildingId(customer, buildingSelected);
-            const list = res?.data?.map((item: any) => ({ label: item.name, value: item._id }));
+            const list = res?.data?.map((item: any) => ({ label: item.name, value: item.id }));
             setFloorsList(list ?? []);
         } catch (error) {
             console.log(error);
@@ -131,7 +131,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
     const fetchDeviceList = async () => {
         try {
             const res = await getDeviceTypeList();
-            const list = res?.data?.map((item: any) => ({ label: item.deviceTypeName, value: item._id }));
+            const list = res?.data?.map((item: any) => ({ label: item.deviceTypeName, value: item.id }));
             setDevicesList(list ?? []);
         } catch (error) {
             console.log(error);

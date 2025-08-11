@@ -7,9 +7,9 @@ export const getFloorsListForSelect = (data: any) => {
             label: 'All',
         });
         for (let i = 0; i < data.length; i++) {
-            if (data?.[i]?.floorId?._id)
-                floorMap.set(data?.[i]?.floorId?._id, {
-                    value: data?.[i]?.floorId?._id,
+            if (data?.[i]?.floorId?.id)
+                floorMap.set(data?.[i]?.floorId?.id, {
+                    value: data?.[i]?.floorId?.id,
                     label: data?.[i]?.floorId?.name,
                 });
         }
@@ -29,10 +29,10 @@ export const getCustomersListForSelect = (data: any) => {
         });
 
         for (let i = 0; i < data.length; i++) {
-            if (data?.[i]?.customerId?._id)
-                customerMap.set(data?.[i]?.customerId?._id, {
+            if (data?.[i]?.customerId?.id)
+                customerMap.set(data?.[i]?.customerId?.id, {
                     label: data?.[i]?.customerId?.name ?? '',
-                    value: data?.[i]?.customerId?._id ?? '',
+                    value: data?.[i]?.customerId?.id ?? '',
                 });
         }
         const customerList = Array.from(customerMap.values());
@@ -50,10 +50,10 @@ export const getBuidinglListForSelect = (data: any) => {
             label: 'All',
         });
         for (let i = 0; i < data.length; i++) {
-            if (data?.[i]?.buildingId?._id)
-                buildingMap.set(data?.[i]?.buildingId?._id, {
+            if (data?.[i]?.buildingId?.id)
+                buildingMap.set(data?.[i]?.buildingId?.id, {
                     label: data?.[i]?.buildingId?.name ?? '',
-                    value: data?.[i]?.buildingId?._id ?? '',
+                    value: data?.[i]?.buildingId?.id ?? '',
                 });
         }
         const buildingList = Array.from(buildingMap.values());
@@ -74,8 +74,8 @@ export const getDeviceListForSelection = (data: any) => {
                 locationName: doc?.locationId?.name,
                 floorName: doc?.floorId?.name,
                 deviceId: doc?.id,
-                customerId: doc?.customerId?._id,
-                buildingId: doc?.buildingId?._id,
+                customerId: doc?.customerId?.id,
+                buildingId: doc?.buildingId?.id,
             },
         }));
         return deviceList;
@@ -87,7 +87,7 @@ export const getDeviceListForSelection = (data: any) => {
 export const filterDataWithBuildingIds = (data: any, buildingIds: string[]) => {
     try {
         if (!Array.isArray(data) || !Array.isArray(buildingIds)) return [];
-        const filtered = data?.filter((device: any) => buildingIds?.includes(device?.buildingId?._id ?? ''));
+        const filtered = data?.filter((device: any) => buildingIds?.includes(device?.buildingId?.id ?? ''));
         return filtered;
     } catch (error) {
         return [];

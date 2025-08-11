@@ -176,7 +176,7 @@ const IAQDeviceCreation = (props: any) => {
         try {
             const res = await getCustomersList();
             // console.log('Custoemrs List', res);
-            const list = res?.data?.records?.map((item: any) => ({ label: item.name, value: item._id }));
+            const list = res?.data?.records?.map((item: any) => ({ label: item.name, value: item.id }));
 
             setCustomers(list ?? []);
         } catch (error) {
