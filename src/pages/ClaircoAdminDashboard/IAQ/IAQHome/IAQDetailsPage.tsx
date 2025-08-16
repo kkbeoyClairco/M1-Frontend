@@ -3,12 +3,13 @@ import { Row, Col } from 'react-bootstrap';
 import IAQDeviseTable from './IAQDeviceTables';
 import IAQDeviseTable2 from './IAQDeviceTables2';
 
-import { getAlerts } from 'helpers/api/services/Clairco/customerSide/iaq';
+import { getAlerts, getOfflineIaqDevices } from 'helpers/api/services/Clairco/customerSide/iaq';
 
 // import { assignDeviceType, formatDateToLocalTime } from 'helpers/utils';
 // import { useRedux } from 'hooks';
 import PageHeading from 'components/ClaircoCustomerDashboard/Headings/PageHeading';
 import { TitleWidget } from 'components/ClaircoCustomerDashboard/Widgets/TitleWidget';
+import { BuildingWidget } from 'components/ClaircoCustomerDashboard/Widgets/BuildingWidget';
 
 import activeIcon from 'assets/icons/check.png';
 
@@ -18,12 +19,15 @@ import { iconConstant, userType } from 'appConstants/claircoConstants';
 import { getUserDetailsFromSession, getUserIdFromSession, getUserType, isAdmin } from 'utils/storageFunctions';
 import AlertsModal from './AlertsModal';
 import { selectTagType } from 'types/selectTagType';
+import { set } from 'react-hook-form';
+import BuildingHealthModal from './BuildingHealth';
 
 const IAQDetailsPage = () => {
     // const { dispatch, appSelector } = useRedux();
     const [totalDevices, setTotalDevices] = useState();
     const [alertsModalStatus, setAlertsModalStatus] = useState(false);
     const [offlineCount, setOfflineCount] = useState(0);
+    const [onlineCount, setOnlineCount] = useState(0);
     const customerId = getUserDetailsFromSession()?.customerId ?? '';
     const [userAssignedAssets, setUserAssignedAssets] = useState<{
         buildings: selectTagType[];
@@ -34,6 +38,7 @@ const IAQDetailsPage = () => {
     const isAdmin1 = isAdmin();
     const isTypeCustomer = getUserType() === userType.Customer;
     const [alerts, setAlerts] = useState<any>([]);
+    const [buildingHealthModalStatus, setBuildingHealthModalStatus] = useState(false);
     const extractBuildings = (data: any) => {
         try {
             const buildings = data?.flatMap((customer: any) =>
@@ -71,14 +76,27 @@ const IAQDetailsPage = () => {
             if (!isAdmin1) res = await getAlerts(customerId, buildingId ?? '');
             else res = await getAlerts();
             setAlerts(res?.data?.offDevices ?? []);
-            setOfflineCount(res?.data?.offDevices?.length ?? 0);
-
             // console.log(res);
         } catch (error) {
             console.log(error);
         }
     };
 
+    const fetchOfflineIaqDevice = async (buildingId?: string) => {
+        try {
+            const res = await getOfflineIaqDevices(customerId, buildingId ?? '');
+            setOfflineCount(res?.data?.offline ?? 0);
+            setTotalDevices(res?.data?.totalDevices ?? 0);
+            setOnlineCount(res?.data?.online ?? 0);
+            setAlerts(res?.data?.offlineDevices ?? []);
+            // console.log('offline devices', res);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const handleBuildingHealth = () => {
+        setBuildingHealthModalStatus((prev) => !prev)
+    }
     const handleAlertsModal = () => {
         try {
             // console.log('alert click');
@@ -94,7 +112,7 @@ const IAQDetailsPage = () => {
         const { buildings, floors } = extractBuildings(data?.access ?? []);
         // console.log('building data', buildings, floors);
         setUserAssignedAssets({ buildings, floors });
-        fetchAlerts();
+        // fetchAlerts();
     }, []);
 
     return (
@@ -102,24 +120,32 @@ const IAQDetailsPage = () => {
             <PageHeading title={'IAQ Device'} />
             <Row className="mx-3">
                 <AlertsModal dataArray={alerts} modalControlFn={handleAlertsModal} modalState={alertsModalStatus} />
+                <BuildingHealthModal modalControlFn={setBuildingHealthModalStatus} modalState={buildingHealthModalStatus} customerId={customerId} />
 
                 <Col lg={4}>
                     <TitleWidget title={' Devices'} value={totalDevices} icon={iconConstant.device} />
                 </Col>
                 <Col lg={4} onClick={handleAlertsModal} style={{ cursor: 'pointer' }}>
-                    <TitleWidget icon={alertIcon} title={'Alerts'} value={alerts?.length ?? 0} />
-                </Col>
-                <Col lg={4}>
                     <TitleWidget icon={iconConstant.offline1 ?? ''} title={'Offline'} value={offlineCount} />
                 </Col>
+                {isAdmin1 && !isTypeCustomer && (
+
+                    <Col lg={4}>
+                        <TitleWidget icon={activeIcon ?? ''} title={'Online'} value={onlineCount} />
+                    </Col>
+                )}
+                {isTypeCustomer && (
+                    <Col onClick={handleBuildingHealth} style={{ cursor: 'pointer' }}>
+                        <BuildingWidget title={'Building Health'} icon={activeIcon} />
+                    </Col>
+                )}
             </Row>
             <Row className="mx-2 rounded-lg">
                 {isAdmin1 || isTypeCustomer ? (
-                    <IAQDeviseTable setTotalDevices={setTotalDevices} />
+                    <IAQDeviseTable fetchOfflineIaqDevice={fetchOfflineIaqDevice} />
                 ) : (
                     <IAQDeviseTable2
-                        setTotalDevices={setTotalDevices}
-                        setOfflineCount={setOfflineCount}
+                        fetchOfflineIaqDevice={fetchOfflineIaqDevice}
                         data={userAssignedAssets}
                     />
                 )}

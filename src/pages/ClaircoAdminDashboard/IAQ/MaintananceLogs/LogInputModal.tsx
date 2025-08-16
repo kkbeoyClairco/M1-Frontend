@@ -85,7 +85,7 @@ const LogInputModal: React.FC<LogInputModalPropTYpes> = ({ modalState, modalCont
         try {
             const res = await getTechnicianList();
             const list = createDataForSelectTag(res?.data);
-            // ?.map((item: any) => ({ label: item.name, value: item._id }));
+            // ?.map((item: any) => ({ label: item.name, value: item.id }));
             setTechniciansList(list ?? []);
         } catch (error) {
             console.log(error);

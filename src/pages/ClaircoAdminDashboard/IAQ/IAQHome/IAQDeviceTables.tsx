@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { CellFormatter, Table } from 'components';
 // import { data as Sites } from './data';
 
-import { Row, Col, Card } from 'react-bootstrap';
+import {Button, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
@@ -40,7 +40,7 @@ export type DeviseTables = {
     sensor_address: string;
 };
 
-const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
+const IAQDeviseTable = ({fetchOfflineIaqDevice}:any) => {
     const [downloadModal, setDownloadModal] = useState(false);
     const [deviceCreationModal, setDeviceCreationModal] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
@@ -108,7 +108,6 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
             setTableData(response?.data?.records ?? []);
             setDeviceExists(response?.data?.records?.length > 0 ? true : false);
             setIsLoading(false);
-            setTotalDevices(response?.data?.records?.length);
         } catch (error) {
             console.log(error);
             setTableData([]);
@@ -299,6 +298,7 @@ const IAQDeviseTable = ({ setTotalDevices, setOfflineCount }: any) => {
             const { buildingId = {}, floorId = {} } = filterData ?? {};
             setFilter({ buildingId, floorId });
         }
+        fetchOfflineIaqDevice();
     }, []);
     useEffect(() => {
         // console.log('Fileters', filter);

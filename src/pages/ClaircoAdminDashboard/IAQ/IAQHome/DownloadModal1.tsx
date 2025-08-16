@@ -79,6 +79,7 @@ const DownloadModal1: React.FC<DownloadModalProps> = ({ modalState, modalControl
                     });
             }
             const buildingList = Array.from(buildingMap.values());
+            console.log('Building List', buildingList);
             return buildingList;
         } catch (error) {
             console.log(error);

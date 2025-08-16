@@ -60,7 +60,7 @@ async function getCsvdownload(deviceId: any, start_time: any, end_time: any, int
 }
 
 export const getCsvdownload1 = async (params: any) => {
-    const url = `${config.DEVICE_CONTROL_API}/iaq/interval-csv`;
+    const url = `${serverDomains.flask}/iaq/interval-csv`;
 
     try {
         const response = await axios.post(url, params, { responseType: 'blob' });
@@ -116,14 +116,13 @@ export const getAlerts = (customerId?: string, buildingId?: string) => {
     try {
         // console.log('Alerts api', customerId);
         const deviceTypeId = '6690ef7fdeb2b486e92011aa';
-        let url = `/devices/offdevices`;
         const searchParam = new URLSearchParams();
         searchParam.append('deviceTypeId', deviceTypeId);
         if (buildingId) searchParam.append('buildingId', buildingId);
         if (customerId) {
             searchParam.append('customerId', customerId);
         }
-        url = `/devices/offdevices?${searchParam.toString()}`;
+        const url = `/devices/offlineDevices?${searchParam.toString()}`;
         return api.get(url, null);
     } catch (error) {
         console.log(error);
@@ -164,3 +163,31 @@ export const createIAQDevice = async (data: any) => {
         console.log(error);
     }
 };
+
+export const getOfflineIaqDevices = async (customerId?: string, buildingId?: string) => {
+    try {
+        const deviceType = 'IAQ';
+        const searchParam = new URLSearchParams();
+        searchParam.append('deviceType', deviceType);
+        if (buildingId) searchParam.append('buildingId', buildingId);
+        if (customerId) {
+            searchParam.append('customerId', customerId);
+        }
+        const url = `/devices/offline?${searchParam.toString()}`;
+        return api.get(url, null);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getBuildingHealth = async (customerId?: string) => {
+    try {
+        const deviceType = 'IAQ';
+        const searchParam = new URLSearchParams();
+        searchParam.append('deviceType', deviceType);
+        const url = `/customers/${customerId}/buildings/air-quality?${searchParam.toString()}`;
+        return api.get(url, null);
+    } catch (error) {
+        console.log(error);
+    }
+}
