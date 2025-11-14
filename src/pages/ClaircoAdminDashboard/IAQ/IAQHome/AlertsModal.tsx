@@ -63,8 +63,7 @@ const AlertsModal: React.FC<AlertsModalPropTypes> = ({ modalState, modalControlF
         <Modal show={modalState} onHide={modalControlFn} animation={true} size="xl">
             <Modal.Header style={{ background: '#008675' }}>
                 <Modal.Title style={{ marginInline: 'auto', color: 'white' }}>
-                    <h5 className="modal-title"> Offline Devices</h5>
-                    {/* <img src={alertIcon} alt="" height={'40em'} /> */}
+                    <h5 className="modal-title"> OFFLINE IAQ DEVICES </h5>
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>

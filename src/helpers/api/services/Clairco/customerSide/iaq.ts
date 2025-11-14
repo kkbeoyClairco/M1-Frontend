@@ -191,3 +191,12 @@ export const getBuildingHealth = async (customerId?: string) => {
         console.log(error);
     }
 }
+
+export const getBuildingList = async(customerId:string) =>{
+    try {
+        const url = `/customers/${customerId}/buildings`;
+        return api.get(url, null);
+    } catch (error) {
+        console.log(error);
+    }
+}

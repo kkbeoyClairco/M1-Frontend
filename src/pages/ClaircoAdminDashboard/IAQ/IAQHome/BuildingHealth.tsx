@@ -139,7 +139,7 @@ const BuildingHealthModal: React.FC<BuidingModalPropTypes> = ({ modalState, moda
         <Modal show={modalState} onHide={modalControlFn} animation={true} size="xl">
             <Modal.Header style={{ background: '#008675' }}>
                 <Modal.Title style={{ marginInline: 'auto', color: 'white' }}>
-                    <h5 className="modal-title"> Building Health </h5>
+                    <h5 className="modal-title"> Building Air Quality </h5>
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
