@@ -11,7 +11,7 @@ import { getCustomersList } from 'helpers/api/services/Clairco/customerSide/main
 // import { userValidationSchema } from 'pages/CalircoAdminSettings/utils/validations';
 // const transformArray = (array: any) => {
 //     const transformedArray = array?.map((item: any) => {
-//         return { value: item?.id, label: item?.name };
+//         return { value: item?._id, label: item?.name };
 //     });
 //     return transformedArray;
 // };

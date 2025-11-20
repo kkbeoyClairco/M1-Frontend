@@ -35,36 +35,35 @@ const AlertsModal: React.FC<AlertsModalPropTypes> = ({ modalState, modalControlF
         // },
         {
             Header: 'Building',
-            accessor: 'buildingName',
+            accessor: 'building',
             defaultCanSort: true,
         },
-        {
-            Header: 'Floor',
-            accessor: 'floorName',
-            defaultCanSort: true,
-        },
+        // {
+        //     Header: 'Floor',
+        //     accessor: 'floorName',
+        //     defaultCanSort: true,
+        // },
 
         {
             Header: 'Device',
-            accessor: 'deviceName',
+            accessor: 'deviceId',
             defaultCanSort: true,
         },
-        {
-            Header: 'Alert Time',
-            accessor: 'offSince',
-            defaultCanSort: false,
-            Cell: ({ value }: any) => {
-                const time = convertUnixToIST(value);
-                return time;
-            },
-        },
+        // {
+        //     Header: 'Alert Time',
+        //     accessor: 'offSince',
+        //     defaultCanSort: false,
+        //     Cell: ({ value }: any) => {
+        //         const time = convertUnixToIST(value);
+        //         return time;
+        //     },
+        // },
     ];
     return (
         <Modal show={modalState} onHide={modalControlFn} animation={true} size="xl">
             <Modal.Header style={{ background: '#008675' }}>
                 <Modal.Title style={{ marginInline: 'auto', color: 'white' }}>
-                    <h5 className="modal-title"> Alerts</h5>
-                    {/* <img src={alertIcon} alt="" height={'40em'} /> */}
+                    <h5 className="modal-title"> OFFLINE IAQ DEVICES </h5>
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
