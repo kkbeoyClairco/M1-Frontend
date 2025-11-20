@@ -52,9 +52,9 @@ const DownloadModal1: React.FC<DownloadModalProps> = ({ modalState, modalControl
 
             for (let i = 0; i < data.length; i++) {
                 if (data?.[i]?.customerId?.id)
-                    customerMap.set(data?.[i]?.customerId.id, {
+                    customerMap.set(data?.[i]?.customerId?.id, {
                         label: data?.[i]?.customerId?.name ?? '',
-                        value: data?.[i]?.customerId.id ?? '',
+                        value: data?.[i]?.customerId?.id ?? '',
                     });
             }
             const customerList = Array.from(customerMap.values());
@@ -299,8 +299,8 @@ const DownloadModal1: React.FC<DownloadModalProps> = ({ modalState, modalControl
     }, [buildingSelected, dataArray]);
 
     useEffect(() => {
-        // console.log('Floor Selected', floorSelected);
-    }, [floorSelected]);
+        console.log('Floor Selected', dataArray);
+    }, [dataArray]);
     return (
         <Modal show={modalState} onHide={modalControlFn} animation={true} size="lg">
             <Modal.Header style={{ background: '#008675' }}>
