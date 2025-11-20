@@ -3,7 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 import IAQDeviseTable from './IAQDeviceTables';
 import IAQDeviseTable2 from './IAQDeviceTables2';
 
-import { getAlerts, getOfflineIaqDevices } from 'helpers/api/services/Clairco/customerSide/iaq';
+import { getAlerts, getOfflineIaqDevices,getBuildingList } from 'helpers/api/services/Clairco/customerSide/iaq';
 
 // import { assignDeviceType, formatDateToLocalTime } from 'helpers/utils';
 // import { useRedux } from 'hooks';
@@ -14,13 +14,14 @@ import { BuildingWidget } from 'components/ClaircoCustomerDashboard/Widgets/Buil
 import activeIcon from 'assets/icons/check.png';
 
 import alertIcon from 'assets/icons/caution.png';
-import { getDevices } from 'redux/actions';
+import { getDevices, setBuildings } from 'redux/actions';
 import { iconConstant, userType } from 'appConstants/claircoConstants';
 import { getUserDetailsFromSession, getUserIdFromSession, getUserType, isAdmin } from 'utils/storageFunctions';
 import AlertsModal from './AlertsModal';
 import { selectTagType } from 'types/selectTagType';
 import { set } from 'react-hook-form';
 import BuildingHealthModal from './BuildingHealth';
+import { get } from 'sortablejs';
 
 const IAQDetailsPage = () => {
     // const { dispatch, appSelector } = useRedux();
@@ -33,6 +34,7 @@ const IAQDetailsPage = () => {
         buildings: selectTagType[];
         floors: selectTagType[];
     } | null>(null);
+    const [buildingsCount, setBuildingsCount] = useState(0);
 
     const { buildingId = '' } = getUserIdFromSession();
     const isAdmin1 = isAdmin();
@@ -81,7 +83,15 @@ const IAQDetailsPage = () => {
             console.log(error);
         }
     };
-
+    const fetchTotalBuildings = async (customerId:string) =>{
+        try{
+          const res = await getBuildingList(customerId);
+          setBuildingsCount(res?.data?.length ?? 0);
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
     const fetchOfflineIaqDevice = async (buildingId?: string) => {
         try {
             const res = await getOfflineIaqDevices(customerId, buildingId ?? '');
@@ -113,6 +123,9 @@ const IAQDetailsPage = () => {
         // console.log('building data', buildings, floors);
         setUserAssignedAssets({ buildings, floors });
         // fetchAlerts();
+        if (customerId) {
+            fetchTotalBuildings(customerId);
+        }
     }, []);
 
     return (
@@ -121,12 +134,18 @@ const IAQDetailsPage = () => {
             <Row className="mx-3">
                 <AlertsModal dataArray={alerts} modalControlFn={handleAlertsModal} modalState={alertsModalStatus} />
                 <BuildingHealthModal modalControlFn={setBuildingHealthModalStatus} modalState={buildingHealthModalStatus} customerId={customerId} />
-
+                {
+                    isTypeCustomer && (
+                           <Col lg={4}>
+                    <TitleWidget title={' Total Buildings'} value={buildingsCount} icon={iconConstant.device} />
+                </Col>     
+                    )
+                } 
                 <Col lg={4}>
-                    <TitleWidget title={' Devices'} value={totalDevices} icon={iconConstant.device} />
+                    <TitleWidget title={' Total IAQ Devices'} value={totalDevices} icon={iconConstant.device} />
                 </Col>
                 <Col lg={4} onClick={handleAlertsModal} style={{ cursor: 'pointer' }}>
-                    <TitleWidget icon={iconConstant.offline1 ?? ''} title={'Offline'} value={offlineCount} />
+                    <TitleWidget icon={iconConstant.offline1 ?? ''} title={'Offline IAQ Devices'} value={offlineCount} />
                 </Col>
                 {isAdmin1 && !isTypeCustomer && (
 
@@ -136,7 +155,7 @@ const IAQDetailsPage = () => {
                 )}
                 {isTypeCustomer && (
                     <Col onClick={handleBuildingHealth} style={{ cursor: 'pointer' }}>
-                        <BuildingWidget title={'Building Health'} icon={activeIcon} />
+                        <BuildingWidget title={'Building Air Quality'} icon={activeIcon} />
                     </Col>
                 )}
             </Row>
