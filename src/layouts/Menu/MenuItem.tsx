@@ -5,7 +5,7 @@ import MenuItemLink from './MenuItemLink';
 const MenuItem = ({ item, className, linkClassName }: SubMenus) => {
     return (
         <li className={classNames('side-nav-item', className)}>
-            <MenuItemLink item={item} className={linkClassName} />
+            {item && <MenuItemLink item={item} className={linkClassName} />}
         </li>
     );
 };

@@ -4,8 +4,8 @@ import { findAllParent, findMenuItem } from 'helpers';
 import { MenuItemType } from 'appConstants';
 import MenuItem from './MenuItem';
 import MenuItemWithChildren from './MenuItemWithChildren';
-import ClaircoLogo from '../../assets/images/Clairco_Logo.png';
-import { getUserDetailsFromSession, isAdmin, isPanasonic } from 'utils/storageFunctions';
+// import ClaircoLogo from '../../assets/images/Clairco_Logo.png';
+import { getUserDetailsFromSession, isAdmin } from 'utils/storageFunctions';
 
 type AppMenuProps = {
     menuItems: Array<MenuItemType>;
@@ -67,15 +67,15 @@ const AppMenu = ({ menuItems, isCondensed }: AppMenuProps) => {
     return (
         <ul className="side-nav " ref={menuRef} id="main-side-menu">
             {(menuItems || []).map((item, index) => {
-                if (item.key === 'UV' && !isUV && !isAdminOrNot) return null;
-                else if (item.key === 'IAQ' && isUV) return null;
+                if (item && item?.key === 'UV' && !isUV && !isAdminOrNot) return null;
+                else if (item && item?.key === 'IAQ' && isUV) return null;
                 return (
                     <React.Fragment key={index.toString()}>
-                        {item.isTitle ? (
-                            <li className="side-nav-title side-nav-item">{item.label}</li>
+                        {item?.isTitle ? (
+                            <li className="side-nav-title side-nav-item">{item?.label}</li>
                         ) : (
                             <>
-                                {item.children ? (
+                                {item?.children ? (
                                     <MenuItemWithChildren
                                         item={item}
                                         toggleMenu={toggleMenu}
@@ -87,7 +87,7 @@ const AppMenu = ({ menuItems, isCondensed }: AppMenuProps) => {
                                     <MenuItem
                                         item={item}
                                         linkClassName="side-nav-link"
-                                        className={activeMenuItems.includes(item.key) ? 'menuitem-active' : ''}
+                                        className={activeMenuItems.includes(item?.key ?? '') ? 'menuitem-active' : ''}
                                     />
                                 )}
                             </>

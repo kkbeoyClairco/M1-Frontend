@@ -1,3 +1,5 @@
+import { records } from 'pages/tables/data';
+
 export const indoorUnitData = [
     {
         Sensor: 'Panasonic Indoor Unit 14',
@@ -150,3 +152,30 @@ export const indoorUnitData = [
         id: '67c9786bd6ecaa33020c0aee',
     },
 ];
+
+export const iaqListFake = {
+    data: {
+        records: [
+            {
+                name: 'IAQ24058',
+                customerId: {
+                    name: 'Panasonic Life Solutions India Pvt. Ltd',
+                    id: '691ee06b13070b74bf9fce25',
+                },
+                buildingId: {
+                    name: 'F 28 & 29, F Block, Sec 8, Noida, UP',
+                    id: '691ee09513070b74bf9fce2b',
+                },
+                floorId: {
+                    name: 'G floor',
+                    id: '691ee27b13070b74bf9fd825',
+                },
+
+                dataUpdatedAt: '2025-11-20T12:19:37.620Z',
+                createdAt: '2025-11-20T09:43:03.158Z',
+                updatedAt: '2025-11-20T09:43:03.158Z',
+                id: '691ee2a713070b74bf9fda25',
+            },
+        ],
+    },
+};

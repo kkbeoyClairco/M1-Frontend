@@ -10,6 +10,7 @@ import { useRedux } from 'hooks';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import { convertUnixToIST } from 'utils/timeFunctions';
 import { getUserIdFromSession } from 'utils/storageFunctions';
+import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 // import { URLSearchParams } from 'url';
 
 type NewType = CellFormatter<DeviseTables>;
@@ -107,15 +108,16 @@ const PCSDeviceTable = ({ setTotalDevices, setTotalOccupants }: any) => {
     const getOccupancyData = async () => {
         try {
             setIsLoading(true);
+            await new Promise((resolve) => setTimeout(resolve, 500));
 
-            const deviceId = deviceTypeId['Occupancy'];
-            const response = await fetchDevicesList(deviceId, customerId);
-            if (response?.data.length === 0) setIsEmpty(true);
+            // const deviceId = deviceTypeId['Occupancy'];
+            // const response = await fetchDevicesList(deviceId, customerId);
+            // if (response?.data.length === 0) setIsEmpty(true);
 
-            setTableData(response?.data || []);
-            setDeviceExists(response?.data?.length > 0 ? true : false);
+            // setTableData(response?.data || []);
+            // setDeviceExists(response?.data?.length > 0 ? true : false);
             setIsLoading(false);
-            setTotalDevices(response?.data?.length);
+            // setTotalDevices(response?.data?.length);
         } catch (error) {
             console.log(error);
             setTableData([]);
@@ -177,21 +179,6 @@ const PCSDeviceTable = ({ setTotalDevices, setTotalOccupants }: any) => {
             defaultCanSort: true,
         },
 
-        // {
-        //     Header: 'Updated on',
-        //     accessor: 'updatedAt',
-        //     defaultCanSort: false,
-        //     Cell: ({ value }: any) => {
-        //         const time = convertUnixToIST(Date.now());
-        //         return time;
-        //     },
-        // },
-        // {
-        //     Header: 'Last Updated',
-        //     accessor: 'last_refreshed_on',
-        //     defaultCanSort: false,
-        // },
-
         {
             Header: 'View',
             accessor: 'action',
@@ -214,7 +201,7 @@ const PCSDeviceTable = ({ setTotalDevices, setTotalOccupants }: any) => {
         },
     ];
     useEffect(() => {
-        // getOccupancyData();
+        getOccupancyData();
     }, []);
     return (
         <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 ">
@@ -246,7 +233,7 @@ const PCSDeviceTable = ({ setTotalDevices, setTotalOccupants }: any) => {
                         />
                     ) : null
                 ) : (
-                    <TableSkelton />
+                    <TableSkelton2 />
                 )}
             </Card.Body>
         </Card>

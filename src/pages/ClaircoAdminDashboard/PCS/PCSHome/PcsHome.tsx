@@ -9,6 +9,7 @@ import alertIcon from 'assets/icons/caution.png';
 
 import { Col, Row } from 'react-bootstrap';
 import { useState } from 'react';
+import { iconConstant } from 'appConstants/claircoConstants';
 
 const PcsHome = () => {
     const [totalOnline, setTotalOnline] = useState();
@@ -21,7 +22,7 @@ const PcsHome = () => {
                 {' '}
                 <Col lg={4}>
                     {' '}
-                    <TitleWidget title={'Total Devices'} value={4} />
+                    <TitleWidget title={'Total Devices'} value={4} icon={iconConstant.device} />
                 </Col>
                 {/* <Col lg={4}>
                     {' '}

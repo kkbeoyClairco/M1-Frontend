@@ -11,14 +11,16 @@ type HeadbandWidgetType = {
     functionToExecute?: () => void;
     isIconActive?: boolean;
     iconFunction?: any;
+    time: string;
     description?: string;
 };
-const HeadbandWidget = ({
+const HeadbandWidget2 = ({
     title,
     value,
     lastUpdated,
     functionToExecute,
     iconFunction,
+    time,
     isIconActive,
     description,
 }: HeadbandWidgetType) => {
@@ -63,19 +65,19 @@ const HeadbandWidget = ({
                 {/* <h6 style={{ marginTop: '0px' }}>BTU Unit 4</h6> */}
                 <div style={{ paddingLeft: '10px', width: '100%' }}>
                     <div style={{ display: 'flex', width: '100%' }}>
-                        <h4 style={{ padding: '0px', width: '80%', marginTop: '20px', marginBottom: '20px' }}>
+                        <h5 style={{ padding: '0px', width: '80%', marginTop: '20px', marginBottom: '20px' }}>
                             {value !== undefined && value !== null && value !== '' ? value : '-'}
-                        </h4>{' '}
+                        </h5>{' '}
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '20%' }}>
                             {' '}
                             {isIconActive && <GearIcon clickeHandlerFunction={iconFunction} />}
                         </div>{' '}
                     </div>
-                    <LastUpdated lastUpdated={lastUpdated || '-'} />
+                    <div> {time ? <h5 style={{ paddingTop: '0px' }}> {time}</h5> : null} </div>
                 </div>
             </div>
         </OverlayTrigger>
     );
 };
 
-export default HeadbandWidget;
+export default HeadbandWidget2;

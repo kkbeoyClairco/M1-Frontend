@@ -18,6 +18,8 @@ const ClaircoAdminLogin = React.lazy(() => import('pages/ClaircoLogin/ClaircoAdm
 
 const IAQSensorPageAdmin = React.lazy(() => import('pages/ClaircoAdminDashboard/IAQ/IAQ_Devices/IAQDevicePage2'));
 const IAQDetailsPage = React.lazy(() => import('pages/ClaircoAdminDashboard/IAQ/IAQHome/IAQDetailsPage'));
+const PCSDetailsPage = React.lazy(() => import('pages/ClaircoAdminDashboard/PCS/PCSHome/PcsHome'));
+const PCSSensorPageAdmin = React.lazy(() => import('pages/ClaircoAdminDashboard/PCS/PCSDevice/PCSDevicePage'));
 
 // //UV
 
@@ -95,6 +97,14 @@ const AllRoutes = () => {
                 {
                     path: 'iaq-home/:device',
                     element: <LoadComponent component={IAQSensorPageAdmin} />,
+                },
+                {
+                    path: 'pcs-home',
+                    element: <LoadComponent component={PCSDetailsPage} />,
+                },
+                {
+                    path: 'pcs-home/:device',
+                    element: <LoadComponent component={PCSSensorPageAdmin} />,
                 },
                 {
                     path: 'maintenance-logs',

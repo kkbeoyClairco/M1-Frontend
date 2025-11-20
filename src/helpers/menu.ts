@@ -7,20 +7,20 @@ import { getAssignedDeviceType } from './user';
 const getMenuItems = () => {
     const api = new APICore();
     // NOTE - You can fetch from server and return here as well
-    const storedData = JSON.parse(sessionStorage?.getItem('USER_DATA') ?? '');
-    const role: string = storedData?.user?.type || '';
+    // const storedData = JSON.parse(sessionStorage?.getItem('USER_DATA') ?? '');
+    // const role: string = storedData?.user?.type || '';
 
-    if (role === 'Admin') return MENU_ITEMS;
+    // if (role === 'Admin') return MENU_ITEMS;
 
-    const deviceList = getAssignedDeviceType(storedData);
+    // const deviceList = getAssignedDeviceType(storedData);
     // const deviceList = api.getLoggedInUser()?.user?.assignedDeviceTypes?.map((doc: any) => doc?.deviceTypeName);
     // ;
     // console.log('Sessrion data', CUSTOMER_MENU_ITEMS, deviceList);
-    const customerSideMenu = [];
-    if (deviceList?.includes('IAQ')) customerSideMenu.push(MENU_ITEMS[0]);
-    if (deviceList?.includes('UV')) customerSideMenu.push(MENU_ITEMS[1]);
-    customerSideMenu.push(MENU_ITEMS[2]);
-    return customerSideMenu;
+    // const customerSideMenu = [];
+    // if (deviceList?.includes('IAQ')) customerSideMenu.push(MENU_ITEMS[0]);
+    // if (deviceList?.includes('UV')) customerSideMenu.push(MENU_ITEMS[1]);
+    // customerSideMenu.push(MENU_ITEMS[2]);
+    return MENU_ITEMS;
 };
 
 const findAllParent = (menuItems: MenuItemType[], menuItem: MenuItemType): string[] => {

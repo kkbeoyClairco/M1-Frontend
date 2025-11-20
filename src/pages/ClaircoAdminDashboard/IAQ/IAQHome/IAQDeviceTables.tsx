@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { CellFormatter, Table } from 'components';
 // import { data as Sites } from './data';
 
-import {Button, Row, Col, Card } from 'react-bootstrap';
+import { Button, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { deviceTypesConstant } from 'appConstants/DeviceMappingConstants';
 import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/LandingPage';
@@ -19,6 +19,7 @@ import TableSkelton2 from 'components/ClaircoSkeltonLoaders/TableSkelton2';
 import IAQDeviceCreation from './IAQDeviceCreation';
 import { getBuidinglListForSelect, getCustomersListForSelect, getFloorsListForSelect } from 'utils/device/filters';
 import DownloadModal1 from './DownloadModal1';
+import { iaqListFake } from 'appConstants/fakeData';
 const addIcon = `https://res.cloudinary.com/dlulq6hny/image/upload/v1741001702/plus_u1czew.png`;
 // import { sampleTableTestData } from '../test';
 const placeHolder = {
@@ -40,7 +41,7 @@ export type DeviseTables = {
     sensor_address: string;
 };
 
-const IAQDeviseTable = ({fetchOfflineIaqDevice}:any) => {
+const IAQDeviseTable = ({ fetchOfflineIaqDevice }: any) => {
     const [downloadModal, setDownloadModal] = useState(false);
     const [deviceCreationModal, setDeviceCreationModal] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
@@ -89,15 +90,15 @@ const IAQDeviseTable = ({fetchOfflineIaqDevice}:any) => {
     //API Call
     const getIAQData = async () => {
         try {
-            // if (!customerId) return;
             setIsLoading(true);
             const deviceType = deviceTypesConstant.IAQ;
-            const response = await fetchDevicesList(deviceType, customerId, '', buildingId ?? '');
+            const response: any = iaqListFake;
+            console.log('IAQ device Li?st', response); ////Saved Filters
+            //  await fetchDevicesList(deviceType, customerId, '', buildingId ?? '');
             setIaqList(response?.data?.records); //Sets data as a referece for the filter
             if (response?.data?.records?.length === 0) setIsEmpty(true);
             let filtered = response?.data?.records; //Unfiltered
             getBuildingAndFloorList(filtered); //Populates the building and floor list for Selection
-            // console.log('IAQ device List', filtered); ////Saved Filters
 
             // const filtersSaved = getDataFromSession(sessionKeys.IAQFilterKey);
 

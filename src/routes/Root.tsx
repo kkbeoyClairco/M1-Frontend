@@ -15,14 +15,14 @@ const Root = () => {
             return 'login';
         }
         switch (loggedInUser?.user?.type) {
-            case 'Admin':
-                return '/customer/iaq-home';
-            case 'Customer':
-                return '/customer/iaq-home';
-            case 'Building Manager':
-                return '/customer/iaq-home';
-            case 'uvCustomer':
-                return '/customer/uv';
+            // case 'Admin':
+            //     return '/customer/iaq-home';
+            // case 'Customer':
+            //     return '/customer/iaq-home';
+            // case 'Building Manager':
+            //     return '/customer/iaq-home';
+            // case 'uvCustomer':
+            //     return '/customer/uv';
             default:
                 return '/customer/iaq-home';
         }
