@@ -91,6 +91,8 @@ const IAQDeviseTable = ({ fetchOfflineIaqDevice }: any) => {
     const getIAQData = async () => {
         try {
             setIsLoading(true);
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
             const deviceType = deviceTypesConstant.IAQ;
             const response: any = iaqListFake;
             console.log('IAQ device Li?st', response); ////Saved Filters
@@ -321,14 +323,7 @@ const IAQDeviseTable = ({ fetchOfflineIaqDevice }: any) => {
                     floorsData={floorList}
                 />
             )}
-            {deviceCreationModal && (
-                <IAQDeviceCreation
-                    show={deviceCreationModal}
-                    data={infoToModal}
-                    // onSubmit={handleDeviceCreation}
-                    onClose={() => setDeviceCreationModal(false)}
-                />
-            )}
+
             <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 " style={{ color: 'black' }}>
                 <Card.Body>
                     <Row style={{ marginBottom: '1em' }}>
@@ -345,16 +340,6 @@ const IAQDeviseTable = ({ fetchOfflineIaqDevice }: any) => {
                                 alignContent: 'baseline',
                                 height: '30px',
                             }}>
-                            {isAdminOrNot && (
-                                <div
-                                    className="mx-2"
-                                    style={{ textAlign: 'center', cursor: 'pointer' }}
-                                    onClick={handleAddClick}>
-                                    {' '}
-                                    <img src={addIcon} alt="" height={'55%'} />
-                                    <h6 style={{ fontSize: '10px', textAlign: 'center' }}>Add new</h6>
-                                </div>
-                            )}
                             <div style={{ textAlign: 'center', cursor: 'pointer' }} onClick={handleDownloadModal}>
                                 {' '}
                                 <img src={downloadIcon} alt="" height={'55%'} style={{}} />

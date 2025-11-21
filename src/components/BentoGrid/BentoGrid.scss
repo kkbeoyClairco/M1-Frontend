@@ -1,0 +1,354 @@
+// AQI Card Styles
+.aqi-card {
+    transition: box-shadow 0.3s, transform 0.3s;
+    box-shadow: 0 4px 24px 0 rgba(33, 150, 243, 0.08);
+    cursor: pointer;
+    &:hover {
+        transform: translateY(-6px) scale(1.03);
+        // box-shadow: 0 12px 48px 0 rgba(33, 150, 243, 0.18);
+        z-index: 2;
+    }
+}
+
+// VOC Card Styles
+.voc-card {
+    transition: box-shadow 0.3s, transform 0.3s;
+    box-shadow: 0 4px 24px 0 rgba(253, 203, 110, 0.08);
+    cursor: pointer;
+    &:hover {
+        transform: translateY(-6px) scale(1.03);
+        // box-shadow: 0 12px 48px 0 rgba(253, 203, 110, 0.18);
+        z-index: 2;
+    }
+}
+.pm10-card {
+    transition: box-shadow 0.3s, transform 0.3s;
+    box-shadow: 0 4px 24px 0 rgba(27, 94, 32, 0.08);
+    cursor: pointer;
+    &:hover {
+        transform: translateY(-6px) scale(1.03);
+        box-shadow: 0 12px 48px 0 rgba(27, 94, 32, 0.18);
+        z-index: 2;
+    }
+}
+.bento-grid-container {
+    width: 100%;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f7fa 100%);
+    padding: 3rem 2rem;
+
+    /* Optimize for TV screens */
+    @media (min-width: 1920px) {
+        padding: 4rem 3rem;
+        min-height: 95vh;
+    }
+
+    @media (min-width: 2560px) {
+        padding: 6rem 4rem;
+        min-height: 100vh;
+    }
+}
+
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+    grid-template-rows: repeat(3, minmax(180px, 1fr));
+    gap: 1.5rem;
+    width: 95vw;
+    max-width: 900px;
+
+    /* Large desktop/small TV screens (1440p) */
+    @media (min-width: 1440px) {
+        grid-template-columns: repeat(2, minmax(420px, 1fr));
+        grid-template-rows: repeat(3, minmax(240px, 1fr));
+        gap: 2rem;
+        max-width: 1100px;
+    }
+
+    /* Full HD TV screens (1920px+) */
+    @media (min-width: 1920px) {
+        grid-template-columns: repeat(2, minmax(600px, 1fr));
+        grid-template-rows: repeat(3, minmax(300px, 1fr));
+        gap: 2.5rem;
+        max-width: 1400px;
+    }
+
+    /* 4K TV screens (2560px+) */
+    @media (min-width: 2560px) {
+        grid-template-columns: repeat(2, minmax(900px, 1fr));
+        grid-template-rows: repeat(3, minmax(380px, 1fr));
+        gap: 3rem;
+        max-width: 2000px;
+    }
+
+    /* Ultra-wide 4K+ TV screens */
+    @media (min-width: 3200px) {
+        grid-template-columns: repeat(2, minmax(1200px, 1fr));
+        grid-template-rows: repeat(3, minmax(450px, 1fr));
+        gap: 4rem;
+        max-width: 2600px;
+    }
+}
+
+.bento-grid-item {
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.07);
+    background: transparent;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    /* Enhanced for large TV screens */
+    @media (min-width: 1920px) {
+        border-radius: 2rem;
+        box-shadow: 0 6px 32px 0 rgba(0, 0, 0, 0.08);
+
+        &:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 48px 0 rgba(0, 0, 0, 0.15);
+        }
+    }
+
+    @media (min-width: 2560px) {
+        border-radius: 2.5rem;
+        box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.1);
+
+        &:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 16px 64px 0 rgba(0, 0, 0, 0.18);
+        }
+    }
+}
+
+.bento-card {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+
+    /* Scale typography and spacing for TV screens */
+    @media (min-width: 1440px) {
+        .card-body {
+            padding: 2rem !important;
+        }
+
+        h6 {
+            font-size: 1.1rem !important;
+        }
+
+        h3 {
+            font-size: 2.2rem !important;
+        }
+
+        small {
+            font-size: 0.95rem !important;
+        }
+    }
+
+    @media (min-width: 1920px) {
+        .card-body {
+            padding: 2.5rem !important;
+        }
+
+        h5 {
+            font-size: 1.4rem !important;
+        }
+
+        h6 {
+            font-size: 1.2rem !important;
+        }
+
+        h3 {
+            font-size: 2.8rem !important;
+        }
+
+        small {
+            font-size: 1rem !important;
+        }
+
+        .fa,
+        .fas,
+        svg {
+            font-size: 1.2em !important;
+        }
+    }
+
+    @media (min-width: 2560px) {
+        .card-body {
+            padding: 3.5rem !important;
+        }
+
+        h5 {
+            font-size: 1.8rem !important;
+        }
+
+        h6 {
+            font-size: 1.5rem !important;
+        }
+
+        h3 {
+            font-size: 3.5rem !important;
+        }
+
+        small {
+            font-size: 1.2rem !important;
+        }
+
+        .fa,
+        .fas,
+        svg {
+            font-size: 1.5em !important;
+        }
+
+        .badge {
+            font-size: 1rem !important;
+            padding: 0.5rem 1rem !important;
+        }
+    }
+}
+
+/* TV-optimized classes for better scaling */
+.tv-optimized {
+    .tv-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .tv-subtitle {
+        font-size: clamp(0.9rem, 1.5vw, 1.4rem);
+        font-weight: 500;
+    }
+
+    .tv-value {
+        font-size: clamp(1.8rem, 4vw, 3.5rem);
+        line-height: 1.1;
+    }
+
+    .tv-unit {
+        font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+    }
+
+    .tv-badge {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+}
+
+/* Animation for demo presentations */
+@media (min-width: 1920px) {
+    .bento-grid-item {
+        animation: slideInUp 0.6s ease-out;
+        animation-fill-mode: both;
+
+        &:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        &:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        &:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        &:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+        &:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+        &:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+        &:nth-child(7) {
+            animation-delay: 0.7s;
+        }
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.bento-pm10 {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+.bento-voc {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+.bento-aqi {
+    grid-column: 3 / 4;
+    grid-row: 1 / 2;
+}
+.bento-energy-saved {
+    grid-column: 4 / 5;
+    grid-row: 1 / 2;
+}
+.bento-money-saved {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+.bento-washroom-solutions {
+    grid-column: 2 / 4;
+    grid-row: 2 / 3;
+}
+.bento-space-management {
+    grid-column: 4 / 5;
+    grid-row: 2 / 3;
+}
+
+@media (max-width: 900px) {
+    .bento-grid {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+        grid-template-rows: repeat(4, minmax(160px, 1fr));
+        gap: 1rem;
+    }
+    .bento-pm10,
+    .bento-voc,
+    .bento-aqi,
+    .bento-energy-saved,
+    .bento-money-saved,
+    .bento-washroom-solutions,
+    .bento-space-management {
+        grid-column: auto;
+        grid-row: auto;
+    }
+    .bento-washroom-solutions {
+        grid-column: 1 / 3;
+    }
+}
+
+@media (max-width: 600px) {
+    .bento-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(7, minmax(140px, 1fr));
+        gap: 1rem;
+    }
+    .bento-pm10,
+    .bento-voc,
+    .bento-aqi,
+    .bento-energy-saved,
+    .bento-money-saved,
+    .bento-washroom-solutions,
+    .bento-space-management {
+        grid-column: 1 / 2;
+        grid-row: auto;
+    }
+}

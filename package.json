@@ -64,6 +64,7 @@
         "react-error-boundary": "^5.0.0",
         "react-hook-form": "^7.27.1",
         "react-i18next": "^11.15.6",
+        "react-icons": "^5.5.0",
         "react-rating": "^2.0.5",
         "react-redux": "^7.2.6",
         "react-router-dom": "^6.2.2",

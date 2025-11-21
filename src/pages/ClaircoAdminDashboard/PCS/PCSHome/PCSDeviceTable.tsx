@@ -205,7 +205,7 @@ const PCSDeviceTable = ({ setTotalDevices, setTotalOccupants }: any) => {
     }, []);
     return (
         <Card className="shadow-lg mt-0 rounded-lg p-2 mx-2 ">
-            <Card.Body>
+            <Card.Body style={{ color: 'black' }}>
                 <Row>
                     <Col>
                         <h4 className="header-title mb-3">People Counting Sensors</h4>
