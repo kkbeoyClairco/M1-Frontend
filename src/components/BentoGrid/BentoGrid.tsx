@@ -17,7 +17,8 @@ const BentoGrid: React.FC = () => {
     const space = { incount: 70, outcount: 50 };
 
     return (
-        <div className="bento-grid-container">
+        <div className="bento-grid-container" style={{ position: 'relative' }}>
+            <div className="bento-center-circle"></div>
             <div className="bento-grid">
                 {/* Left column: PM10/PM2.5 tall card, VOC and AQI compact cards below */}
                 <div
