@@ -29,6 +29,17 @@ const BentoGrid: React.FC = () => {
                         flexDirection: 'column',
                         height: '100%',
                     }}>
+                    <div
+                        style={{
+                            fontWeight: 700,
+                            fontSize: '1.2rem',
+                            color: '#222',
+                            marginBottom: '0.5rem',
+                            textAlign: 'left',
+                            letterSpacing: 0.2,
+                        }}>
+                        Air Quality
+                    </div>
                     <div style={{ flex: 2, minHeight: 0 }}>
                         <PM10Card
                             pm10={airQuality.pm10}
@@ -58,24 +69,76 @@ const BentoGrid: React.FC = () => {
                 </div>
                 <div
                     className="bento-grid-item bento-energy-saved"
-                    style={{ gridColumn: '2 / 3', gridRow: '1 / 3', height: '100%' }}>
-                    <EnergySavedCard energySaved={hvac.energySaved} moneySaved={100} percentChange={200} />
+                    style={{
+                        gridColumn: '2 / 3',
+                        gridRow: '1 / 3',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}>
+                    <div
+                        style={{
+                            fontWeight: 700,
+                            fontSize: '1.2rem',
+                            color: '#222',
+                            marginBottom: '0.5rem',
+                            textAlign: 'left',
+                            letterSpacing: 0.2,
+                        }}>
+                        Energy Savings
+                    </div>
+                    <div style={{ flex: 1, display: 'flex' }}>
+                        <EnergySavedCard energySaved={hvac.energySaved} moneySaved={100} percentChange={200} />
+                    </div>
                 </div>
 
                 {/* Bottom row: Washroom and SpaceManagement */}
                 <div
                     className="bento-grid-item bento-washroom-solutions"
-                    style={{ gridColumn: '1 / 2', gridRow: '3 / 4' }}>
-                    <WashroomSolutionsCard {...washroom} />
+                    style={{ gridColumn: '1 / 2', gridRow: '3 / 4', display: 'flex', flexDirection: 'column' }}>
+                    <div
+                        style={{
+                            fontWeight: 700,
+                            fontSize: '1.2rem',
+                            color: '#222',
+                            marginBottom: '0.5rem',
+                            textAlign: 'left',
+                            letterSpacing: 0.2,
+                        }}>
+                        Washroom Solutions
+                    </div>
+                    <div style={{ flex: 1, display: 'flex' }}>
+                        <WashroomSolutionsCard {...washroom} />
+                    </div>
                 </div>
                 <div
                     className="bento-grid-item bento-space-management"
-                    style={{ gridColumn: '2 / 3', gridRow: '3 / 4', display: 'flex', gap: '1rem', height: '100%' }}>
-                    <div style={{ flex: 1, display: 'flex' }}>
-                        <InCountCard count={space.incount} />
+                    style={{
+                        gridColumn: '2 / 3',
+                        gridRow: '3 / 4',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.5rem',
+                        height: '100%',
+                    }}>
+                    <div
+                        style={{
+                            fontWeight: 700,
+                            fontSize: '1.2rem',
+                            color: '#222',
+                            marginBottom: '0.5rem',
+                            textAlign: 'left',
+                            letterSpacing: 0.2,
+                        }}>
+                        Space Management
                     </div>
-                    <div style={{ flex: 1, display: 'flex' }}>
-                        <OutCountCard count={space.outcount} />
+                    <div style={{ display: 'flex', flex: 1, gap: '1rem' }}>
+                        <div style={{ flex: 1, display: 'flex' }}>
+                            <InCountCard count={space.incount} />
+                        </div>
+                        <div style={{ flex: 1, display: 'flex' }}>
+                            <OutCountCard count={space.outcount} />
+                        </div>
                     </div>
                 </div>
             </div>
