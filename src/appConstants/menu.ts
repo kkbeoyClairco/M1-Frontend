@@ -15,6 +15,13 @@ export type MenuItemType = {
 
 const MENU_ITEMS: MenuItemType[] = [
     {
+        key: 'HOME',
+        label: 'Home',
+        isTitle: false,
+        icon: 'uil-home-alt',
+        url: '/home',
+    },
+    {
         key: 'IAQ',
         label: 'IAQ',
         isTitle: false,
@@ -28,50 +35,115 @@ const MENU_ITEMS: MenuItemType[] = [
         icon: 'mdi mdi-account-multiple',
         url: 'pcs-home',
     },
+];
 
-    // {
-    //     key: 'UV',
-    //     label: 'UV Home',
-    //     isTitle: false,
-    //     icon: 'uil-cloud-data-connection',
-    //     url: 'uv',
-    // },
-    // {
-    //     key: 'Maintenance',
-    //     label: 'Maintenance Logs',
-    //     isTitle: false,
-    //     icon: 'uil-sitemap',
-    //     url: 'maintenance-logs',
-    // },
-    // {
-    //     key: 'Tree',
-    //     label: 'Client Tree',
-    //     isTitle: false,
-    //     icon: 'uil-list-ul',
-    //     url: 'tree',
-    // },
-    // {
-    //     key: 'Settings',
-    //     label: 'Settings',
-    //     isTitle: false,
-    //     icon: 'dripicons-gear',
-    //     url: 'settings',
-    // },
-    // {
-    //     key: 'Clients Tree',
-    //     label: 'Clients Tree',
-    //     isTitle: false,
-    //     icon: 'mdi mdi-file-tree',
-    //     url: 'pages/tree',
-    // },
+const ENERGY_MENU_ITEMS: MenuItemType[] = [
+    {
+        key: 'HOME',
+        label: 'Home',
+        isTitle: false,
+        icon: 'uil-home-alt',
+        url: '/home',
+    },
+    {
+        key: 'Energy Meter',
+        label: 'Energy ',
+        isTitle: false,
+        icon: 'uil-tachometer-fast',
+        url: 'energymeter',
+    },
+    {
+        key: 'Occupancy',
+        label: 'Occupancy',
+        isTitle: false,
+        icon: 'uil-sitemap',
+        url: 'occupancy',
+    },
+    {
+        key: 'AHU',
+        label: 'AHU',
+        isTitle: false,
+        icon: 'uil-wind',
+        url: 'ahu',
+    },
+];
 
+const WASHROOM_MENU_ITEMS: MenuItemType[] = [
+    {
+        key: 'HOME',
+        label: 'Home',
+        isTitle: false,
+        icon: 'uil-home-alt',
+        url: '/home',
+    },
+    {
+        key: 'Washroom-IAQ',
+        label: 'OdourClair',
+        isTitle: false,
+        icon: 'uil-water',
+        url: 'Odour',
+    },
+    {
+        key: 'PCS',
+        label: 'sensiCOUNT',
+        isTitle: false,
+        icon: 'mdi mdi-account-multiple',
+        url: 'sensiCOUNT',
+    },
+    {
+        key: 'Feedback',
+        label: 'Feedback Analytics',
+        isTitle: false,
+        icon: 'mdi mdi-message',
+        url: 'feedback',
+    },
+];
+const IAQ_MENU_ITEMS: MenuItemType[] = [
+    {
+        key: 'HOME',
+        label: 'Home',
+        isTitle: false,
+        icon: 'uil-home-alt',
+        url: '/home',
+    },
+    {
+        key: 'IAQ',
+        label: 'IAQ',
+        isTitle: false,
+        icon: 'uil-water',
+        url: 'iaq-home',
+    },
     // {
-    //     key: 'Control-Logs',
-    //     label: 'Control-Logs',
+    //     key: 'PCS',
+    //     label: 'PCS',
     //     isTitle: false,
-    //     icon: 'uil-list-ul',
-    //     url: 'pages/control-logs',
+    //     icon: 'mdi mdi-account-multiple',
+    //     url: 'pcs-home',
     // },
+];
+
+const SPACE_MENU_ITEMS: MenuItemType[] = [
+    {
+        key: 'HOME',
+        label: 'Home',
+        isTitle: false,
+        icon: 'uil-home-alt',
+        url: '/home',
+    },
+    // {
+    //     key: 'IAQ',
+    //     label: 'IAQ',
+    //     isTitle: false,
+    //     icon: 'uil-water',
+    //     url: 'iaq-home',
+    // },
+    {
+        key: 'PCS',
+        label: 'PCS',
+        isTitle: false,
+        icon: 'mdi mdi-account-multiple',
+        url: 'pcs-home',
+    },
 ];
 
 const CUSTOMER_MENU_ITEMS: MenuItemType[] = [
@@ -134,4 +206,4 @@ const CUSTOMER_MENU_ITEMS: MenuItemType[] = [
     // },
 ];
 
-export { MENU_ITEMS, CUSTOMER_MENU_ITEMS };
+export { MENU_ITEMS, CUSTOMER_MENU_ITEMS, ENERGY_MENU_ITEMS, IAQ_MENU_ITEMS, SPACE_MENU_ITEMS, WASHROOM_MENU_ITEMS };

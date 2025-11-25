@@ -1,133 +1,131 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBolt, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
+import { faBolt } from '@fortawesome/free-solid-svg-icons';
 
 interface EnergySavedCardProps {
     moneySaved?: number;
     energySaved?: number;
-    percentChange?: number;
+    percentChange?: number; // percentage monetary savings
 }
 
 const EnergySavedCard: React.FC<EnergySavedCardProps> = ({ moneySaved, energySaved, percentChange = 12 }) => (
     <Card
         className="bento-card energy-saved-card split-card shadow-sm rounded-4 p-0 text-center"
-        style={{ background: '#fff', borderRadius: '1.5rem' }} // ensure solid background
-    >
-        {' '}
+        style={{ background: '#fff', borderRadius: '1.5rem' }}>
         <div
             className="split-card-top rounded"
             style={{
-                // background: '#C6F6D5',
                 background: 'linear-gradient(to bottom, #fffefc, #f9e79f)',
                 borderTopLeftRadius: '1.5rem',
                 borderTopRightRadius: '1.5rem',
-                height: '65%',
+                height: '100%',
                 display: 'flex',
-                flexDirection: 'column',
+                flexDirection: 'row',
+                alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '2rem 1.5rem 1.2rem 1.5rem',
             }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span
-                    style={{
-                        fontWeight: 600,
-                        letterSpacing: 2,
-                        color: '#4A5568',
-                        fontSize: '1.1rem',
-                        fontFamily: 'Inter, sans-serif',
-                    }}>
-                    {/* Energy Savings */}
-                </span>
-                {/* <FontAwesomeIcon icon={faMoneyBillWave} style={{ color: '#38B2AC', fontSize: '2rem' }} /> */}
-            </div>
-            <div style={{ textAlign: 'left', marginTop: '1.2rem' }}>
-                <div style={{ color: '#718096', fontWeight: 500, fontSize: '1.1rem', fontFamily: 'Inter, sans-serif' }}>
-                    Savings
-                </div>
-                <div
-                    style={{
-                        fontWeight: 700,
-                        fontSize: '2.5rem',
-                        color: '#22223b',
-                        fontFamily: 'Inter, sans-serif',
-                        margin: '0.2rem 0 0.5rem 0',
-                    }}>
-                    ₹{moneySaved?.toLocaleString(undefined, { minimumFractionDigits: 3 })}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {/* <span
-                        style={{
-                            background: '#E6FFFA',
-                            color: '#38B2AC',
-                            borderRadius: '1rem',
-                            padding: '0.2rem 0.8rem',
-                            fontWeight: 600,
-                            fontSize: '1rem',
-                            fontFamily: 'Inter, sans-serif',
-                        }}>
-                        ↑ +{percentChange}%
-                    </span> */}
-                </div>
-            </div>
-        </div>
-        <div
-            className="split-card-bottom"
-            style={{
-                background: '#fff',
-                borderBottomLeftRadius: '1.5rem',
-                borderBottomRightRadius: '1.5rem',
-                height: '30%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'start',
-                padding: '1.2rem 1.5rem',
-            }}>
+            {/* Center left: Main highlight - percentage monetary savings */}
             <div
                 style={{
+                    flex: 2,
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                    marginBottom: 4,
-                    whiteSpace: 'nowrap',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                    minWidth: 0,
                 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <FontAwesomeIcon icon={faBolt} style={{ color: '#fdcb6e', fontSize: '1.1rem' }} />
-                    <span
-                        style={{
-                            color: 'black',
-                            fontWeight: 500,
-                            fontSize: '1.1rem',
-                            fontFamily: 'Inter, sans-serif',
-                        }}>
-                        Energy Saved
-                    </span>
+                <span
+                    style={{
+                        fontWeight: 900,
+                        fontSize: '2.8rem',
+                        color: '#27ae60',
+                        fontFamily: 'Inter, sans-serif',
+                        letterSpacing: 1,
+                        lineHeight: 1.1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                    }}>
+                    <FontAwesomeIcon icon={faBolt} style={{ color: '#fdcb6e', fontSize: '2rem' }} />
+                    {percentChange}%
                 </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <span
-                        style={{
-                            fontWeight: 700,
-                            fontSize: '1.5rem',
-                            color: '#22223b',
-                            fontFamily: 'Inter, sans-serif',
-                        }}>
-                        {energySaved}
-                    </span>
-                    <span
-                        style={{
-                            color: '#718096',
-                            fontWeight: 500,
-                            fontSize: '1rem',
-                            fontFamily: 'Inter, sans-serif',
-                        }}>
-                        kWh
-                    </span>
+                <span
+                    style={{
+                        fontWeight: 700,
+                        fontSize: '1.2rem',
+                        color: '#22223b',
+                        marginTop: 2,
+                        letterSpacing: 0.5,
+                    }}>
+                    Reduction in Electricity Bills
+                </span>
+                <span
+                    style={{
+                        fontWeight: 500,
+                        fontSize: '1rem',
+                        color: '#888',
+                        marginTop: 2,
+                    }}>
+                    with Clairco’s HVAC Efficiency
+                </span>
+                <span
+                    style={{
+                        fontWeight: 500,
+                        fontSize: '0.98rem',
+                        color: '#888',
+                        fontFamily: 'Inter, sans-serif',
+                        marginTop: 2,
+                        letterSpacing: 0.5,
+                        whiteSpace: 'nowrap',
+                    }}>
+                    Energy Saved: {energySaved} kWh
                 </span>
             </div>
-            <div style={{ color: '#A0AEC0', fontSize: '0.95rem', fontFamily: 'Inter, sans-serif', marginTop: 2 }}>
-                November
+            {/* Right: Monetary savings value moved to lower right */}
+            <div style={{ flex: 1, position: 'relative', minWidth: 0, height: '100%' }}>
+                <div
+                    style={{
+                        position: 'absolute',
+                        right: 0,
+                        bottom: 0,
+                        minWidth: 210,
+                        maxWidth: 270,
+                        background: 'rgba(255,255,255,0.92)',
+                        borderRadius: 14,
+                        boxShadow: '0 2px 12px 0 rgba(39, 174, 96, 0.10)',
+                        padding: '1.1rem 1.3rem 1.1rem 1.3rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-end',
+                        justifyContent: 'center',
+                        zIndex: 2,
+                    }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span
+                            style={{
+                                fontWeight: 800,
+                                fontSize: '2rem',
+                                color: '#22223b',
+                                fontFamily: 'Inter, sans-serif',
+                                letterSpacing: 0.5,
+                            }}>
+                            ₹{moneySaved?.toLocaleString(undefined, { minimumFractionDigits: 0 })}
+                        </span>
+                    </span>
+                    <span
+                        style={{
+                            fontWeight: 600,
+                            fontSize: '1.02rem',
+                            color: 'black',
+                            fontFamily: 'Inter, sans-serif',
+                            marginTop: 2,
+                            letterSpacing: 0.5,
+                        }}>
+                        Saved in November
+                    </span>
+                </div>
             </div>
         </div>
     </Card>

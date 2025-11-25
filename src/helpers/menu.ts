@@ -1,11 +1,37 @@
-import { MENU_ITEMS, MenuItemType, CUSTOMER_MENU_ITEMS } from 'appConstants';
+import {
+    MENU_ITEMS,
+    MenuItemType,
+    ENERGY_MENU_ITEMS,
+    IAQ_MENU_ITEMS,
+    SPACE_MENU_ITEMS,
+    WASHROOM_MENU_ITEMS,
+} from 'appConstants';
 import { getDeviceListFromSession, getUserIdFromSession } from 'utils/storageFunctions';
 import { APICore } from './api/apiCore';
 import { getAssignedDeviceType } from './user';
+import { retry } from 'redux-saga/effects';
+
+export const getServiceFromRoute = (pathname: string): string | null => {
+    // Remove leading slash and hash if present
+    const cleanPath = pathname.replace(/^\/?(#\/)?/, '');
+
+    // Split by '/' and get the first segment (service)
+    const segments = cleanPath.split('/');
+    return segments[0] || null;
+};
 
 // const loginData = JSON.parse(sessionStorage.getItem('USER_DATA') || ' ');
 const getMenuItems = () => {
     const api = new APICore();
+    const currentPath = window.location.pathname + window.location.hash;
+    const service = getServiceFromRoute(currentPath);
+    console.log('Service', service);
+    if (service === 'wsr') return WASHROOM_MENU_ITEMS;
+    if (service === 'energy-efficiency') return ENERGY_MENU_ITEMS;
+
+    if (service === 'space') return SPACE_MENU_ITEMS;
+    if (service === 'air-quality') return IAQ_MENU_ITEMS;
+    return IAQ_MENU_ITEMS;
     // NOTE - You can fetch from server and return here as well
     // const storedData = JSON.parse(sessionStorage?.getItem('USER_DATA') ?? '');
     // const role: string = storedData?.user?.type || '';

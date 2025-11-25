@@ -11,6 +11,7 @@ import { fetchDevicesList } from 'helpers/api/services/Clairco/customerSide/Land
 import { setLocale } from 'yup';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
 import NoDevice from 'components/ClaircoGeneral/NoDevice';
+import { ahuList } from 'appConstants/dataToSvg';
 type DeviseTables = {
     _id: string;
     deviceName: string;
@@ -48,14 +49,15 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
     const getAHUData = async () => {
         try {
             setIsLoading(true);
-            const deviceId = deviceTypeId['AHU'];
-            const { customerId } = data;
-            const response = await fetchDevicesList(deviceId, customerId, floorId);
-            if (response?.data.length === 0) setIsEmpty(true);
+            // const deviceId = deviceTypeId['AHU'];
+            // const { customerId } = data;
+            const response: any = ahuList;
+            //  await fetchDevicesList(deviceId, customerId, floorId);
+            if (response?.length === 0) setIsEmpty(true);
 
-            setTableData(response?.data || []);
+            setTableData(response || []);
             // console.log('AHu', response);
-            setTotalDevices(response?.data?.length);
+            setTotalDevices(response?.length);
             setIsLoading(false);
         } catch (error) {
             console.log(error);
@@ -87,7 +89,7 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
         searchParam.append('floorId', floorId);
 
         // console.log('id to navigate', floorId);
-        navigate(`/customer/ahu/${searchParam}`, {
+        navigate(`${searchParam}`, {
             // state: { sensorName: sensorName, deviceName: name, btuName, id, floorId },
         });
     };
@@ -152,7 +154,7 @@ const AHUDevicesTable = ({ setTotalDevices }: any) => {
             Cell: ({ value }: any) => {
                 if (!value) return 'N/A';
 
-                const time = convertUnixToIST(value);
+                const time = convertUnixToIST(new Date());
                 return time;
             },
         },
