@@ -19,7 +19,15 @@ import LastUpdated from 'components/ClaircoCustomerDashboard/General/LastUpdated
 import SpaceManagementCard from './SpaceManagementCard';
 const hvac = { energySaved: 41574.8, moneySaved: 199155.8 };
 const washroom = { odourLevel: 2, isOccupied: false, totalEntries: 34 };
-
+const headingStyle = {
+    fontWeight: 700,
+    fontSize: '1.18rem',
+    color: '#1a237e',
+    marginBottom: '0.5rem',
+    textAlign: 'center' as const,
+    letterSpacing: 0.2,
+    fontFamily: 'inherit',
+};
 const BentoGrid: React.FC = () => {
     // Demo data, replace with real data as needed
     const [airQuality, setAirQuality] = useState({
@@ -128,17 +136,8 @@ const BentoGrid: React.FC = () => {
                         flexDirection: 'column',
                         height: '100%',
                     }}>
-                    <div
-                        style={{
-                            fontWeight: 700,
-                            fontSize: '1.2rem',
-                            color: '#222',
-                            marginBottom: '0.5rem',
-                            textAlign: 'center',
-                            letterSpacing: 0.2,
-                        }}>
-                        Air Quality
-                    </div>
+                    <div style={headingStyle}>Air Quality</div>
+
                     <div style={{ flex: 1, minHeight: 0 }}>
                         <PM10Card2
                             pm10={airQuality.pm10}
@@ -161,17 +160,8 @@ const BentoGrid: React.FC = () => {
                         display: 'flex',
                         flexDirection: 'column',
                     }}>
-                    <div
-                        style={{
-                            fontWeight: 700,
-                            fontSize: '1.2rem',
-                            color: '#222',
-                            marginBottom: '0.5rem',
-                            textAlign: 'center',
-                            letterSpacing: 0.2,
-                        }}>
-                        Energy Savings
-                    </div>
+                    <div style={headingStyle}>HVAC Energy Efficiency</div>
+
                     <div style={{ flex: 1, display: 'flex' }}>
                         <EnergySavedCard
                             energySaved={hvac.energySaved}
@@ -193,17 +183,8 @@ const BentoGrid: React.FC = () => {
                         flexDirection: 'column',
                         height: '100%',
                     }}>
-                    <div
-                        style={{
-                            fontWeight: 700,
-                            fontSize: '1.2rem',
-                            color: '#222',
-                            marginBottom: '0.5rem',
-                            textAlign: 'center',
-                            letterSpacing: 0.2,
-                        }}>
-                        Washroom Solutions
-                    </div>
+                    <div style={headingStyle}>Washroom Solutions</div>
+
                     <div style={{ flex: 1, display: 'flex' }}>
                         <WashroomSolutionsCard {...washroom} lastUpdated={airQuality.lastUpdated} />
                     </div>
@@ -221,31 +202,13 @@ const BentoGrid: React.FC = () => {
                         gap: '0.5rem',
                         height: '100%',
                     }}>
-                    <div
-                        style={{
-                            fontWeight: 700,
-                            fontSize: '1.2rem',
-                            color: '#222',
-                            marginBottom: '0.5rem',
-                            textAlign: 'center',
-                            letterSpacing: 0.2,
-                        }}>
-                        Space Management
-                    </div>
+                    <div style={headingStyle}>Space Management</div>
                     <SpaceManagementCard
                         inCount={35}
                         occupantCount={25}
                         outCount={10}
                         lastUpdated={airQuality.lastUpdated}
                     />
-                    {/* <div style={{ display: 'flex', flex: 1, gap: '1rem' }}>
-                        <div style={{ flex: 1, display: 'flex' }}>
-                            <InCountCard count={space.incount} />
-                        </div>
-                        <div style={{ flex: 1, display: 'flex' }}>
-                            <OutCountCard count={space.outcount} />
-                        </div>
-                    </div> */}
                 </div>
             </div>
         </div>

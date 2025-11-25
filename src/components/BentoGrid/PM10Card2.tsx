@@ -94,12 +94,22 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                         flexDirection: 'row',
                         flex: 1,
                         alignItems: 'flex-start',
-                        marginTop: 2,
+                        marginTop: 0,
                         minHeight: 0,
                         gap: 0,
                     }}>
                     {/* Left side: empty for visual balance */}
-                    <div style={{ flex: 1 }}></div>
+                    <div style={{ flex: 1 }}>
+                        <div
+                            style={{
+                                fontWeight: 400,
+                                fontSize: '0.92rem',
+                                color: '#888',
+                                marginTop: 10,
+                            }}>
+                            Last updated: {lastUpdated ?? ''}
+                        </div>
+                    </div>
                     {/* Right side: Outdoor box with flip effect */}
                     <div
                         style={{
@@ -285,15 +295,7 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                 </div>
                 {/* Divider */}
                 <div style={{ width: '100%', height: 1, background: '#e6e6e6', margin: '8px 0 0 0' }} />
-                <div
-                    style={{
-                        fontWeight: 400,
-                        fontSize: '0.92rem',
-                        color: '#888',
-                        marginTop: 10,
-                    }}>
-                    Last updated: {lastUpdated ?? ''}
-                </div>
+                {/*  */}
                 {/* Indoor (Solution) Section */}
                 <div
                     style={{
@@ -338,6 +340,7 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                         style={{
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'space-between',
                             gap: 10,
                             fontWeight: 500,
                             fontSize: '0.92rem',
@@ -345,10 +348,13 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                             marginBottom: 1,
                         }}>
                         <span style={{ minWidth: 32 }}>PM 10</span>
-                        <span style={{ fontWeight: 700, fontSize: '1.02rem', color: 'black' }}>{pm10}</span>
-                        <span style={{ fontSize: '0.7rem', fontWeight: 400, marginLeft: 2, color: 'black' }}>
-                            µg/m³
-                        </span>{' '}
+                        <span style={{ fontWeight: 700, fontSize: '1.02rem', color: 'black' }}>
+                            {pm10}{' '}
+                            <span style={{ fontSize: '0.7rem', fontWeight: 400, marginLeft: 2, color: 'black' }}>
+                                µg/m³
+                            </span>{' '}
+                        </span>
+
                         <span
                             style={{
                                 marginLeft: 8,
@@ -379,6 +385,8 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                         style={{
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'space-between',
+
                             gap: 10,
                             fontWeight: 500,
                             fontSize: '0.92rem',
@@ -386,10 +394,13 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                             marginBottom: 1,
                         }}>
                         <span style={{ minWidth: 32 }}>PM 2.5</span>
-                        <span style={{ fontWeight: 700, fontSize: '1.02rem', color: 'black' }}>{pm25}</span>
-                        <span style={{ fontSize: '0.7rem', fontWeight: 400, marginLeft: 2, color: 'black' }}>
-                            µg/m³
+                        <span style={{ fontWeight: 700, fontSize: '1.02rem', color: 'black' }}>
+                            {pm25}{' '}
+                            <span style={{ fontSize: '0.7rem', fontWeight: 400, marginLeft: 2, color: 'black' }}>
+                                µg/m³
+                            </span>
                         </span>
+
                         <span
                             style={{
                                 marginLeft: 8,
@@ -420,6 +431,8 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                         style={{
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'space-between',
+
                             gap: 10,
                             fontWeight: 500,
                             fontSize: '0.92rem',
@@ -427,8 +440,12 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                             marginBottom: 1,
                         }}>
                         <span style={{ minWidth: 32 }}>AQI</span>
-                        <span style={{ fontWeight: 700, fontSize: '1.02rem', color: 'black' }}>{aqi}</span>
-                        <span style={{ fontSize: '0.7rem', fontWeight: 400, marginLeft: 2, color: 'black' }}>AQI</span>
+                        <span style={{ fontWeight: 700, fontSize: '1.02rem', color: 'black' }}>
+                            {aqi}{' '}
+                            <span style={{ fontSize: '0.7rem', fontWeight: 400, marginLeft: 2, color: 'black' }}>
+                                AQI
+                            </span>
+                        </span>
                         <span
                             style={{
                                 marginLeft: 8,
@@ -459,6 +476,8 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                         style={{
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'space-between',
+
                             gap: 10,
                             fontWeight: 500,
                             fontSize: '0.92rem',
@@ -466,8 +485,12 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                             marginBottom: 1,
                         }}>
                         <span style={{ minWidth: 32 }}>VOC</span>
-                        <span style={{ fontWeight: 700, fontSize: '1.02rem', color: 'black' }}>{voc}</span>
-                        <span style={{ fontSize: '0.7rem', fontWeight: 400, marginLeft: 2, color: 'black' }}>ppm</span>
+                        <span style={{ fontWeight: 700, fontSize: '1.02rem', color: 'black' }}>
+                            {voc}{' '}
+                            <span style={{ fontSize: '0.7rem', fontWeight: 400, marginLeft: 2, color: 'black' }}>
+                                ppm
+                            </span>
+                        </span>
                         <span
                             style={{
                                 marginLeft: 8,

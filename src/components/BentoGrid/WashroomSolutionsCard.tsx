@@ -16,42 +16,40 @@ const WashroomSolutionsCard: React.FC<WashroomSolutionsCardProps> = ({
 }) => {
     return (
         <Card
-            className="bento-card washroom-solutions-card shadow-sm rounded-4 p-4"
+            className="bento-card washroom-solutions-card shadow-sm rounded-4"
             style={{
-                minHeight: 100,
+                minHeight: 70,
+                // height: 300,
                 display: 'flex',
                 justifyContent: 'center',
                 background: 'linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%)',
-                borderRadius: 24,
+                borderRadius: 20,
+                padding: '2px 10px 8px 10px', // less top padding
             }}>
             <Card.Body
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
+                    alignItems: 'flex-start',
                     height: '100%',
-                    padding: 0,
+                    padding: '0 2px',
+                    fontSize: '1.05rem', // match other cards
                 }}>
                 <div
                     style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: 8,
-                        background: '#e0f7fa',
-                        border: '1px solid #4dd0e1',
-                        color: '#00838f',
+                        background: '#d4edda',
+                        color: '#256029',
                         fontWeight: 600,
-                        fontSize: '0.98rem',
-                        borderRadius: 16,
-                        padding: '4px 16px',
-                        marginTop: 10,
-                        boxShadow: '0 1px 4px rgba(0,183,195,0.07)',
+                        fontSize: '0.95rem',
+                        borderRadius: 12,
+                        padding: '2px 14px',
+                        marginTop: 2,
                         width: 'fit-content',
-                        minWidth: 90,
+                        minWidth: 50,
                     }}>
-                    <svg width="16" height="16" fill="#00bcd4" style={{ marginRight: 4 }} viewBox="0 0 16 16">
-                        <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 12.6A5.6 5.6 0 1 1 8 2.4a5.6 5.6 0 0 1 0 11.2zM7.25 5.75a.75.75 0 1 1 1.5 0v3.5a.75.75 0 1 1-1.5 0v-3.5zm.75 6a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5z" />
-                    </svg>
                     Alerts None
                 </div>
                 {/* Additional parameters grid */}
@@ -59,9 +57,9 @@ const WashroomSolutionsCard: React.FC<WashroomSolutionsCardProps> = ({
                     style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr',
-                        gap: '6px 12px',
-                        marginTop: 10,
-                        fontSize: '0.98rem',
+                        gap: '3px 6px',
+                        marginTop: 4,
+                        fontSize: '1.05rem',
                         color: '#333',
                         width: '100%',
                     }}>
@@ -70,60 +68,103 @@ const WashroomSolutionsCard: React.FC<WashroomSolutionsCardProps> = ({
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            background: '#e3f2fd',
-                            borderRadius: 7,
-                            padding: '4px 10px',
+                            // background: '#e3f2fd',
+                            borderRadius: 5,
+                            padding: '2px 6px',
                         }}>
                         <span style={{ fontWeight: 600 }}>People Count</span>
-                        <span style={{ fontWeight: 700, color: '#1976d2' }}>120</span>
+                        <span
+                            style={{
+                                fontWeight: 700,
+                                color: 'black',
+                                fontSize: '1.12em',
+                                //  background: '#e3f2fd'
+                            }}>
+                            120
+                        </span>
                     </div>
                     <div
                         style={{
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            background: '#e3f2fd',
-                            borderRadius: 7,
-                            padding: '4px 10px',
+                            // background: '#e3f2fd',
+                            borderRadius: 5,
+                            padding: '2px 6px',
                         }}>
-                        <span style={{ fontWeight: 600 }}>Feedbacks</span>
-                        <span style={{ fontWeight: 700, color: '#1976d2' }}>90 % Great</span>
+                        <span style={{ fontWeight: 600 }}>Leakage Detected</span>
+                        <span
+                            style={{
+                                fontWeight: 700,
+                                color: 'black',
+                                fontSize: '1.12em',
+                                //  background: '#e3f2fd'
+                            }}>
+                            none
+                        </span>
                     </div>
                     <div
                         style={{
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            background: '#e3f2fd',
-                            borderRadius: 7,
-                            padding: '4px 10px',
+                            // background: '#e3f2fd',
+                            borderRadius: 5,
+                            padding: '2px 6px',
                         }}>
                         <span style={{ fontWeight: 600 }}>Tissue </span>
-                        <span style={{ fontWeight: 700, color: '#1976d2' }}>40% remaining </span>
+                        <span
+                            style={{
+                                fontWeight: 700,
+                                color: 'black',
+                                fontSize: '1.12em',
+                                //  background: '#e3f2fd'
+                            }}>
+                            {' '}
+                            25% remaining{' '}
+                        </span>
                     </div>
                     <div
                         style={{
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            background: '#e3f2fd',
-                            borderRadius: 7,
-                            padding: '4px 10px',
+                            // background: '#e3f2fd',
+                            borderRadius: 5,
+                            padding: '2px 6px',
                         }}>
                         <span style={{ fontWeight: 600 }}>Dustbin </span>
-                        <span style={{ fontWeight: 700, color: '#1976d2' }}>60% full</span>
+                        <span
+                            style={{
+                                fontWeight: 700,
+                                color: 'black',
+                                fontSize: '1.12em',
+                                //  background: '#e3f2fd'
+                            }}>
+                            {' '}
+                            60% full
+                        </span>
                     </div>
                     <div
                         style={{
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            background: '#e3f2fd',
-                            borderRadius: 7,
-                            padding: '4px 10px',
+                            // background: '#e3f2fd',
+                            borderRadius: 5,
+                            padding: '2px 6px',
                         }}>
-                        <span style={{ fontWeight: 600 }}>Wetness noticed</span>
-                        <span style={{ fontWeight: 700, color: '#1976d2' }}>none</span>
+                        <span style={{ fontWeight: 600 }}>Odour </span>
+                        <span
+                            style={{
+                                fontWeight: 700,
+                                color: 'black',
+                                fontSize: '1.12em',
+                                //  background: '#e3f2fd'
+                            }}>
+                            {' '}
+                            Moderate
+                        </span>
                     </div>
                     {/* <div
                         style={{
@@ -140,14 +181,47 @@ const WashroomSolutionsCard: React.FC<WashroomSolutionsCardProps> = ({
                 </div>{' '}
                 <div
                     style={{
-                        fontWeight: 400,
-                        fontSize: '0.92rem',
-                        color: '#888',
-                        marginTop: 10,
-                        justifyContent: 'center',
-                        display: 'flex',
+                        display: 'grid',
+                        gridTemplateColumns: '1fr',
+                        gap: '3px 6px',
+                        marginTop: 4,
+                        fontSize: '1.05rem',
+                        color: '#333',
+                        width: '100%',
                     }}>
-                    Last updated: {lastUpdated ?? ''}
+                    {' '}
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+
+                            borderRadius: 5,
+                            padding: '2px 6px',
+                        }}>
+                        <span style={{ fontWeight: 600 }}>Feedbacks</span>
+                        <span
+                            style={{
+                                fontWeight: 700,
+                                color: 'black',
+                                fontSize: '1.12em',
+                                //  background: '#e3f2fd'
+                            }}>
+                            {' '}
+                            90.34% Positive Sentiments
+                        </span>
+                    </div>
+                    <div
+                        style={{
+                            fontWeight: 400,
+                            fontSize: '0.95rem',
+                            color: '#888',
+                            marginTop: 10,
+                            justifyContent: 'center',
+                            display: 'flex',
+                        }}>
+                        Last updated: {lastUpdated ?? ''}
+                    </div>
                 </div>
             </Card.Body>
         </Card>
