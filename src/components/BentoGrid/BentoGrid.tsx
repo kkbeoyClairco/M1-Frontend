@@ -3,7 +3,7 @@ import PM10Card from './PM10Card';
 import VOCCard from './VOCCard';
 import AQICard from './AQICard';
 import EnergySavedCard from './EnergySavedCard';
-import MoneySavedCard from './MoneySavedCard';
+// import MoneySavedCard from './MoneySavedCard';
 import WashroomSolutionsCard from './WashroomSolutionsCard';
 import InCountCard from './InCountCard';
 import OutCountCard from './OutCountCard';
@@ -15,13 +15,23 @@ import PM10Card2 from './PM10Card2';
 import { useNavigate } from 'react-router-dom';
 import { getPcsData } from 'helpers/api/services/Clairco/customerSide/pcs';
 import { convertUnixToIST } from 'utils/timeFunctions';
+import LastUpdated from 'components/ClaircoCustomerDashboard/General/LastUpdated/LastUpdated';
+import SpaceManagementCard from './SpaceManagementCard';
 const hvac = { energySaved: 41574.8, moneySaved: 199155.8 };
 const washroom = { odourLevel: 2, isOccupied: false, totalEntries: 34 };
 
 const BentoGrid: React.FC = () => {
     // Demo data, replace with real data as needed
-    const [airQuality, setAirQuality] = useState({ pm10: 0, pm25: 0, opm10: 0, opm25: 0, voc: 0, aqi: 0 });
-    const [space, setSpace] = useState({ incount: 60, outcount: 50 });
+    const [airQuality, setAirQuality] = useState({
+        pm10: 0,
+        pm25: 0,
+        opm10: 0,
+        opm25: 0,
+        voc: 0,
+        aqi: 0,
+        lastUpdated: '',
+    });
+    const [space, setSpace] = useState({ incount: 60, outcount: 50, lastUpdated: '' });
     const navigate = useNavigate();
     // const airQuality = { pm10: 0, pm25: 0, voc: 120, aqi: 85 };
     // const space = { incount: 70, outcount: 50 };
@@ -63,6 +73,7 @@ const BentoGrid: React.FC = () => {
             setSpace({
                 incount: latestData?.inCount ?? '-',
                 outcount: latestData?.outCount ?? '-',
+                lastUpdated: latestTime,
             });
             console.log('PCS Data', pcsData);
         } catch (error) {
@@ -74,13 +85,22 @@ const BentoGrid: React.FC = () => {
             const iaqSensorName = 'IAQ24058';
             const Id = deviceTypeId['IAQ'];
             const iaqData = await getIaqData({ sensorName: iaqSensorName, deviceTypeId: Id });
-            const { AQI = 0, PM10 = 0, PM25 = 0, VOC = 0, OPM10 = 0, OPM25 = 0 } = iaqData?.data?.[0] ?? {};
+            const {
+                AQI = 0,
+                PM10 = 0,
+                PM25 = 0,
+                VOC = 0,
+                OPM10 = 0,
+                OPM25 = 0,
+                timestamp = 0,
+            } = iaqData?.data?.[0] ?? {};
             // console.log('IAQ data', iaqData, AQI, PM10, PM25);
             setAirQuality((prev) => ({
                 ...prev,
                 pm10: PM10,
                 pm25: PM25,
                 aqi: AQI,
+                lastUpdated: convertUnixToIST(timestamp),
                 voc: VOC,
             }));
         } catch (error) {
@@ -127,6 +147,7 @@ const BentoGrid: React.FC = () => {
                             oPm25={airQuality.opm25}
                             aqi={airQuality.aqi}
                             voc={airQuality.voc}
+                            lastUpdated={airQuality?.lastUpdated}
                         />
                     </div>
                 </div>
@@ -156,6 +177,7 @@ const BentoGrid: React.FC = () => {
                             energySaved={hvac.energySaved}
                             moneySaved={hvac.moneySaved}
                             percentChange={24}
+                            lastUpdated={airQuality.lastUpdated}
                         />
                     </div>
                 </div>
@@ -183,7 +205,7 @@ const BentoGrid: React.FC = () => {
                         Washroom Solutions
                     </div>
                     <div style={{ flex: 1, display: 'flex' }}>
-                        <WashroomSolutionsCard {...washroom} />
+                        <WashroomSolutionsCard {...washroom} lastUpdated={airQuality.lastUpdated} />
                     </div>
                 </div>
 
@@ -210,14 +232,20 @@ const BentoGrid: React.FC = () => {
                         }}>
                         Space Management
                     </div>
-                    <div style={{ display: 'flex', flex: 1, gap: '1rem' }}>
+                    <SpaceManagementCard
+                        inCount={35}
+                        occupantCount={25}
+                        outCount={10}
+                        lastUpdated={airQuality.lastUpdated}
+                    />
+                    {/* <div style={{ display: 'flex', flex: 1, gap: '1rem' }}>
                         <div style={{ flex: 1, display: 'flex' }}>
                             <InCountCard count={space.incount} />
                         </div>
                         <div style={{ flex: 1, display: 'flex' }}>
                             <OutCountCard count={space.outcount} />
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
