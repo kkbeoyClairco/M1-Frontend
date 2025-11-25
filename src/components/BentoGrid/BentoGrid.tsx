@@ -204,9 +204,9 @@ const BentoGrid: React.FC = () => {
                     }}>
                     <div style={headingStyle}>Space Management</div>
                     <SpaceManagementCard
-                        inCount={35}
-                        occupantCount={25}
-                        outCount={10}
+                        inCount={650}
+                        occupantCount={250}
+                        outCount={400}
                         lastUpdated={airQuality.lastUpdated}
                     />
                 </div>
