@@ -20,7 +20,7 @@ const washroom = { odourLevel: 2, isOccupied: false, totalEntries: 34 };
 
 const BentoGrid: React.FC = () => {
     // Demo data, replace with real data as needed
-    const [airQuality, setAirQuality] = useState({ pm10: 0, pm25: 0, opm10: 0, opm25: 0, voc: 120, aqi: 85 });
+    const [airQuality, setAirQuality] = useState({ pm10: 0, pm25: 0, opm10: 0, opm25: 0, voc: 0, aqi: 0 });
     const [space, setSpace] = useState({ incount: 60, outcount: 50 });
     const navigate = useNavigate();
     // const airQuality = { pm10: 0, pm25: 0, voc: 120, aqi: 85 };
