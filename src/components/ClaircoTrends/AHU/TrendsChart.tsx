@@ -7,6 +7,7 @@ import { convertDateToEpoch, convertUnixToIST } from 'utils/timeFunctions';
 import { fetchAHUTrends, fetchBTUTrendsData, fetchTrendsDPT } from 'helpers/api/services/Clairco/customerSide/ahu';
 import { roundToOneDecimal } from 'utils/maths';
 import TableSkelton from 'components/ClaircoCustomer/Skeltons/TableSkelton';
+import { ahuTrends, btuTrends, dptTrends } from 'appConstants/dataToSvg';
 const AHUTrendsChart = ({ sensorNameAHU, sensorNameBTU, deviceId }: any) => {
     const timeGrouingConstants: { [key: string]: string } = {
         a: '1',
@@ -49,14 +50,14 @@ const AHUTrendsChart = ({ sensorNameAHU, sensorNameBTU, deviceId }: any) => {
     const [ahuXAxisCategory, setAhuXAxisCategory] = useState<any>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    const [flowRate, setFlowRate] = useState([]);
-    const [netFlow, setNetFlow] = useState([]);
-    const [temp1, setTemp1] = useState([]);
-    const [temp2, setTemp2] = useState([]);
-    const [IEnergy, setIEnergy] = useState([]);
-    const [totalEnergy, setTotalEnergy] = useState([]);
-    const [dptData, setDptData] = useState([]);
-    const [dptXAxis, setDptXAxis] = useState([]);
+    const [flowRate, setFlowRate] = useState<any>([]);
+    const [netFlow, setNetFlow] = useState<any>([]);
+    const [temp1, setTemp1] = useState<any>([]);
+    const [temp2, setTemp2] = useState<any>([]);
+    const [IEnergy, setIEnergy] = useState<any>([]);
+    const [totalEnergy, setTotalEnergy] = useState<any>([]);
+    const [dptData, setDptData] = useState<any>([]);
+    const [dptXAxis, setDptXAxis] = useState<any>([]);
     // console.log('Device Names', sensorNameAHU, sensorNameBTU);
     // Function that returns graph data corresponding to the user selection
     const getGraphData = (graphState: any) => {
@@ -89,19 +90,20 @@ const AHUTrendsChart = ({ sensorNameAHU, sensorNameBTU, deviceId }: any) => {
     const getDPTTrends = useCallback(
         async (timeDifference: any) => {
             try {
-                if (!deviceId) return;
+                // if (!deviceId) return;
                 const currentEpoch = convertDateToEpoch(new Date());
                 const startEpoch = currentEpoch - oneHourInMilliseconds * timeDifference;
-                const response = await fetchTrendsDPT(
-                    deviceId,
-                    Math.floor(startEpoch / 1000),
-                    Math.floor(currentEpoch / 1000)
-                );
+                const response = dptTrends;
+                //  await fetchTrendsDPT(
+                //     deviceId,
+                //     Math.floor(startEpoch / 1000),
+                //     Math.floor(currentEpoch / 1000)
+                // );
                 // console.log('DPT x axis', response);
-                const values = response?.data?.map((doc: any) => {
+                const values = response?.map((doc: any) => {
                     return roundToOneDecimal(doc?.value);
                 });
-                const times = response?.data?.map((doc: any) => {
+                const times = response?.map((doc: any) => {
                     return convertUnixToIST(doc?.timestamp);
                 });
 
@@ -117,48 +119,43 @@ const AHUTrendsChart = ({ sensorNameAHU, sensorNameBTU, deviceId }: any) => {
     const getLiveDataAPI = useCallback(
         async (timeDifference: any) => {
             try {
-                if (!sensorNameAHU || !sensorNameBTU) return;
+                // if (!sensorNameAHU || !sensorNameBTU) return;
                 setIsLoading(true);
-                const currentEpoch = convertDateToEpoch(new Date());
-                const startEpoch = currentEpoch - oneHourInMilliseconds * timeDifference;
+                // const currentEpoch = convertDateToEpoch(new Date());
+                // const startEpoch = currentEpoch - oneHourInMilliseconds * timeDifference;
 
-                const data = await fetchBTUTrendsData(
-                    sensorNameBTU,
-                    Math.floor(startEpoch / 1000),
-                    Math.floor(currentEpoch / 1000)
-                );
-                const ahuData = await fetchAHUTrends(
-                    sensorNameAHU,
-                    Math.floor(startEpoch / 1000),
-                    Math.floor(currentEpoch / 1000)
-                );
+                const data = btuTrends;
+                // await fetchBTUTrendsData(sensorNameBTU, Math.floor(startEpoch / 1000), Math.floor(currentEpoch / 1000));
+                const ahuData = ahuTrends;
+                // await fetchAHUTrends(sensorNameAHU, Math.floor(startEpoch / 1000), Math.floor(currentEpoch / 1000));
                 // console.log('AHU trends', sensorNameAHU, ahuData);
                 //  BTU
-                const flowRateArray = data?.data.reverse().map((doc: any) => doc.data.Flowrate);
-                const netRateArray = data?.data.map((doc: any) => doc.data['Net Flow']);
-                const temp1Array = data?.data.map((doc: any) => doc.data.Temp1);
-                const temp2Array = data?.data.map((doc: any) => doc.data.Temp2);
-                const instantEnergyArray = data?.data.map((doc: any) => doc.data['Instantaneous Energy Rate']);
-                const totalEnergyArray = data?.data.map((doc: any) => doc.data['Total Energy']);
-                const xAxisData = data?.data.map((doc: any) =>
+                const flowRateArray = data?.reverse()?.map((doc: any) => roundToOneDecimal(doc?.data?.Flowrate));
+                const netRateArray = data?.map((doc: any) => roundToOneDecimal(doc?.data?.['Net Flow']));
+                const temp1Array = data?.map((doc: any) => roundToOneDecimal(doc?.data?.Temp1));
+                const temp2Array = data?.map((doc: any) => roundToOneDecimal(doc?.data?.Temp2));
+                const instantEnergyArray = data.map((doc: any) =>
+                    roundToOneDecimal(doc?.data?.['Instantaneous Energy Rate'])
+                );
+                const totalEnergyArray = data.map((doc: any) => roundToOneDecimal(doc?.data?.['Total Energy']));
+                const xAxisData = data.map((doc: any) =>
                     doc?.['Epoch time']?.['$numberDecimal']
                         ? convertUnixToIST(Number(doc?.['Epoch time']?.['$numberDecimal']))
                         : null
                 );
                 // AHU
                 const setTemperatures =
-                    ahuData?.data?.reverse().map((doc: any) => roundToOneDecimal(doc.data.STEMP / 10)) || [];
-                const fanSpeedArray = ahuData?.data?.map((doc: any) => doc.data.FANMODE + 1) || [];
-                const modeArray = ahuData?.data?.map((doc: any) => doc.data.MODE) || [];
-                const returnAirTempArray =
-                    ahuData?.data?.map((doc: any) => roundToOneDecimal(doc.data.RTEMP / 10)) || [];
+                    ahuData?.reverse().map((doc: any) => roundToOneDecimal(doc.data.STEMP / 10)) || [];
+                const fanSpeedArray = ahuData?.map((doc: any) => doc.data.FANMODE + 1) || [];
+                const modeArray = ahuData?.map((doc: any) => doc.data.MODE) || [];
+                const returnAirTempArray = ahuData?.map((doc: any) => roundToOneDecimal(doc.data.RTEMP / 10)) || [];
                 const timeArray =
-                    ahuData?.data?.map((doc: any) =>
+                    ahuData?.map((doc: any) =>
                         doc?.['Epoch time'].$numberDecimal
                             ? convertUnixToIST(Number(doc?.['Epoch time'].$numberDecimal))
                             : null
                     ) || [];
-                // console.log('AHU Data extracted:', fanSpeedArray);
+                // console.log('AHU Data extracted:', setTemperatures, modeArray, fanSpeedArray, fanSpeedArray);
                 // AHU
                 setSetTemp(setTemperatures);
                 setModesData(modeArray);

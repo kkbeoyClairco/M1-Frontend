@@ -26,7 +26,7 @@ import { DeviceSelectionComponent } from './DeviceSelectionComponent';
 import { TwoParameterWidget } from './TwoParameterWidget';
 import AHUTrendsChart from 'components/ClaircoTrends/AHU/TrendsChart';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ahuRealTIme, ahuRealTime, averages, btuRealTime, dpt } from 'appConstants/dataToSvg';
+import { ahuRealTIme, ahuRealTime, averages, btuRealTime, dpt } from 'appConstants/ahuFake';
 
 interface LocationState {
     sensorName?: string;
