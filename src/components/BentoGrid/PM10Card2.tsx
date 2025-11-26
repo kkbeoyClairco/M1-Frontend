@@ -115,7 +115,7 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                     {/* Right side: Outdoor box with flip effect */}
                     <div
                         style={{
-                            minWidth: 210,
+                            minWidth: 220,
                             maxWidth: 260,
                             minHeight: 120, // Ensures the box doesn't shrink
                             height: 120, // Fixed height for consistent flip
@@ -160,26 +160,26 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                                     Outdoor
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 2 }}>
-                                    <span style={{ fontWeight: 500, fontSize: '0.98rem', color: '#444', minWidth: 54 }}>
+                                    <span style={{ fontWeight: 300, fontSize: '0.75rem', color: '#444', minWidth: 54 }}>
                                         PM 10
                                     </span>
                                     <span
                                         style={{
                                             fontWeight: 700,
-                                            fontSize: '1.08rem',
+                                            fontSize: '0.9rem',
                                             color: oPm10Color,
-                                            marginLeft: 8,
+                                            marginLeft: 0,
                                         }}>
                                         {oPm10Value}
                                     </span>
-                                    <span style={{ fontSize: '0.8rem', fontWeight: 400, marginLeft: 2, color: '#888' }}>
+                                    <span style={{ fontSize: '0.5rem', fontWeight: 300, marginLeft: 2, color: '#888' }}>
                                         µg/m³
                                     </span>
                                     <span
                                         style={{
                                             marginLeft: 10,
                                             fontSize: '0.92rem',
-                                            color: '#666',
+                                            color: oPm10Color,
                                             fontWeight: 500,
                                             background: '#f6f6f6',
                                             borderRadius: 6,
@@ -208,26 +208,26 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                                 </div>
                                 {/* Outdoor PM2.5 */}
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: 2 }}>
-                                    <span style={{ fontWeight: 500, fontSize: '0.98rem', color: '#444', minWidth: 54 }}>
+                                    <span style={{ fontWeight: 500, fontSize: '0.75rem', color: '#444', minWidth: 54 }}>
                                         PM 2.5
                                     </span>
                                     <span
                                         style={{
                                             fontWeight: 700,
-                                            fontSize: '1.08rem',
+                                            fontSize: '0.9rem',
                                             color: oPm25Color,
-                                            marginLeft: 8,
+                                            marginLeft: 0,
                                         }}>
                                         {oPm25Value}
                                     </span>
-                                    <span style={{ fontSize: '0.8rem', fontWeight: 400, marginLeft: 2, color: '#888' }}>
+                                    <span style={{ fontSize: '0.5rem', fontWeight: 300, marginLeft: 2, color: '#888' }}>
                                         µg/m³
                                     </span>
                                     <span
                                         style={{
                                             marginLeft: 10,
                                             fontSize: '0.92rem',
-                                            color: '#666',
+                                            color: oPm25Color,
                                             fontWeight: 500,
                                             background: '#f6f6f6',
                                             borderRadius: 6,

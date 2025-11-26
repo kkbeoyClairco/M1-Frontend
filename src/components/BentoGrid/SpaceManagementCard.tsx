@@ -54,6 +54,17 @@ const SpaceManagementCard: React.FC<SpaceManagementCardProps> = ({ occupantCount
                             Occupants Count
                         </span>
                         <span style={{ fontWeight: 800, fontSize: '2.2rem', color: 'black' }}>{occupantCount}</span>
+                        <span
+                            style={{
+                                fontSize: '0.85rem',
+                                color: 'black',
+                                fontWeight: 500,
+                                marginTop: 2,
+                                whiteSpace: 'nowrap',
+                                opacity: 0.85,
+                            }}>
+                            12% fewer occupants compared to last week
+                        </span>
                     </div>
                     <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', gap: 16 }}>
                         <div

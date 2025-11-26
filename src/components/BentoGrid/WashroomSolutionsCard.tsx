@@ -213,6 +213,27 @@ const WashroomSolutionsCard: React.FC<WashroomSolutionsCardProps> = ({
                     </div>
                     <div
                         style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+
+                            borderRadius: 5,
+                            padding: '2px 6px',
+                        }}>
+                        <span style={{ fontWeight: 600 }}></span>
+                        <span
+                            style={{
+                                fontWeight: 700,
+                                color: 'black',
+                                fontSize: '1.12em',
+                                //  background: '#e3f2fd'
+                            }}>
+                            {' '}
+                            {/* 90.34% Positive Sentiments */}
+                        </span>
+                    </div>
+                    <div
+                        style={{
                             fontWeight: 400,
                             fontSize: '0.95rem',
                             color: '#888',

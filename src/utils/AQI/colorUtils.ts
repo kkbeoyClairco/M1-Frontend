@@ -29,10 +29,10 @@ export const getPM25Color = (value: number) => {
 
 export const getPM10Color = (value: number) => {
     if (value >= 0 && value <= 54) return '#59e759';
-    else if (value >= 55 && value <= 154) return '#f2f262';
-    else if (value >= 155 && value <= 254) return '#f5b43e';
-    else if (value >= 255 && value <= 354) return '#FF4500';
-    else if (value >= 355 && value <= 424) return '#4EA4F8';
+    else if (value > 54 && value <= 154) return '#f2f262';
+    else if (value > 154 && value <= 254) return '#f5b43e';
+    else if (value > 254 && value <= 354) return '#FF4500';
+    else if (value > 354 && value <= 424) return '#4EA4F8';
     else if (value > 424) return '#8B0000';
     else return '#A9A9A9';
 };
@@ -40,10 +40,10 @@ export const getPM10Color = (value: number) => {
 export const getPM10Label = (value: number) => {
     if (value === 0) return 'N/A';
     if (value > 0 && value <= 54) return 'Good';
-    else if (value >= 55 && value <= 154) return 'Moderate';
-    else if (value >= 155 && value <= 254) return 'Poor';
-    else if (value >= 255 && value <= 354) return 'Unhealthy';
-    else if (value >= 355 && value <= 424) return 'Severe';
+    else if (value > 54 && value <= 154) return 'Moderate';
+    else if (value > 154 && value <= 254) return 'Poor';
+    else if (value > 254 && value <= 354) return 'Unhealthy';
+    else if (value > 354 && value <= 424) return 'Severe';
     else if (value > 424) return 'Hazardous';
     else return 'N/A';
 };

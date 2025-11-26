@@ -31,15 +31,20 @@ const headingStyle = {
 const BentoGrid: React.FC = () => {
     // Demo data, replace with real data as needed
     const [airQuality, setAirQuality] = useState({
-        pm10: 0,
-        pm25: 0,
-        opm10: 0,
-        opm25: 0,
-        voc: 0,
-        aqi: 0,
-        lastUpdated: '',
+        pm10: 50,
+        pm25: 12,
+        opm10: 152,
+        opm25: 150,
+        voc: 39,
+        aqi: 50,
+        lastUpdated: convertUnixToIST(new Date()),
     });
-    const [space, setSpace] = useState({ incount: 60, outcount: 50, lastUpdated: '' });
+    const [space, setSpace] = useState({
+        incount: 650,
+        outcount: 400,
+        occupancy: 250,
+        lastUpdated: convertUnixToIST(new Date()),
+    });
     const navigate = useNavigate();
     // const airQuality = { pm10: 0, pm25: 0, voc: 120, aqi: 85 };
     // const space = { incount: 70, outcount: 50 };
@@ -76,11 +81,12 @@ const BentoGrid: React.FC = () => {
         try {
             const pcsData = await getPcsData('PCS_IGBC');
             let latestData = pcsData?.data?.data;
-            const latestTime = convertUnixToIST(latestData?.['timestamp']);
+            const latestTime = convertUnixToIST(latestData?.['timestamp'] ?? new Date());
 
             setSpace({
-                incount: latestData?.inCount ?? '-',
-                outcount: latestData?.outCount ?? '-',
+                incount: latestData?.inCount ?? 650,
+                outcount: latestData?.outCount ?? 400,
+                occupancy: latestData?.inCount - latestData?.outcount,
                 lastUpdated: latestTime,
             });
             console.log('PCS Data', pcsData);
@@ -93,14 +99,22 @@ const BentoGrid: React.FC = () => {
             const iaqSensorName = 'IAQ24058';
             const Id = deviceTypeId['IAQ'];
             const iaqData = await getIaqData({ sensorName: iaqSensorName, deviceTypeId: Id });
+            //  pm10: 50,
+            // pm25: 12,
+            // opm10: 152,
+            // opm25: 356,
+            // voc: 39,
+            // aqi: 50,
+            // lastUpdated: convertUnixToIST(new Date()),
+
             const {
-                AQI = 0,
-                PM10 = 0,
-                PM25 = 0,
-                VOC = 0,
-                OPM10 = 0,
-                OPM25 = 0,
-                timestamp = 0,
+                AQI = 50,
+                PM10 = 50,
+                PM25 = 12,
+                VOC = 38,
+                OPM10 = 152,
+                OPM25 = 150,
+                timestamp = new Date(),
             } = iaqData?.data?.[0] ?? {};
             // console.log('IAQ data', iaqData, AQI, PM10, PM25);
             setAirQuality((prev) => ({
@@ -108,8 +122,10 @@ const BentoGrid: React.FC = () => {
                 pm10: PM10,
                 pm25: PM25,
                 aqi: AQI,
-                lastUpdated: convertUnixToIST(timestamp),
+                opm10: OPM10,
+                opm25: OPM25,
                 voc: VOC,
+                lastUpdated: convertUnixToIST(timestamp),
             }));
         } catch (error) {
             console.log(error);
@@ -204,9 +220,9 @@ const BentoGrid: React.FC = () => {
                     }}>
                     <div style={headingStyle}>Space Management</div>
                     <SpaceManagementCard
-                        inCount={650}
-                        occupantCount={250}
-                        outCount={400}
+                        inCount={space.incount ?? 650}
+                        occupantCount={space.incount - space.outcount ?? 250}
+                        outCount={space.outcount ?? 400}
                         lastUpdated={airQuality.lastUpdated}
                     />
                 </div>

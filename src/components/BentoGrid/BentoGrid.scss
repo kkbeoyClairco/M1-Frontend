@@ -33,7 +33,7 @@
         grid-template-rows: 1fr 1fr; /* Only two rows */
 
         height: 85vh;
-        width: 95vw;
+        width: 100vw;
         min-height: 0;
         min-width: 0;
         box-sizing: border-box;
@@ -47,7 +47,7 @@
         grid-template-rows: 1fr 1fr; /* Only two rows */
 
         height: 80vh;
-        width: 80vw;
+        width: 100vw;
         max-width: 1400px;
         min-height: 0;
         min-width: 0;
@@ -114,7 +114,7 @@
         grid-template-columns: repeat(2, minmax(420px, 1fr));
         grid-template-rows: 3fr 2fr 2fr;
         gap: 2rem;
-        max-width: 1100px;
+        max-width: 1400px;
     }
 
     /* Full HD TV screens (1920px+) */

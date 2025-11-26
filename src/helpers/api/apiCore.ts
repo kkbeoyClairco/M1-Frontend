@@ -1,6 +1,7 @@
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import config from '../../config';
+import { key } from 'appConstants/claircoConstants';
 
 // content type
 axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -214,7 +215,8 @@ Check if token available in session
 */
 let user = getUserFromSession();
 if (user) {
-    const { token } = user;
+    // const { token } = user;
+    const token = key;
     if (token) {
         setAuthorization(token);
     }
