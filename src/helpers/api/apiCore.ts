@@ -6,7 +6,7 @@ import { key } from 'appConstants/claircoConstants';
 // content type
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.baseURL = config.API_URL;
-
+axios.defaults.headers.common['Authorization'] = 'Bearer ' + key;
 // intercepting to capture errors
 axios.interceptors.response.use(
     (response) => {
@@ -215,8 +215,8 @@ Check if token available in session
 */
 let user = getUserFromSession();
 if (user) {
-    // const { token } = user;
-    const token = key;
+    const { token } = user;
+    // const token = key;
     if (token) {
         setAuthorization(token);
     }
