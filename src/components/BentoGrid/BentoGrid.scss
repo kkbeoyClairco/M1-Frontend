@@ -12,6 +12,20 @@
 //     pointer-events: none;
 // }
 
+// MacBook 13" Retina (2560x1600) specific layout
+@media screen and (min-width: 2500px) and (max-width: 2600px) and (min-height: 1500px) and (max-height: 1700px) {
+    .bento-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr; /* Only two rows */
+
+        height: 85vh;
+        width: 90vw;
+        min-height: 0;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+}
+
 // MacBook 13" (1280x800 or 1440x900) specific layout
 @media screen and (min-width: 1200px) and (max-width: 1450px) and (min-height: 700px) and (max-height: 950px) {
     .bento-grid {
