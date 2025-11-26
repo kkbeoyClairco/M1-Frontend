@@ -12,6 +12,7 @@ import { deviceTypeId } from 'appConstants/DeviceMappingConstants';
 import LeanParallelSketon from 'components/ClaircoCustomer/Skeltons/LeanParallelSketon';
 import VerticalParametersGroup from 'components/ClaircoIterators/VerticalParametersGroup';
 import HorizontalButtonGroup1 from 'components/ClaircoButtons/HorizontalButtonGroup1';
+import { IAQAgg, IAQAnalytics, IAQTrendsOneHr } from 'appConstants/IAQFake';
 
 const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
     const timeGrouingConstants: { [key: string]: string } = {
@@ -47,8 +48,8 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
     const [pm25, setpm25] = useState<any[]>([]);
     const [pm10, setpm10] = useState<any[]>([]);
     const [aqi, setAqi] = useState<any[]>([]);
-    const [outdoorPm25, setOutdoorPm25] = useState([]);
-    const [outdoorPm10, setOutdoorPm10] = useState([]);
+    const [outdoorPm25, setOutdoorPm25] = useState<number[]>([]);
+    const [outdoorPm10, setOutdoorPm10] = useState<number[]>([]);
     const [xAxis, setXAxis] = useState<any>([]);
     const [lastUpdated, setLastUpdated] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -88,44 +89,44 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                 setIsLoading(true);
 
                 const Id = deviceTypeId['IAQ'];
-                const response = await getIaqData({
-                    sensorName,
-                    timeFrameInHours: timeGroup,
-                    deviceTypeId: Id,
-                });
+                // const response = await getIaqData({
+                //     sensorName,
+                //     timeFrameInHours: timeGroup,
+                //     deviceTypeId: Id,
+                // });
                 // console.log('Trends', response);
-                const xAxisData = response?.data?.reverse().map((doc: any) => convertUnixToIST(doc?.timestamp));
+                const xAxisData = IAQTrendsOneHr.reverse().map((doc: any) => convertUnixToIST(doc?.timestamp));
                 //    stamp));
-                const tempArray = response?.data
-                    ?.map((doc: any) => roundToOneDecimal(doc?.TEMP))
-                    .filter((val: any) => !isNaN(val));
-                const humidityArray = response?.data
-                    ?.map((doc: any) => roundToOneDecimal(doc?.HUM))
-                    .filter((val: any) => !isNaN(val));
-                const pm1Array = response?.data
-                    ?.map((doc: any) => roundToOneDecimal(doc?.PM1))
-                    .filter((val: any) => !isNaN(val));
-                const pm10Array = response?.data
-                    ?.map((doc: any) => roundToOneDecimal(doc?.PM10))
-                    .filter((val: any) => !isNaN(val));
-                const pm25Array = response?.data
-                    ?.map((doc: any) => roundToOneDecimal(doc?.PM25))
-                    .filter((val: any) => !isNaN(val));
-                const vocArray = response?.data
-                    ?.map((doc: any) => roundToOneDecimal(doc?.VOC))
-                    .filter((val: any) => !isNaN(val));
-                const aqiArray = response?.data
-                    ?.map((doc: any) => roundToOneDecimal(doc?.AQI))
-                    .filter((val: any) => !isNaN(val));
-                const co2Array = response?.data
-                    ?.map((doc: any) => roundToOneDecimal(doc?.CO2))
-                    .filter((val: any) => !isNaN(val));
-                const outdoorPm25Array = response?.data
-                    ?.map((doc: any) => roundToOneDecimal(doc?.OPM25))
-                    .filter((val: any) => !isNaN(val));
-                const outdoorPm10Array = response?.data
-                    ?.map((doc: any) => roundToOneDecimal(doc?.OPM10))
-                    .filter((val: any) => !isNaN(val));
+                const tempArray = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.TEMP)).filter(
+                    (val: any) => !isNaN(val)
+                );
+                const humidityArray = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.HUM)).filter(
+                    (val: any) => !isNaN(val)
+                );
+                const pm1Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.PM1)).filter(
+                    (val: any) => !isNaN(val)
+                );
+                const pm10Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.PM10)).filter(
+                    (val: any) => !isNaN(val)
+                );
+                const pm25Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.PM25)).filter(
+                    (val: any) => !isNaN(val)
+                );
+                const vocArray = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.VOC)).filter(
+                    (val: any) => !isNaN(val)
+                );
+                const aqiArray = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.AQI)).filter(
+                    (val: any) => !isNaN(val)
+                );
+                const co2Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.CO2)).filter(
+                    (val: any) => !isNaN(val)
+                );
+                const outdoorPm25Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.OPM25)).filter(
+                    (val: any) => !isNaN(val)
+                );
+                const outdoorPm10Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.OPM10)).filter(
+                    (val: any) => !isNaN(val)
+                );
                 const arr = [
                     // { key: 'pm1Array', value: pm1Array },
                     { key: 'pm25Array', value: pm25Array },
@@ -209,9 +210,11 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
     const getAggregateData = useCallback(async () => {
         try {
             setIsLoading(true);
-            const res = await getIaqAggregate(sensorName, buildingId, deviceId);
+            // const res = await getIaqAggregate(sensorName, buildingId, deviceId);
             // console.log('Aggregate res', res);
-            const data = res?.data ?? [];
+            const data: any = IAQAgg;
+            // res?.data ?? [];
+            // console.log('dataaaaaa', data);
             const keys = Object.keys(data ?? [])
                 .map(Number)
                 .sort((a, b) => a - b);
@@ -244,7 +247,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                 outdoorPm10Array: 'Outdoor PM 10',
                 outdoorPm25Array: 'Outdoor PM 2.5',
             };
-            // console.log("Time array",timeArray)
+            // console.log('Time array', timeArray);
             const arr = [
                 // { key: 'pm1Array', value: pm1Array },
                 { key: 'pm25Array', value: pm25Array },

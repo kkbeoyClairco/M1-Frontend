@@ -42,6 +42,7 @@ import {
 import { userType } from 'appConstants/claircoConstants';
 import { getAssignedBuildings } from 'helpers/user';
 import { useUser } from 'hooks';
+import { IAQCards } from 'appConstants/IAQFake';
 const AnalyticsWrapper = React.lazy(() => import('../Analytics/AnalyticsChart'));
 const TrendsChart = React.lazy(() => import('./TrendsChart'));
 interface CardData {
@@ -145,13 +146,14 @@ const IAQDevicePage = () => {
             setError(false);
             setIsLoading(true);
             const Id = deviceTypeId['IAQ'];
-            const response = await getIaqData({
-                sensorName,
-                deviceTypeId: Id,
-            });
+            // const response = await getIaqData({
+            //     sensorName,
+            //     deviceTypeId: Id,
+            // });
             // console.log('Response', response);
 
-            const data = response?.data?.[0] ?? {};
+            const data: any = IAQCards;
+            // response?.data?.[0] ?? {};
             // const data = sampleTableTestData[0] as any;
             const {
                 VOC = 0,

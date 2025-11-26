@@ -117,16 +117,16 @@ const BentoGrid: React.FC = () => {
                 timestamp = new Date(),
             } = iaqData?.data?.[0] ?? {};
             // console.log('IAQ data', iaqData, AQI, PM10, PM25);
-            setAirQuality((prev) => ({
-                ...prev,
-                pm10: PM10,
-                pm25: PM25,
-                aqi: AQI,
-                opm10: OPM10,
-                opm25: OPM25,
-                voc: VOC,
-                lastUpdated: convertUnixToIST(timestamp),
-            }));
+            // setAirQuality((prev) => ({
+            //     ...prev,
+            //     pm10: PM10,
+            //     pm25: PM25,
+            //     aqi: AQI,
+            //     opm10: OPM10,
+            //     opm25: OPM25,
+            //     voc: VOC,
+            //     lastUpdated: convertUnixToIST(timestamp),
+            // }));
         } catch (error) {
             console.log(error);
         }

@@ -10,6 +10,7 @@ import { convertUnixToIST } from 'utils/timeFunctions';
 import { getPcsData, getPCSMonthlyTraffic, getPCSTraffic } from 'helpers/api/services/Clairco/customerSide/pcs';
 import HeadbandWidget2 from 'components/ClaircoCustomerDashboard/Widgets/HeadbandWidget2';
 import useInterval from 'use-interval';
+import { PCSCard2, PCSCard3, PCSCardDaiy, PCSCardMonthly } from 'appConstants/PCSFake';
 interface LocationState {
     name?: string;
 }
@@ -25,8 +26,9 @@ const PCSDevicePage = () => {
     const getLiveData = useCallback(async (sensorName) => {
         if (!sensorName) return;
 
-        const res = await getPcsData(sensorName);
-        let latestData = res?.data?.data;
+        // const res = await getPcsData(sensorName);
+        let latestData: any = PCSCard2;
+        // res?.data?.data;
         const latestTime = convertUnixToIST(latestData?.['timestamp']);
 
         setRealTimeData({
@@ -41,9 +43,11 @@ const PCSDevicePage = () => {
         try {
             const today = new Date();
             const formattedDate = today.toISOString().slice(0, 10);
-            // console.log(formattedDate); // Output: 2025-06-24
-            const res = await getPCSTraffic(sensorName, 'day', formattedDate);
-            const { busiestHour = {}, leastBusiestHour = {} } = res?.data ?? {};
+            const res: any = PCSCardDaiy;
+            // await getPCSTraffic(sensorName, 'day', formattedDate);
+            // console.log('res', res); // Output: 2025-06-24
+            const { busiestHour = {}, leastBusiestHour = {} } = res;
+            // res?.data ?? {};
             setCardData((prev: any) => ({ ...prev, busiestHour, leastBusiestHour }));
             // console.log('Res', res);
         } catch (error) {
@@ -52,9 +56,12 @@ const PCSDevicePage = () => {
     }, []);
     const getPCSTrafficDataMonthly = useCallback(async (sensorName: string) => {
         try {
-            const res = await getPCSTraffic(sensorName, 'month');
-            const { busiestDay = {}, leastBusiestDay = {} } = res?.data ?? {};
-            // setCardData((prev: any) => ({ ...prev, busiestDay, leastBusiestDay }));
+            const res = PCSCard3;
+            // await getPCSTraffic(sensorName, 'month');
+            const { busiestDay = {}, leastBusiestDay = {} } = res;
+            // res?.data ?? {};
+            // console.log('Res', PCSCardMonthly);
+            setCardData((prev: any) => ({ ...prev, busiestDay, leastBusiestDay }));
             // console.log('Res', res);
         } catch (error) {
             console.log(error);
@@ -63,8 +70,10 @@ const PCSDevicePage = () => {
 
     const getMontlyData = async (sensorName: string) => {
         try {
-            const res = await getPCSMonthlyTraffic(sensorName);
-            const { busiestDay = {}, leastBusiestDay = {} } = res?.data ?? {};
+            const res: any = PCSCardMonthly;
+            // await getPCSMonthlyTraffic(sensorName);
+            const { busiestDay = {}, leastBusiestDay = {} } = res;
+            //  res?.data ?? {};
             setCardData((prev: any) => ({
                 ...prev,
                 busiestDay: {

@@ -12,6 +12,7 @@ import { HyperDatepicker } from 'components';
 import downloadIcon from 'assets/icons/downloads.png';
 import DownloadModal from './DownloadModal';
 import HorizontalButtonGroup1 from 'components/ClaircoButtons/HorizontalButtonGroup1';
+import { PCSAgg, PCSLiveTrends } from 'appConstants/PCSFake';
 
 const graphOptions: { [key: string]: string } = { a: 'Live', b: 'Aggregate' };
 const timeGrouingConstants: { [key: string]: string } = {
@@ -122,7 +123,8 @@ const TrendsChart = ({ sensorName }: any) => {
             const hour = 3600 * 1000;
             const startTime = endTime - hour * Number(timeFrame);
             setIsLoading(true);
-            const res = await getPcsData(sensorName, startTime.toString(), endTime.toString());
+            const res = { data: { data: PCSLiveTrends } };
+            // await getPcsData(sensorName, startTime.toString(), endTime.toString());
             // console.log('Live data', res);
             processResponseData(res);
             setIsLoading(false);
@@ -142,7 +144,8 @@ const TrendsChart = ({ sensorName }: any) => {
             const endTime = getCurrentEpochTime() * 1000;
             const hour = 3600 * 1000;
             const startTime = endTime - hour * Number(timeFrame);
-            const res = await getPCSAggregate(sensorName, startTime.toString(), endTime.toString());
+            const res = { data: { data: PCSAgg } };
+            //  await getPCSAggregate(sensorName, startTime.toString(), endTime.toString());
             processResponseDataAgg(res, true);
         } catch (error) {
             setInCount([]);
@@ -188,10 +191,12 @@ const TrendsChart = ({ sensorName }: any) => {
 
             const fetchData = async () => {
                 if (graphState === graphOptions.b) {
-                    const res = await getPCSAggregate(sensorName, startEpochTime.toString(), endEpochTime.toString());
+                    const res = { data: { data: PCSAgg } };
+                    // await getPCSAggregate(sensorName, startEpochTime.toString(), endEpochTime.toString());
                     processResponseDataAgg(res, true);
                 } else {
-                    const res = await getPcsData(sensorName, startEpochTime.toString(), endEpochTime.toString());
+                    const res = { data: { data: PCSLiveTrends } };
+                    // await getPcsData(sensorName, startEpochTime.toString(), endEpochTime.toString());
                     processResponseData(res);
                 }
             };
