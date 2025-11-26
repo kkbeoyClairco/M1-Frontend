@@ -92,7 +92,7 @@ const WashroomSolutionsCard: React.FC<WashroomSolutionsCardProps> = ({
                             borderRadius: 5,
                             padding: '2px 6px',
                         }}>
-                        <span style={{ fontWeight: 600 }}>Leakage Detected</span>
+                        <span style={{ fontWeight: 600 }}>Leakage </span>
                         <span
                             style={{
                                 fontWeight: 700,
@@ -100,7 +100,7 @@ const WashroomSolutionsCard: React.FC<WashroomSolutionsCardProps> = ({
                                 fontSize: '1.12em',
                                 //  background: '#e3f2fd'
                             }}>
-                            none
+                            Not Detected
                         </span>
                     </div>
                     <div

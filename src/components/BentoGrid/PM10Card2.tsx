@@ -71,28 +71,18 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
+                    justifyContent: 'flex-start',
                     padding: '6px 0 6px 0',
                     minHeight: 0,
                 }}>
                 {/* Top: PM label */}
-                <div
-                    style={{
-                        fontWeight: 700,
-                        fontSize: '1.05rem',
-                        color: '#22223b',
-                        margin: '2px 0 0 10px',
-                        textAlign: 'left',
-                        letterSpacing: 0.2,
-                    }}>
-                    Particulate Matter
-                </div>
+
                 {/* Main content: Outdoor box on right */}
                 <div
                     style={{
                         display: 'flex',
                         flexDirection: 'row',
-                        flex: 1,
+                        // flex: 1,
                         alignItems: 'flex-start',
                         marginTop: 0,
                         minHeight: 0,
@@ -100,6 +90,18 @@ const PM10Card2: React.FC<PMCardProps> = ({ pm10, pm25, oPm10, oPm25, aqi, voc, 
                     }}>
                     {/* Left side: empty for visual balance */}
                     <div style={{ flex: 1 }}>
+                        {' '}
+                        <div
+                            style={{
+                                fontWeight: 700,
+                                fontSize: '1.05rem',
+                                color: '#22223b',
+                                margin: '2px 0 0 10px',
+                                textAlign: 'left',
+                                letterSpacing: 0.2,
+                            }}>
+                            Particulate Matter
+                        </div>
                         <div
                             style={{
                                 fontWeight: 400,

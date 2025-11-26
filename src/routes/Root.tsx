@@ -24,7 +24,7 @@ const Root = () => {
             // case 'uvCustomer':
             //     return '/customer/uv';
             default:
-                return '/customer/iaq-home';
+                return '/home';
         }
     };
 
