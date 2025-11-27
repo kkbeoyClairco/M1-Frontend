@@ -89,7 +89,7 @@ const VrfData: React.FC<VrfDataProps> = ({ data }) => {
                     <Col xs={6} style={{ padding: '0px', textAlign: 'start' }}>
                         Updated On:{' '}
                     </Col>
-                    <Col xs={6}>{convertUnixToIST(data['Epoch time']) || '-'}</Col>
+                    <Col xs={6}>{convertUnixToIST(new Date()) || '-'}</Col>
                 </Row>
             )}
         </div>
@@ -147,7 +147,7 @@ const AhuData: React.FC<AHUDataProps> = ({ data }) => {
                     <Col xs={6} style={{ padding: '0px', textAlign: 'start' }}>
                         Updated on:{' '}
                     </Col>
-                    <Col xs={6}>{convertUnixToIST(data?.['Epoch time']?.['$numberDecimal']) || '-'}</Col>
+                    <Col xs={6}>{convertUnixToIST(new Date()) || '-'}</Col>
                 </Row>
             )}
         </div>
@@ -171,7 +171,7 @@ const OccupancyDataComponent: React.FC<OccupancyProps> = ({ data }) => {
                         <Col xs={6} style={{ padding: '0px', textAlign: 'start' }}>
                             Updated on:{' '}
                         </Col>
-                        <Col xs={6}>{data?.['epochTime']} </Col>
+                        <Col xs={6}>{convertUnixToIST(new Date())} </Col>
                     </Row>
                 </>
             )}
