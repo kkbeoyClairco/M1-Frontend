@@ -1,0 +1,102 @@
+.bento-grid2-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: 'white';
+    // linear-gradient(135deg, #f8fafc 0%, #e0f7fa 100%);
+    padding: 3rem 2rem;
+}
+
+.bento-grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 1600px;
+    height: 90vh;
+}
+
+/* MacBook 13" (height ~800px, width >=1200px) - top 1/3, bottom 2/3 */
+// @media (max-height: 900px) and (min-width: 1100px) {
+//     .bento-grid2 {
+//         grid-template-rows: 1fr 2fr;
+//         height: 90vh;
+//     }
+// }
+// MacBook 13" (1280x800 or 1440x900) specific layout
+@media screen and (min-width: 1200px) and (max-width: 1450px) and (min-height: 700px) and (max-height: 950px) {
+    .bento-grid2 {
+        grid-template-rows: 1fr 2fr;
+        height: 90vh;
+    }
+}
+.bento-grid2-item {
+    border-radius: 1.5rem;
+    min-height: 120px;
+    // background: #fff;
+    // box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.08);
+    // transition: box-shadow 0.3s, transform 0.3s;
+    border: none;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    &:hover {
+        // box-shadow: 0 12px 48px 0 rgba(44, 62, 80, 0.16);
+        transform: translateY(-4px) scale(1.02);
+    }
+}
+
+.top-left-box {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+
+.top-right-box {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+.bottom-trends-box {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+    min-height: 180px;
+}
+
+@media (max-width: 900px) {
+    .bento-grid2 {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(3, 1fr);
+        height: auto;
+    }
+    .top-left-box,
+    .top-right-box,
+    .bottom-trends-box {
+        grid-column: 1 / 2;
+        grid-row: auto;
+    }
+}
+
+.trends-card {
+    // background: #fff;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.08);
+    transition: box-shadow 0.3s, transform 0.3s;
+    border: none;
+}
+.trends-card:hover {
+    box-shadow: 0 12px 48px 0 rgba(44, 62, 80, 0.16);
+    transform: translateY(-4px) scale(1.02);
+}
+.trends-chart-container {
+    // background: linear-gradient(135deg, #f8fafc 0%, #e0f7fa 100%);
+    border-radius: 1.2rem;
+    // box-shadow: 0 2px 12px 0 rgba(44, 62, 80, 0.06);
+    padding: 1.5rem 1rem;
+    transition: box-shadow 0.3s;
+}
+.trends-chart-container:hover {
+    // box-shadow: 0 8px 32px 0 rgba(44, 62, 80, 0.13);
+}

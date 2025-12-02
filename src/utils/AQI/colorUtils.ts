@@ -94,12 +94,33 @@ export const getVocColor = (value: number) => {
     else if (value > 1000) return '#8B0000';
     else return '#A9A9A9';
 };
+
+export const getNH3Colors = (value: number) => {
+    if (value > 0 && value <= 5) return '#59e759';
+    else if (value > 5 && value <= 50) return '#f2f262';
+    else if (value >= 50 && value <= 150) return '#f5b43e';
+    else if (value >= 150 && value <= 300) return '#FF4500';
+    else if (value >= 300 && value <= 500) return '#8B0000';
+    else if (value > 500) return '#8B0000';
+    else return '#A9A9A9';
+};
+
 export const getVoCLabel = (value: number) => {
     if (value > 0 && value <= 40) return 'Good';
     else if (value > 40 && value <= 100) return 'Moderate';
     // else if (value <= 40 && value <= 100) return 'Poor';
     else if (value >= 101 && value <= 300) return 'Poor';
     else if (value >= 301 && value <= 1000) return 'Unhealthy';
+    else return 'N/A';
+};
+
+export const getNH3Label = (value: number) => {
+    if (value > 0 && value <= 5) return 'Good';
+    else if (value > 5 && value <= 50) return 'Moderate';
+    else if (value >= 50 && value <= 150) return 'Poor';
+    else if (value >= 150 && value <= 300) return 'Unhealthy';
+    else if (value >= 300 && value <= 500) return 'Unhealthy';
+    else if (value > 500) return 'Unhealthy';
     else return 'N/A';
 };
 
