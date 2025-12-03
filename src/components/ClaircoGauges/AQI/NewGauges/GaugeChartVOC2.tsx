@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
-import { Card } from 'react-bootstrap';
+import { Card, Row, Col } from 'react-bootstrap';
 import { getVocColor, getVoCLabel } from 'utils/AQI/colorUtils';
 import * as echarts from 'echarts';
 import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
@@ -164,37 +164,80 @@ const GaugeChartVOC2: React.FC<GaugeChartProps> = ({ property, value, deviceName
                             alignItems: 'center',
                             background: panelHovered ? 'rgba(245,247,250,0.95)' : 'rgba(245,247,250,0.7)',
                             borderRadius: 12,
-                            padding: '0.75rem 0.5rem',
-                            boxShadow: 'none',
+                            padding: '2rem 1.5rem 2rem 1.5rem', // top right bottom left                            boxShadow: 'none',
                             minWidth: 180,
-                            maxWidth: 220,
+                            maxWidth: 260,
                             marginLeft: 12,
                             marginBottom: 4,
                             fontSize: 13,
                             transition: 'background 0.3s',
                             color: 'black',
                         }}>
-                        <div style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: 6 }}>Reference</div>
-                        <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
-                            <tbody>
-                                <tr>
-                                    <td style={{ padding: '2px 0', fontWeight: 500, color: '#4CAF50' }}>Good</td>
-                                    <td style={{ padding: '2px 0', color: '#333' }}>0 to 40</td>
-                                </tr>
-                                <tr>
-                                    <td style={{ padding: '2px 0', fontWeight: 500, color: '#FFC107' }}>Moderate</td>
-                                    <td style={{ padding: '2px 0', color: '#333' }}>41 to 100</td>
-                                </tr>
-                                <tr>
-                                    <td style={{ padding: '2px 0', fontWeight: 500, color: '#F44336' }}>Poor</td>
-                                    <td style={{ padding: '2px 0', color: '#333' }}>101 to 300</td>
-                                </tr>
-                                <tr>
-                                    <td style={{ padding: '2px 0', fontWeight: 500, color: '#8B0000' }}>Unhealthy</td>
-                                    <td style={{ padding: '2px 0', color: '#333' }}>301 or higher</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: 6 }}>Reference in ppm</div>
+                        <div style={{ width: '100%' }}>
+                            <Row style={{ fontSize: 13, marginBottom: 2 }}>
+                                <Col
+                                    xs={5}
+                                    style={{ color: '#4CAF50', fontWeight: 500, textAlign: 'left', padding: 0 }}>
+                                    Good
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'center', padding: 0 }}>
+                                    0
+                                </Col>
+                                <Col xs={1} style={{ textAlign: 'center', padding: 0 }}>
+                                    to
+                                </Col>
+                                <Col xs={4} style={{ textAlign: 'right', padding: 0 }}>
+                                    40
+                                </Col>
+                            </Row>
+                            <Row style={{ fontSize: 13, marginBottom: 2 }}>
+                                <Col
+                                    xs={5}
+                                    style={{ color: '#FFC107', fontWeight: 500, textAlign: 'left', padding: 0 }}>
+                                    Moderate
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'center', padding: 0 }}>
+                                    41
+                                </Col>
+                                <Col xs={1} style={{ textAlign: 'center', padding: 0 }}>
+                                    to
+                                </Col>
+                                <Col xs={4} style={{ textAlign: 'right', padding: 0 }}>
+                                    100
+                                </Col>
+                            </Row>
+                            <Row style={{ fontSize: 13, marginBottom: 2 }}>
+                                <Col
+                                    xs={5}
+                                    style={{ color: '#F44336', fontWeight: 500, textAlign: 'left', padding: 0 }}>
+                                    Poor
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'center', padding: 0 }}>
+                                    101
+                                </Col>
+                                <Col xs={1} style={{ textAlign: 'center', padding: 0 }}>
+                                    to
+                                </Col>
+                                <Col xs={4} style={{ textAlign: 'right', padding: 0 }}>
+                                    300
+                                </Col>
+                            </Row>
+                            <Row style={{ fontSize: 13, marginBottom: 2 }}>
+                                <Col
+                                    xs={5}
+                                    style={{ color: '#8B0000', fontWeight: 500, textAlign: 'left', padding: 0 }}>
+                                    Unhealthy
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'center', padding: 0 }}>
+                                    301
+                                </Col>
+                                <Col xs={1} style={{ textAlign: 'center', padding: 0 }}></Col>
+                                <Col xs={4} style={{ textAlign: 'right', padding: 0 }}>
+                                    or higher
+                                </Col>
+                            </Row>
+                        </div>
                         <div style={{ marginTop: 8, fontSize: 11, fontStyle: 'italic' }}>*As per IGBC standard</div>
                     </div>
                 </div>

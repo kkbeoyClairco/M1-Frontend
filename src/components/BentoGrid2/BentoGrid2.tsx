@@ -7,37 +7,42 @@ import { convertUnixToIST } from 'utils/timeFunctions';
 import { deviceTypeId } from 'appConstants/DeviceMappingConstants';
 import { getIaqData } from 'helpers/api/services/Clairco/customerSide/iaq';
 import GaugeChartNH3 from 'components/ClaircoGauges/AQI/NewGauges/GaugeChartNH3';
-const sensorName = 'IAQ24002';
+const sensorNameVOC = 'ODS25050';
+const sensorNameNH3 = 'ODS25048';
 const BentoGrid2 = () => {
     const [cardData, setCardData] = useState<any>({
         voc: 0,
         nh3: 0,
     });
-    const [lastUpdated, setLastUpdated] = useState('');
+    const [lastUpdated, setLastUpdated] = useState({
+        VOC: '',
+        NH3: '',
+    });
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const getAQICardData = async (sensorName: string) => {
+    const getAQICardData = async () => {
         try {
-            if (!sensorName) return;
             setIsLoading(true);
             const Id = deviceTypeId['IAQ'];
-            const response = await getIaqData({
-                sensorName,
+            const vocResponse = await getIaqData({
+                sensorName: sensorNameVOC,
                 deviceTypeId: Id,
             });
-            console.log('Response', response);
-
-            const data: any = response?.data?.[0] ?? {};
-            // const data = sampleTableTestData[0] as any;
-            const { VOC = 0, NH3 = 0, timestamp = 0 } = data;
+            const nh3Response = await getIaqData({
+                sensorName: sensorNameNH3,
+                deviceTypeId: Id,
+            });
+            const VOC = vocResponse?.data?.[0]?.VOC_index ?? 0;
+            const NH3 = nh3Response?.data?.[0]?.NH3 ?? 0;
+            const timestampVOC = convertUnixToIST(vocResponse?.data?.[0]?.timestamp ?? 0);
+            const timestampNH3 = convertUnixToIST(nh3Response?.data?.[0]?.timestamp ?? 0);
 
             setCardData({
-                // aqi: roundToOneDecimal(Number(AQI)),
                 voc: roundToOneDecimal(Number(VOC)),
                 nh3: roundToOneDecimal(Number(NH3)),
             });
-            setLastUpdated(convertUnixToIST(timestamp));
+            setLastUpdated({ NH3: timestampNH3, VOC: timestampVOC });
         } catch (error) {
             console.log(error);
             setCardData({
@@ -50,19 +55,24 @@ const BentoGrid2 = () => {
         }
     };
     useEffect(() => {
-        getAQICardData(sensorName);
+        getAQICardData();
     }, []);
     return (
         <div className="bento-grid2-container">
             <div className="bento-grid2">
                 <div className="bento-grid2-item top-left-box">
-                    <GaugeChartVOC2 deviceName="" property="" value={cardData.voc} lastUpdated={lastUpdated} />
+                    <GaugeChartVOC2 deviceName="" property="" value={cardData.voc} lastUpdated={lastUpdated.VOC} />
                 </div>
                 <div className="bento-grid2-item top-right-box">
-                    <GaugeChartNH3 deviceName="" property="" value={cardData.nh3} lastUpdated={lastUpdated} />
+                    <GaugeChartNH3 deviceName="" property="" value={cardData.nh3} lastUpdated={lastUpdated.NH3} />
                 </div>
                 <div className=" bottom-trends-box">
-                    <TrendsChart sensorName={sensorName} deviceId="" buildingId="" />
+                    <TrendsChart
+                        sensorNameVOC={sensorNameVOC}
+                        sensorNameNH3={sensorNameNH3}
+                        deviceId=""
+                        buildingId=""
+                    />
                 </div>
             </div>
         </div>

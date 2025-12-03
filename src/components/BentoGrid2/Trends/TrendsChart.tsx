@@ -35,26 +35,22 @@ const graphOptions: { [key: string]: string } = {
     a: 'live',
     //  b: 'aggregated'
 };
-const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
+
+const apiParams = { 1: 'VOC', 2: 'NH3' };
+const TrendsChart = ({ sensorNameVOC, sensorNameNH3, deviceId, buildingId }: any) => {
     const [graphState, setGraphState] = useState(graphOptions.a);
-    const [apiParams, setApiParams] = useState({});
+    // const [apiParams, setApiParams] = useState({});
     // const [downloadModal, setDownloadModal] = useState(false);
     const [timeGroup, setTimeGroup] = useState<any>(timeGrouingConstants.a);
     const [graphPara, setGraphPara] = useState<string | null>(null);
     const [graphLineColour, setGraphLinecolour] = useState(coloursTable.a);
     const [data, setData] = useState<{ VOC: number[]; NH3: number[] }>({ VOC: [], NH3: [] });
-    // const [temperature, setTemperature] = useState<any[]>([]);
-    // const [humidity, sethumidity] = useState<any>([]);
-    // const [co2, setCo2] = useState<any>([]);
-    // const [voc, setvoc] = useState<any>([]);
-    // const [pm1, setpm1] = useState<any>([]);
+
     const [pm25, setpm25] = useState<any[]>([]);
     const [pm10, setpm10] = useState<any[]>([]);
-    // const [aqi, setAqi] = useState<any[]>([]);
-    // const [outdoorPm25, setOutdoorPm25] = useState<number[]>([]);
-    // const [outdoorPm10, setOutdoorPm10] = useState<number[]>([]);
+
     const [xAxis, setXAxis] = useState<any>([]);
-    const [lastUpdated, setLastUpdated] = useState('');
+    const [lastUpdated, setLastUpdated] = useState({ voc: '', nh3: '' });
     const [isLoading, setIsLoading] = useState(false);
 
     // Function that returns graph data corresponding to the user selection
@@ -83,6 +79,30 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
             console.log(error);
         }
     };
+    const getNH3Data = useCallback(async (sensorName, timeGroup) => {
+        try {
+            if (!sensorName) return;
+            // console.log('IAQ Live');
+            setIsLoading(true);
+
+            const Id = deviceTypeId['IAQ'];
+            const nh3Response = await getIaqData({
+                sensorName: sensorName,
+                timeFrameInHours: timeGroup,
+                deviceTypeId: Id,
+            });
+            const xAxisDataNH3 = nh3Response?.data?.reverse().map((doc: any) => convertUnixToIST(doc?.timestamp));
+            const nh3Array = nh3Response?.data
+                ?.map((doc: any) => roundToOneDecimal(doc?.NH3))
+                .filter((val: any) => !isNaN(val));
+            console.log('NH# res', nh3Array, nh3Response);
+            setXAxis((prev: any) => ({ ...prev, NH3: xAxisDataNH3 }));
+            setData((prev) => ({ ...prev, NH3: nh3Array }));
+            setLastUpdated((prev) => ({ ...prev, nh3: xAxisDataNH3[xAxisDataNH3.length - 1] }));
+        } catch (error) {
+            console.log(error);
+        }
+    }, []);
     // Function to get Live data
     const getLiveDataAPI = useCallback(
         async (sensorName: string, timeGroup: any) => {
@@ -92,136 +112,40 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                 setIsLoading(true);
 
                 const Id = deviceTypeId['IAQ'];
-                const response = await getIaqData({
-                    sensorName,
+                const vocResponse = await getIaqData({
+                    sensorName: sensorName,
                     timeFrameInHours: timeGroup,
                     deviceTypeId: Id,
                 });
-                const IAQTrendsOneHr = response?.data ?? [];
-                const xAxisData = IAQTrendsOneHr.reverse().map((doc: any) => convertUnixToIST(doc?.timestamp));
-                const vocArray = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.VOC)).filter(
-                    (val: any) => !isNaN(val)
-                );
-                const nh3Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.NH3)).filter(
-                    (val: any) => !isNaN(val)
-                );
-                const xAxisFormatted = xAxisData.map((data: any) => data.split(',')?.[1] ?? '');
-                // console.log('Trends', xAxisFormatted);
-                //    stamp));
-                // const tempArray = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.TEMP)).filter(
-                //     (val: any) => !isNaN(val)
-                // );
-                // const humidityArray = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.HUM)).filter(
-                //     (val: any) => !isNaN(val)
-                // );
-                // const pm1Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.PM1)).filter(
-                //     (val: any) => !isNaN(val)
-                // );
-                // const pm10Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.PM10)).filter(
-                //     (val: any) => !isNaN(val)
-                // );
-                // const pm25Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.PM25)).filter(
-                //     (val: any) => !isNaN(val)
-                // );
 
-                // const aqiArray = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.AQI)).filter(
-                //     (val: any) => !isNaN(val)
-                // );
-                // const co2Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.CO2)).filter(
-                //     (val: any) => !isNaN(val)
-                // );
-                // const outdoorPm25Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.OPM25)).filter(
-                //     (val: any) => !isNaN(val)
-                // );
-                // const outdoorPm10Array = IAQTrendsOneHr?.map((doc: any) => roundToOneDecimal(doc?.OPM10)).filter(
-                //     (val: any) => !isNaN(val)
-                // );
-                // const arr = [
-                //     // { key: 'pm1Array', value: pm1Array },
-                //     // { key: 'pm25Array', value: pm25Array },
-                //     // { key: 'pm10Array', value: pm10Array },
-                //     // { key: 'co2Array', value: co2Array },
-                //     { key: 'vocArray', value: vocArray },
-                //     { key: 'nh3Array', value: nh3Array },
-                //     // { key: 'tempArray', value: tempArray },
-                //     // { key: 'humidityArray', value: humidityArray },
-                //     // { key: 'outdoorPm25Array', value: outdoorPm25Array },
-                //     // { key: 'outdoorPm10Array', value: outdoorPm10Array },
-                // ];
+                const xAxisDataVOC = vocResponse?.data?.reverse().map((doc: any) => convertUnixToIST(doc?.timestamp));
 
-                // const map: { [key: string]: string } = {
-                //     tempArray: 'Temperature',
-                //     humidityArray: 'Humidity',
-                //     // pm1Array, 'PM 1',
-                //     pm10Array: 'PM 10',
-                //     pm25Array: 'PM 2.5',
-                //     vocArray: 'VOC',
-                //     aqiArray: 'AQI',
-                //     co2Array: 'CO2',
-                //     outdoorPm10Array: 'Outdoor PM 10',
-                //     outdoorPm25Array: 'Outdoor PM 2.5',
-                // };
-                // const newparameters: { [key: string]: string } = {};
-                // for (let i = 0; i < 2; i++) {
-                //     if (arr[i].value.length > 0) {
-                //         newparameters[i + 1] = map[arr[i].key];
-                //     }
-                // }
+                const vocArray = vocResponse?.data?.map((doc: any) => roundToOneDecimal(doc?.VOC_index));
+                // .filter((val: any) => !isNaN(val));
                 if (!graphPara) setGraphPara('VOC');
-                // console.log(newparameters);
-                const newParams = { 1: 'VOC', 2: 'NH3' };
-                setApiParams(newParams);
-                setXAxis(xAxisFormatted);
+                console.log('VOC res', vocArray, vocResponse);
 
-                setData((prev) => ({ ...prev, NH3: nh3Array, VOC: vocArray })); // setvoc(vocArray);
-                setLastUpdated(xAxisData[xAxisData?.length - 1]);
-                // setTemperature(tempArray);
-                // sethumidity(humidityArray);
-                // setpm1(pm1Array);
-                // setpm10(pm10Array);
-                // setpm25(pm25Array);
-                // setAqi(aqiArray);
-                // setCo2(co2Array);
-                // setOutdoorPm10(outdoorPm10Array);
-                // setOutdoorPm25(outdoorPm25Array);
+                // setApiParams(newParams);
+                setXAxis((prev: any) => ({ ...prev, VOC: xAxisDataVOC }));
+
+                setData((prev) => ({ ...prev, VOC: vocArray })); // setvoc(vocArray);
+                setLastUpdated((prev) => ({ ...prev, voc: xAxisDataVOC[xAxisDataVOC.length - 1] }));
                 setIsLoading(false);
-
-                // console.log(
-                //     'IAQ Trends res:',
-                //     // xAxisData,
-                //     // tempArray,
-                //     // humidityArray
-                //     pm1Array
-                //     // pm10Array,
-                //     // pm25Array,
-                //     // vocArray,
-                //     // aqiArray,
-                //     // co2Array
-                // );
             } catch (error) {
                 setXAxis([]);
-                // setTemperature([]);
-                // sethumidity([]);
-                // setpm1([]);
                 setpm10([]);
                 setpm25([]);
-                // setvoc([]);
-                // setAqi([]);
-                // setCo2([]);
-                setLastUpdated('');
-                // setOutdoorPm10([]);
-                // setOutdoorPm25([]);
                 setIsLoading(false);
 
                 console.log(error);
             }
         },
-        [timeGroup, sensorName]
+        [timeGroup, sensorNameNH3]
     );
     const getAggregateData = useCallback(async () => {
         try {
             setIsLoading(true);
-            const res = await getIaqAggregate(sensorName, buildingId, deviceId);
+            const res = await getIaqAggregate(sensorNameNH3, buildingId, deviceId);
             // console.log('Aggregate res', res);
             const data: any = res?.data;
             // res?.data ?? [];
@@ -277,8 +201,8 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                     newparameters[i + 1] = map[arr[i].key];
                 }
             }
-            if (!graphPara) setGraphPara((Object.values(newparameters)?.[0] as string)?.toString());
-            setApiParams(newparameters);
+            // if (!graphPara) setGraphPara((Object.values(newparameters)?.[0] as string)?.toString());
+            // setApiParams(newparameters);
 
             setXAxis(timeArray ?? []);
             // setTemperature(tempArray ?? []);
@@ -341,12 +265,12 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
         grid: {
             left: '14%', // Adjust the left margin
             right: '8%', // Adjust the right margin
-            bottom: '14%', // Increase the bottom margin to make space for the labels
+            bottom: '28%', // Increase the bottom margin to make space for the labels
             top: '6%',
         },
         xAxis: {
             type: 'category',
-            data: xAxis,
+            data: xAxis[graphPara ?? 'VOC'],
             axisLabel: {
                 rotate: 60, // Rotate the labels 90 degrees to make them vertical
                 textStyle: {
@@ -361,38 +285,10 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
             trigger: 'axis',
             formatter: function (values: any) {
                 let toolTipContent = values[0].name + '<br/>';
-
-                if (graphPara === parameters.c || graphPara === parameters.d) {
-                    values.forEach((item: any) => {
-                        toolTipContent +=
-                            item.marker + ' ' + item.seriesName + ' ' + ':' + ' ' + item.value + ' ppm ' + ' <br/>';
-                    });
-                } else if (
-                    graphPara === parameters.a ||
-                    graphPara === parameters.b ||
-                    graphPara === parameters.h ||
-                    graphPara === parameters.i
-                ) {
-                    values.forEach((item: any) => {
-                        toolTipContent +=
-                            item.marker + ' ' + item.seriesName + ' ' + ':' + ' ' + item.value + ' ' + 'µg/m³  <br/>';
-                    });
-                } else if (graphPara === parameters.f) {
-                    values.forEach((item: any) => {
-                        toolTipContent +=
-                            item.marker + ' ' + item.seriesName + ' ' + ':' + ' ' + item.value + ' °C <br/>';
-                    });
-                } else if (graphPara === parameters.g) {
-                    values.forEach((item: any) => {
-                        toolTipContent +=
-                            item.marker + ' ' + item.seriesName + ' ' + ':' + ' ' + item.value + '%  <br/>';
-                    });
-                } else {
-                    values.forEach((item: any) => {
-                        toolTipContent +=
-                            item.marker + ' ' + item.seriesName + ' ' + ':' + ' ' + item.value + ' ' + ' <br/>';
-                    });
-                }
+                values.forEach((item: any) => {
+                    toolTipContent +=
+                        item.marker + ' ' + item.seriesName + ' ' + ':' + ' ' + item.value + ' ppm ' + ' <br/>';
+                });
 
                 return toolTipContent;
             },
@@ -430,8 +326,11 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
 
     useEffect(() => {
         if (graphState === graphOptions.b) getAggregateData();
-        else getLiveDataAPI(sensorName, timeGroup);
-    }, [graphState, timeGroup, sensorName]);
+        else {
+            getNH3Data(sensorNameNH3, timeGroup);
+            getLiveDataAPI(sensorNameVOC, timeGroup);
+        }
+    }, [graphState, timeGroup, sensorNameNH3]);
     return (
         <>
             {/* <DownloadModal modalState={downloadModal} modalControlFn={handleDownloadModal} deviceId={deviceId} /> */}
@@ -452,7 +351,7 @@ const TrendsChart = ({ sensorName, deviceId, buildingId }: any) => {
                                         <h5> {graphPara}</h5>
                                     </Col>
                                     <Col xxl={4} style={{ width: '200px' }}>
-                                        <h6 style={{ textAlign: 'center' }}>Updated on {lastUpdated}</h6>{' '}
+                                        {/* <h6 style={{ textAlign: 'center' }}>Updated on {lastUpdated}</h6>{' '} */}
                                     </Col>
                                     <Col
                                         xxl={4}

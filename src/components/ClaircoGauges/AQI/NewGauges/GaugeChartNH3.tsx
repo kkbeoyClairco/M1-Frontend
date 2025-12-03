@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
-import { Card } from 'react-bootstrap';
+import { Card, Row, Col } from 'react-bootstrap';
 import { getNH3Label, getNH3Colors } from 'utils/AQI/colorUtils';
 import * as echarts from 'echarts';
 import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
@@ -165,7 +165,7 @@ const GaugeChartNH3: React.FC<GaugeChartProps> = ({ property, value, deviceName,
                             alignItems: 'center',
                             background: panelHovered ? 'rgba(245,247,250,0.95)' : 'rgba(245,247,250,0.7)',
                             borderRadius: 12,
-                            padding: '0.75rem 0.5rem',
+                            padding: '0.5rem 1.5rem 2rem 1.5rem', // top right bottom left                            boxShadow: 'none',
                             boxShadow: 'none',
                             minWidth: 180,
                             maxWidth: 300,
@@ -176,47 +176,90 @@ const GaugeChartNH3: React.FC<GaugeChartProps> = ({ property, value, deviceName,
                             color: 'black',
                         }}>
                         <div style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: 6 }}>Reference in ppm</div>
-                        <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
-                            <tbody>
-                                <tr>
-                                    <td style={{ padding: '2px 0', fontWeight: 500, color: 'black' }}>
-                                        No health effects
-                                    </td>
-                                    <td style={{ padding: '2px 0', color: '#333' }}>0 to 5</td>
-                                </tr>
-                                <tr>
-                                    <td style={{ padding: '2px 0', fontWeight: 500, color: 'black' }}>
-                                        Slight discomfort
-                                    </td>
-                                    <td style={{ padding: '2px 0', color: '#333' }}>5 to 50</td>
-                                </tr>
-                                <tr>
-                                    <td style={{ padding: '2px 0', fontWeight: 500, color: 'black' }}>
-                                        Irritation of eyes, nose, throat
-                                    </td>
-                                    <td style={{ padding: '2px 0', color: '#333' }}>50 to 150</td>
-                                </tr>
-                                <tr>
-                                    <td style={{ padding: '2px 0', fontWeight: 500, color: 'black' }}>
-                                        Coughing, more pronounced irritation
-                                    </td>
-                                    <td style={{ padding: '2px 0', color: '#333' }}>150 to 300</td>
-                                </tr>
-                                <tr>
-                                    <td style={{ padding: '2px 0', fontWeight: 500, color: 'black' }}>
-                                        {' '}
-                                        Severe irritation
-                                    </td>
-                                    <td style={{ padding: '2px 0', color: '#333' }}>300 to 500</td>
-                                </tr>
-                                <tr>
-                                    <td style={{ padding: '2px 0', fontWeight: 500, color: 'black' }}>
-                                        Acute health risks
-                                    </td>
-                                    <td style={{ padding: '2px 0', color: '#333' }}>500 or higher</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div style={{ width: '100%' }}>
+                            <Row style={{ fontSize: 13, marginBottom: 2 }}>
+                                <Col xs={7} style={{ fontWeight: 500, color: 'black', textAlign: 'left', padding: 0 }}>
+                                    No health effects
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'center', padding: 0 }}>
+                                    0
+                                </Col>
+                                <Col xs={1} style={{ textAlign: 'center', padding: 0 }}>
+                                    to
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'right', padding: 0 }}>
+                                    5
+                                </Col>
+                            </Row>
+                            <Row style={{ fontSize: 13, marginBottom: 2 }}>
+                                <Col xs={7} style={{ fontWeight: 500, color: 'black', textAlign: 'left', padding: 0 }}>
+                                    Slight discomfort
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'center', padding: 0 }}>
+                                    5
+                                </Col>
+                                <Col xs={1} style={{ textAlign: 'center', padding: 0 }}>
+                                    to
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'right', padding: 0 }}>
+                                    50
+                                </Col>
+                            </Row>
+                            <Row style={{ fontSize: 13, marginBottom: 2 }}>
+                                <Col xs={7} style={{ fontWeight: 500, color: 'black', textAlign: 'left', padding: 0 }}>
+                                    Irritation of eyes, nose, throat
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'center', padding: 0 }}>
+                                    50
+                                </Col>
+                                <Col xs={1} style={{ textAlign: 'center', padding: 0 }}>
+                                    to
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'right', padding: 0 }}>
+                                    150
+                                </Col>
+                            </Row>
+                            <Row style={{ fontSize: 13, marginBottom: 2 }}>
+                                <Col xs={7} style={{ fontWeight: 500, color: 'black', textAlign: 'left', padding: 0 }}>
+                                    Pronounced irritation
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'center', padding: 0 }}>
+                                    150
+                                </Col>
+                                <Col xs={1} style={{ textAlign: 'center', padding: 0 }}>
+                                    to
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'right', padding: 0 }}>
+                                    300
+                                </Col>
+                            </Row>
+                            <Row style={{ fontSize: 13, marginBottom: 2 }}>
+                                <Col xs={7} style={{ fontWeight: 500, color: 'black', textAlign: 'left', padding: 0 }}>
+                                    Severe irritation
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'center', padding: 0 }}>
+                                    300
+                                </Col>
+                                <Col xs={1} style={{ textAlign: 'center', padding: 0 }}>
+                                    to
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'right', padding: 0 }}>
+                                    500
+                                </Col>
+                            </Row>
+                            <Row style={{ fontSize: 13, marginBottom: 2 }}>
+                                <Col xs={7} style={{ fontWeight: 500, color: 'black', textAlign: 'left', padding: 0 }}>
+                                    Acute health risks
+                                </Col>
+                                <Col xs={2} style={{ textAlign: 'center', padding: 0 }}>
+                                    500
+                                </Col>
+                                <Col xs={1} style={{ textAlign: 'center', padding: 0 }}></Col>
+                                <Col xs={2} style={{ textAlign: 'right', padding: 0 }}>
+                                    or higher
+                                </Col>
+                            </Row>
+                        </div>
                         <div style={{ marginTop: 8, fontSize: 11, fontStyle: 'italic' }}>*As per IGBC standard</div>
                     </div>
                 </div>
