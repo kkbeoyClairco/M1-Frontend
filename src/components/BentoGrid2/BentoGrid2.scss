@@ -50,7 +50,7 @@
 .bento-grid2-item {
     border-radius: 1.5rem;
     min-height: 120px;
-    // background: #fff;
+    background: #fff;
     // box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.08);
     // transition: box-shadow 0.3s, transform 0.3s;
     border: none;
@@ -105,12 +105,12 @@
     transform: translateY(-4px) scale(1.02);
 }
 .trends-chart-container {
-    // background: linear-gradient(135deg, #f8fafc 0%, #e0f7fa 100%);
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f7fa 100%);
     border-radius: 1.2rem;
-    // box-shadow: 0 2px 12px 0 rgba(44, 62, 80, 0.06);
+    box-shadow: 0 2px 12px 0 rgba(44, 62, 80, 0.06);
     padding: 1.5rem 1rem;
     transition: box-shadow 0.3s;
 }
 .trends-chart-container:hover {
-    // box-shadow: 0 8px 32px 0 rgba(44, 62, 80, 0.13);
+    box-shadow: 0 8px 32px 0 rgba(44, 62, 80, 0.13);
 }

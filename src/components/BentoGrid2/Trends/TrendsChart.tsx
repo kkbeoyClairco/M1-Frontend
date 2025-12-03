@@ -317,6 +317,7 @@ const TrendsChart = ({ sensorNameVOC, sensorNameNH3, deviceId, buildingId }: any
                 // yAxisIndex: 0,
                 symbol: 'diamond',
                 symbolSize: 5,
+                // areaStyle: {},
                 lineStyle: {
                     color: graphLineColour,
                 },

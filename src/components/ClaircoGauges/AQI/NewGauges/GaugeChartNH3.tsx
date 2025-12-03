@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import { Card, Row, Col } from 'react-bootstrap';
-import { getNH3Label, getNH3Colors } from 'utils/AQI/colorUtils';
+import { getNH3Label, getNH3Colors, getNH3Gradient } from 'utils/AQI/colorUtils';
 import * as echarts from 'echarts';
 import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
 import { deviceTypeId } from 'appConstants/DeviceMappingConstants';
@@ -96,7 +96,8 @@ const GaugeChartNH3: React.FC<GaugeChartProps> = ({ property, value, deviceName,
                 // background: 'linear-gradient(135deg, #f5fafd 0%, #e8f0fe 100%)',
                 // background: 'linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%)', //SoftTeal
                 // background: 'linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%)', //lavender
-                background: 'linear-gradient(135deg, #ffe9e6 0%, #ffffff 100%)', //Pale
+                background: getNH3Gradient(value),
+                //  'linear-gradient(135deg, #ffe9e6 0%, #ffffff 100%)', //Pale
                 // background: 'linear-gradient(135deg, #eafbe7 0%, #ffffff 100%)', //Green
                 // background: 'linear-gradient(135deg, #e3f0ff 0%, #f7fafd 100%)', // Modern blue
                 // background: hovered ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,1)',

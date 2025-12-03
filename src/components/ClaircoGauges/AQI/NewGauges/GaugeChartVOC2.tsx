@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import { Card, Row, Col } from 'react-bootstrap';
-import { getVocColor, getVoCLabel } from 'utils/AQI/colorUtils';
+import { getVocColor, getVOCGradient, getVoCLabel } from 'utils/AQI/colorUtils';
 import * as echarts from 'echarts';
 import { InformationIcon } from 'components/ClaricoIcons/InformationIcon';
 // import { deviceTypeId } from 'appConstants/DeviceMappingConstants';
@@ -93,7 +93,8 @@ const GaugeChartVOC2: React.FC<GaugeChartProps> = ({ property, value, deviceName
                 borderRadius: 20,
                 boxShadow: hovered ? '0 8px 32px 0 rgba(44,62,80,0.18)' : '0 4px 24px 0 rgba(0,0,0,0.07)',
                 transition: 'box-shadow 0.3s, background 0.3s',
-                background: 'linear-gradient(135deg, #ffe9e6 0%, #ffffff 100%)', //Pale
+                background: getVOCGradient(value),
+                // 'linear-gradient(135deg, #ffe9e6 0%, #ffffff 100%)', //Pale
                 // background: 'linear-gradient(135deg, #f5fafd 0%, #e8f0fe 100%)',
                 // background: 'linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%)', //SoftTeal
                 // background: 'linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%)', //lavender

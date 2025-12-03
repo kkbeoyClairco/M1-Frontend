@@ -94,7 +94,18 @@ export const getVocColor = (value: number) => {
     else if (value > 1000) return '#8B0000';
     else return '#A9A9A9';
 };
-
+export function getVOCGradient(value: number): string {
+    if (value >= 0 && value <= 40) {
+        // Safe: green to blue
+        return 'linear-gradient(135deg, #eafbe7 0%, #e0f7fa 100%)';
+    } else if (value > 40 && value <= 100) {
+        // Moderate: yellow to orange
+        return 'linear-gradient(135deg, #fffbe6 0%, #ffe0b2 100%)';
+    } else {
+        // High: orange to red
+        return 'linear-gradient(135deg, #ffe0b2 0%, #ffb3b3 100%)';
+    }
+}
 export const getNH3Colors = (value: number) => {
     if (value > 0 && value <= 5) return '#59e759';
     else if (value > 5 && value <= 50) return '#f2f262';
@@ -104,7 +115,18 @@ export const getNH3Colors = (value: number) => {
     else if (value > 500) return '#8B0000';
     else return '#A9A9A9';
 };
-
+export function getNH3Gradient(value: number): string {
+    if (value <= 5) {
+        // Safe: green to blue
+        return 'linear-gradient(135deg, #eafbe7 0%, #e0f7fa 100%)';
+    } else if (value <= 150) {
+        // Moderate: yellow to orange
+        return 'linear-gradient(135deg, #fffbe6 0%, #ffe0b2 100%)';
+    } else {
+        // High: orange to red
+        return 'linear-gradient(135deg, #ffe0b2 0%, #ffb3b3 100%)';
+    }
+}
 export const getVoCLabel = (value: number) => {
     if (value > 0 && value <= 40) return 'Good';
     else if (value > 40 && value <= 100) return 'Moderate';
