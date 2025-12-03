@@ -1,3 +1,17 @@
+/* Responsive fix for short screens in MacBook range */
+@media screen and (min-width: 1200px) and (max-width: 1450px) and (max-height: 800px) {
+    .bento-grid2 {
+        height: 70vh;
+        grid-template-rows: minmax(0, 1fr) minmax(0, 2fr);
+    }
+    .bento-grid2-item {
+        min-height: 80px;
+        padding: 0.5rem 0.5rem;
+    }
+    .trends-card {
+        padding: 1rem 0.5rem;
+    }
+}
 .bento-grid2-container {
     width: 100%;
     min-height: 100vh;
@@ -27,12 +41,12 @@
 //     }
 // }
 // MacBook 13" (1280x800 or 1440x900) specific layout
-@media screen and (min-width: 1200px) and (max-width: 1450px) and (min-height: 700px) and (max-height: 950px) {
-    .bento-grid2 {
-        grid-template-rows: 1fr 2fr;
-        height: 90vh;
-    }
-}
+// @media screen and (min-width: 1200px) and (max-width: 1450px) and (min-height: 700px) and (max-height: 950px) {
+//     .bento-grid2 {
+//         grid-template-rows: 1fr 1fr;
+//         height: 90vh;
+//     }
+// }
 .bento-grid2-item {
     border-radius: 1.5rem;
     min-height: 120px;

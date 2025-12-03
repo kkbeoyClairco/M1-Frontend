@@ -140,7 +140,16 @@ const GaugeChartNH3: React.FC<GaugeChartProps> = ({ property, value, deviceName,
                                 </div>
                             )}
                         </div>
-                        <ReactEcharts option={option} style={{ height: '200px', width: '200px' }} />
+                        <ReactEcharts
+                            option={option}
+                            style={{
+                                height: '18vw',
+                                maxHeight: '180px',
+                                width: '18vw',
+                                maxWidth: '180px',
+                                minWidth: '120px',
+                            }}
+                        />
                         <div style={{ marginTop: 8, fontSize: 13, color: '#888', fontWeight: 500 }}>{deviceName}</div>
                         <div style={{ fontSize: 11, fontWeight: 500, marginTop: 2, color: 'black' }}>
                             Updated on {lastUpdated}

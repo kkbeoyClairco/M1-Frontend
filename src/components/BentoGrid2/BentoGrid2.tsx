@@ -59,8 +59,7 @@ const BentoGrid2 = () => {
                     <GaugeChartVOC2 deviceName="" property="" value={cardData.voc} lastUpdated={lastUpdated} />
                 </div>
                 <div className="bento-grid2-item top-right-box">
-                    {/* cardData.nh3 ?? */}
-                    <GaugeChartNH3 deviceName="" property="" value={cardData.nh3} lastUpdated="02/12/25, 16:45" />
+                    <GaugeChartNH3 deviceName="" property="" value={cardData.nh3} lastUpdated={lastUpdated} />
                 </div>
                 <div className=" bottom-trends-box">
                     <TrendsChart sensorName={sensorName} deviceId="" buildingId="" />

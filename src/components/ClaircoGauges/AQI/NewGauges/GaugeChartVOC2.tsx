@@ -93,10 +93,10 @@ const GaugeChartVOC2: React.FC<GaugeChartProps> = ({ property, value, deviceName
                 borderRadius: 20,
                 boxShadow: hovered ? '0 8px 32px 0 rgba(44,62,80,0.18)' : '0 4px 24px 0 rgba(0,0,0,0.07)',
                 transition: 'box-shadow 0.3s, background 0.3s',
+                background: 'linear-gradient(135deg, #ffe9e6 0%, #ffffff 100%)', //Pale
                 // background: 'linear-gradient(135deg, #f5fafd 0%, #e8f0fe 100%)',
                 // background: 'linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%)', //SoftTeal
                 // background: 'linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%)', //lavender
-                background: 'linear-gradient(135deg, #ffe9e6 0%, #ffffff 100%)', //Pale
                 // background: 'linear-gradient(135deg, #eafbe7 0%, #ffffff 100%)', //Green
                 // background: 'linear-gradient(135deg, #e3f0ff 0%, #f7fafd 100%)', // Modern blue
                 // background: hovered ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,1)',
@@ -106,9 +106,7 @@ const GaugeChartVOC2: React.FC<GaugeChartProps> = ({ property, value, deviceName
             }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}>
-            {' '}
             <Card.Body style={{ padding: '1.5rem 1.5rem 2rem 1.5rem' }}>
-                {' '}
                 <div
                     style={{
                         display: 'flex',
@@ -117,6 +115,7 @@ const GaugeChartVOC2: React.FC<GaugeChartProps> = ({ property, value, deviceName
                         justifyContent: 'center',
                         alignItems: 'stretch',
                         minHeight: 260,
+                        overflow: 'hidden',
                     }}>
                     {/* Left: Gauge */}
                     <div
@@ -140,7 +139,16 @@ const GaugeChartVOC2: React.FC<GaugeChartProps> = ({ property, value, deviceName
                                 </div>
                             )}
                         </div>
-                        <ReactEcharts option={option} style={{ height: '200px', width: '200px' }} />
+                        <ReactEcharts
+                            option={option}
+                            style={{
+                                height: '18vw',
+                                maxHeight: '180px',
+                                width: '18vw',
+                                maxWidth: '180px',
+                                minWidth: '120px',
+                            }}
+                        />
                         <div style={{ marginTop: 8, fontSize: 13, color: '#888', fontWeight: 500 }}>{deviceName}</div>
                         <div style={{ fontSize: 11, fontWeight: 500, marginTop: 2, color: 'black' }}>
                             Updated on {lastUpdated}
