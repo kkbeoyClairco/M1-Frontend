@@ -1,14 +1,19 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, ListGroup, Badge } from 'react-bootstrap';
-import { KonvaLayer } from './KonvaLayer';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Button, ListGroup } from 'react-bootstrap';
 import { KonvaErrorBoundary } from './KonvaErrorBoundary';
 import KonvaLayerRedux from './KonvaLayerRedux';
-import { Shape, Point } from 'types/whiteBoard/shapes';
-import ShapePropertiesEditor from './Modals/ShapePropertiesEditor';
+import { Shape } from 'types/whiteBoard/shapes';
 import { FloorPlan } from 'types/whiteBoard/entity';
-import { useAppSelector } from 'redux/hooks';
+// import { useAppSelector } from 'redux/hooks';
 import { roundToOneDecimal } from 'utils/maths';
-
+import { saveFloorPlan, loadFloorPlan as loadFloorPlanAPI } from 'helpers/api/services/Clairco/floorPlan';
+import { useAppDispatch, useAppSelector } from 'redux/hooks';
+import {
+    selectShapes,
+    selectActiveDeviceType,
+    selectFloorPlanImage,
+    loadFloorPlan,
+} from 'redux/floorPlan/floorPlanSlice';
 // Types for the system
 // interface Point {
 //     x: number;
@@ -45,21 +50,28 @@ import { roundToOneDecimal } from 'utils/maths';
 // }
 
 // Mock data for demonstration
-const sampleFloorPlan: FloorPlan = {
-    id: 'fp_001',
-    name: 'Office Floor 1',
-    imageUrl: 'https://via.placeholder.com/800x600/f0f0f0/999999?text=Floor+Plan+Image',
+// const sampleFloorPlan: FloorPlan = {
+//     id: 'fp_001',
+//     name: 'Office Floor 1',
+//     imageUrl: 'https://via.placeholder.com/800x600/f0f0f0/999999?text=Floor+Plan+Image',
 
-    deviceTypes: {
-        AHU: { shapes: [] },
-    },
-    originalImageDimensions: {
-        width: 0,
-        height: 0,
-    },
-};
-
-export const FloorPlanEditor: React.FC = () => {
+//     deviceTypes: {
+//         AHU: { shapes: [] },
+//     },
+//     originalImageDimensions: {
+//         width: 0,
+//         height: 0,
+//     },
+// };
+interface FloorPlanEditorInterface {
+    siteData?: {
+        customer?: Record<string, any> | null;
+        building?: object | null;
+        floor?: object | null;
+    };
+    floorPlanImageUrl?: string;
+}
+export const FloorPlanEditor: React.FC<FloorPlanEditorInterface> = ({ floorPlanImageUrl }) => {
     const [floorPlan, setFloorPlan] = useState<FloorPlan | null>(null);
     // const [selectedShape, setSelectedShape] = useState<Shape | null>(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -76,29 +88,84 @@ export const FloorPlanEditor: React.FC = () => {
     //         },
     //     }));
     // }, []);
+    const dispatch = useAppDispatch();
+    const shapes = useAppSelector(selectShapes);
+    const activeDeviceType = useAppSelector(selectActiveDeviceType);
+    const floorPlanImage = useAppSelector(selectFloorPlanImage);
 
-    useEffect(() => {
-        setFloorPlan(floorPlanData);
-    }, [floorPlanData]);
     // Save floor plan to backend
-    const saveFloorPlan = async () => {
-        setIsSaving(true);
+    const handleSaveFloorPlan = async () => {
         try {
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            setIsSaving(true);
+            const floorId = 'floor-123'; // Get from props or context
 
-            // Here you would call your actual API
-            // await floorPlanAPI.save(floorPlan);
+            // Shapes will be automatically filtered (UI properties removed)
+            const response = await saveFloorPlan(
+                floorId,
+                activeDeviceType,
+                shapes, // Pass shapes with UI properties - they'll be stripped automatically
+                floorPlanImage ?? undefined
+            );
 
-            console.log('Floor plan saved:', floorPlan);
+            console.log('Saved to DB (without UI props):', response);
             alert('Floor plan saved successfully!');
         } catch (error) {
-            console.error('Failed to save floor plan:', error);
+            console.error('Save failed:', error);
             alert('Failed to save floor plan');
         } finally {
             setIsSaving(false);
         }
     };
+
+    // Load floor plan from backend
+    const handleLoadFloorPlan = async () => {
+        try {
+            const floorId = 'floor-123'; // Get from props or context
+            const deviceType = 'VRV/VRF';
+
+            // Shapes will be automatically enriched with default UI properties
+            const { shapes: loadedShapes, floorPlanImage, metadata } = await loadFloorPlanAPI(floorId, deviceType);
+
+            console.log('Loaded from DB (with UI props added):', loadedShapes);
+
+            // Dispatch to Redux
+            dispatch(
+                loadFloorPlan({
+                    deviceType,
+                    shapes: loadedShapes,
+                    floorPlanImage,
+                })
+            );
+
+            alert('Floor plan loaded successfully!');
+        } catch (error) {
+            console.error('Load failed:', error);
+            alert('Failed to load floor plan');
+        }
+    };
+    useEffect(() => {
+        console.log('Floor plan data', floorPlanData);
+        setFloorPlan(floorPlanData);
+    }, [floorPlanData]);
+    // Save floor plan to backend
+    // const saveFloorPlan = async () => {
+    //     setIsSaving(true);
+    //     try {
+    //         // Simulate API call
+    //         await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    //         // Here you would call your actual API
+    //         // await floorPlanAPI.save(floorPlan);
+
+    //         console.log('Floor plan saved:', floorPlan);
+    //         alert('Floor plan saved successfully!');
+    //     } catch (error) {
+    //         console.error('Failed to save floor plan:', error);
+    //         alert('Failed to save floor plan');
+    //     } finally {
+    //         setIsSaving(false);
+    //     }
+    // };
 
     // Handle shape selection for property editing
     const handleShapeSelect = (shapeId: string) => {
@@ -136,18 +203,27 @@ export const FloorPlanEditor: React.FC = () => {
                                 {/* {floorPlan?.metadata?.building ?? ''} - {floorPlan.metadata.floor} */}
                             </small>
                         </div>
-                        <Button variant="success" onClick={saveFloorPlan} disabled={isSaving}>
-                            {isSaving ? 'Saving...' : 'Save Floor Plan'}
-                        </Button>
+                        {typeof floorPlanImageUrl === 'string' && floorPlanImageUrl !== '' && (
+                            <Button variant="success" onClick={handleSaveFloorPlan} disabled={isSaving}>
+                                {isSaving ? 'Saving...' : 'Save Floor Plan'}
+                            </Button>
+                        )}
                     </div>
 
                     <KonvaErrorBoundary>
-                        <KonvaLayerRedux
-                            floorPlanImageUrl="https://res.cloudinary.com/dlulq6hny/image/upload/v1745837864/HCLlayout_4_k7jefr.svg"
-                            // floorPlanImage={floorPlan.imageUrl}
-                            // onShapesChange={handleShapesChange}
-                            // initialShapes={floorPlan.shapes}
-                        />
+                        {typeof floorPlanImageUrl === 'string' && floorPlanImageUrl !== '' ? (
+                            <KonvaLayerRedux
+                                handleSaveFloorPlan={handleSaveFloorPlan}
+                                floorPlanImageUrl={floorPlanImageUrl}
+                                // "https://res.cloudinary.com/dlulq6hny/image/upload/v1767861534/BCG_qvqk8x.png"
+                                // "https://res.cloudinary.com/dlulq6hny/image/upload/v1745837864/HCLlayout_4_k7jefr.svg"
+                                // floorPlanImage={floorPlan.imageUrl}
+                                // onShapesChange={handleShapesChange}
+                                // initialShapes={floorPlan.shapes}
+                            />
+                        ) : (
+                            <p>Floor Image is not available. Please select a floor image</p>
+                        )}
                     </KonvaErrorBoundary>
                 </Col>
 

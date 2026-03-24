@@ -111,12 +111,23 @@ const CustomerTable = () => {
     const handleNavigation = (data: any) => {
         const { customerId = '', customerName = '' } = data;
         console.log('customerId', customerId, customerName);
-        navigate(`/admin/pages/${customerName}`, {
+        navigate(`/admin/pages/customer/${customerName}`, {
             state: {
                 id: customerId,
                 name: customerName,
             },
         });
+    };
+    const handleNavigation1 = (data: any) => {
+        const { customerId = '', customerName = '' } = data;
+        console.log('customerId', customerId, customerName);
+        const searchParam = new URLSearchParams();
+
+        searchParam.append('customerId', customerId);
+        searchParam.append('customerName', customerName);
+
+        let url = `/admin/pages/whiteboard/${searchParam.toString()}`;
+        navigate(url);
     };
 
     const ActionColumn = ({ row }: any) => {
@@ -127,6 +138,18 @@ const CustomerTable = () => {
                         className="mdi mdi-eye me-3"
                         style={{ cursor: 'pointer' }}
                         onClick={() => handleNavigation(row.original)}></i>
+                </div>
+            </div>
+        );
+    };
+    const ActionColumn1 = ({ row }: any) => {
+        return (
+            <div className="action-icon">
+                <div>
+                    <i
+                        className="mdi mdi-eye me-3"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => handleNavigation1(row.original)}></i>
                 </div>
             </div>
         );
@@ -152,6 +175,12 @@ const CustomerTable = () => {
             accessor: 'action',
             defaultCanSort: false,
             Cell: ActionColumn,
+        },
+        {
+            Header: 'Floor Plan',
+            accessor: 'floorplan',
+            defaultCanSort: false,
+            Cell: ActionColumn1,
         },
     ];
     const handlePageChange = (newPage: number) => {

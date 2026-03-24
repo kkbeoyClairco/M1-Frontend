@@ -41,6 +41,7 @@ interface KonvaLayerReduxProps {
     floorPlanImageUrl?: string;
     className?: string;
     style?: React.CSSProperties;
+    handleSaveFloorPlan?: () => void;
 }
 
 const deviceTypes = [
@@ -52,7 +53,16 @@ const deviceTypes = [
 interface ModalsType {
     zoneEditModal: boolean;
 }
-export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImageUrl, className = '', style = {} }) => {
+// const handleSaveFloorPlan = () => {
+//     console.log('Do this in Redux');
+// };
+const isSaving = false;
+export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
+    floorPlanImageUrl,
+    className = '',
+    style = {},
+    handleSaveFloorPlan,
+}) => {
     // Redux state and dispatch
     const dispatch = useAppDispatch();
     const shapes = useAppSelector(selectShapes); // Now gets shapes for active device type
@@ -82,6 +92,7 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
         if (e?.value) {
             dispatch(setActiveDeviceType(e.value));
         }
+        console.log('Shapes', shapes);
     };
 
     // Load floor plan image
@@ -648,7 +659,12 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({ floorPlanImage
                             </Layer>
                         </Stage>
                     </div>
-
+                    <Card.Footer>
+                        {' '}
+                        <Button variant="success" onClick={handleSaveFloorPlan} disabled={isSaving}>
+                            {isSaving ? 'Saving...' : 'Save Floor Plan'}
+                        </Button>
+                    </Card.Footer>
                     {/* Status bar */}
                     <div className="p-2 bg-light border-top d-flex justify-content-between align-items-center text-sm">
                         <div>

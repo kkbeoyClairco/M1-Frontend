@@ -456,17 +456,23 @@ const AllRoutes = () => {
                             path: 'admindashboard',
                             element: <LoadComponent component={ClaircoAdminDashboard} />,
                         },
+
                         {
-                            path: ':customerName',
-                            element: <LoadComponent component={BuildingListPage} />,
-                        },
-                        {
-                            path: ':customerName/:buildingName',
-                            element: <LoadComponent component={FloorListPage} />,
-                        },
-                        {
-                            path: ':customerName/:buildingName/:floorName',
-                            element: <LoadComponent component={DevicesListPage} />,
+                            path: 'customer',
+                            children: [
+                                {
+                                    path: ':customerName',
+                                    element: <LoadComponent component={BuildingListPage} />,
+                                },
+                                {
+                                    path: ':customerName/:buildingName',
+                                    element: <LoadComponent component={FloorListPage} />,
+                                },
+                                {
+                                    path: ':customerName/:buildingName/:floorName',
+                                    element: <LoadComponent component={DevicesListPage} />,
+                                },
+                            ],
                         },
                         {
                             path: 'indoor-devices',
@@ -556,7 +562,7 @@ const AllRoutes = () => {
                             element: <LoadComponent component={PCSDevicePageAdmin} />,
                         },
                         {
-                            path: 'whiteboard',
+                            path: 'whiteboard/:customerDetails',
                             element: <LoadComponent component={WhiteBoardPage} />,
                         },
 
