@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, ListGroup } from 'react-bootstrap';
 import { KonvaErrorBoundary } from './KonvaErrorBoundary';
 import KonvaLayerRedux from './KonvaLayerRedux';
+import ShapesListModal from './Modals/ShapesListModal';
 import { Shape } from 'types/whiteBoard/shapes';
 import { FloorPlan } from 'types/whiteBoard/entity';
 // import { useAppSelector } from 'redux/hooks';
@@ -75,6 +76,7 @@ export const FloorPlanEditor: React.FC<FloorPlanEditorInterface> = ({ floorPlanI
     const [floorPlan, setFloorPlan] = useState<FloorPlan | null>(null);
     // const [selectedShape, setSelectedShape] = useState<Shape | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [showShapesModal, setShowShapesModal] = useState(false);
     const floorPlanData = useAppSelector((state) => state?.floorPlan);
     // console.log('Floor Plan', floorPlanData);
     // Handle shape changes from KonvaLayer
@@ -91,7 +93,7 @@ export const FloorPlanEditor: React.FC<FloorPlanEditorInterface> = ({ floorPlanI
     const dispatch = useAppDispatch();
     const shapes = useAppSelector(selectShapes);
     const activeDeviceType = useAppSelector(selectActiveDeviceType);
-    const floorPlanImage = useAppSelector(selectFloorPlanImage);
+    // const floorPlanImage = useAppSelector(selectFloorPlanImage);
 
     // Save floor plan to backend
     const handleSaveFloorPlan = async () => {
@@ -104,7 +106,7 @@ export const FloorPlanEditor: React.FC<FloorPlanEditorInterface> = ({ floorPlanI
                 floorId,
                 activeDeviceType,
                 shapes, // Pass shapes with UI properties - they'll be stripped automatically
-                floorPlanImage ?? undefined
+                floorPlanImageUrl ?? undefined
             );
 
             console.log('Saved to DB (without UI props):', response);
@@ -203,11 +205,11 @@ export const FloorPlanEditor: React.FC<FloorPlanEditorInterface> = ({ floorPlanI
                                 {/* {floorPlan?.metadata?.building ?? ''} - {floorPlan.metadata.floor} */}
                             </small>
                         </div>
-                        {typeof floorPlanImageUrl === 'string' && floorPlanImageUrl !== '' && (
+                        {/* {typeof floorPlanImageUrl === 'string' && floorPlanImageUrl !== '' && (
                             <Button variant="success" onClick={handleSaveFloorPlan} disabled={isSaving}>
                                 {isSaving ? 'Saving...' : 'Save Floor Plan'}
                             </Button>
-                        )}
+                        )} */}
                     </div>
 
                     <KonvaErrorBoundary>
@@ -230,8 +232,16 @@ export const FloorPlanEditor: React.FC<FloorPlanEditorInterface> = ({ floorPlanI
                 {/* Properties Panel */}
                 <Col lg={12} className="p-3 border-start">
                     <Card className="h-100">
-                        <Card.Header>
+                        <Card.Header className="d-flex justify-content-between align-items-center">
                             <h5 className="mb-0">Zones List</h5>
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => setShowShapesModal(true)}
+                                disabled={Object.keys(floorPlan?.deviceTypes ?? {}).length === 0}>
+                                <i className="mdi mdi-table-large me-1"></i>
+                                View All in Table
+                            </Button>
                         </Card.Header>
                         <Card.Body>
                             {/* <h6>Zones List</h6> */}
@@ -278,6 +288,9 @@ export const FloorPlanEditor: React.FC<FloorPlanEditorInterface> = ({ floorPlanI
                     </Card>
                 </Col>
             </Row>
+
+            {/* Shapes List Modal */}
+            <ShapesListModal show={showShapesModal} onClose={() => setShowShapesModal(false)} floorPlan={floorPlan} />
         </Container>
     );
 };

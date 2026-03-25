@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
-import { Card, ButtonGroup, Button } from 'react-bootstrap';
+import { Card, ButtonGroup, Button, Row, Col } from 'react-bootstrap';
 import { Layer, Rect, Stage, Transformer, Circle, Image, Line } from 'react-konva';
 import Konva from 'konva';
 import Select, { SingleValue } from 'react-select';
@@ -70,7 +70,7 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
     const selectedShape = useAppSelector(selectSelectedShape);
     const drawingTool = useAppSelector(selectDrawingTool);
     const isDrawing = useAppSelector(selectIsDrawing);
-    const floorPlanImage = useAppSelector(selectFloorPlanImage);
+    // const floorPlanImage = useAppSelector(selectFloorPlanImage);
     const scale = useAppSelector(selectScale);
     const offset = useAppSelector(selectOffset);
     const canUndo = useAppSelector(selectCanUndo);
@@ -97,7 +97,7 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
 
     // Load floor plan image
     useEffect(() => {
-        if (floorPlanImageUrl && floorPlanImageUrl !== floorPlanImage) {
+        if (floorPlanImageUrl) {
             const img = new window.Image();
             img.crossOrigin = 'anonymous';
             img.onload = () => {
@@ -118,7 +118,7 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
             };
             img.src = floorPlanImageUrl;
         }
-    }, [floorPlanImageUrl, floorPlanImage, dispatch]);
+    }, [floorPlanImageUrl, dispatch]);
 
     // Generate unique ID for shapes
     const generateId = () => `shape_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -660,10 +660,13 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
                         </Stage>
                     </div>
                     <Card.Footer>
-                        {' '}
-                        <Button variant="success" onClick={handleSaveFloorPlan} disabled={isSaving}>
-                            {isSaving ? 'Saving...' : 'Save Floor Plan'}
-                        </Button>
+                        <Row className="d-flex justify-content-end">
+                            <Col xs={4} className="d-flex justify-content-end">
+                                <Button variant="success" onClick={handleSaveFloorPlan} disabled={isSaving}>
+                                    {isSaving ? 'Saving...' : 'Save Floor Plan'}
+                                </Button>
+                            </Col>
+                        </Row>
                     </Card.Footer>
                     {/* Status bar */}
                     <div className="p-2 bg-light border-top d-flex justify-content-between align-items-center text-sm">

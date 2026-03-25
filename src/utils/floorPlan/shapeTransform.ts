@@ -80,3 +80,64 @@ export const deserializeShapeWithCustomUI = (
         ...customUI,
     };
 };
+
+/**
+ * Interface for fake data shape format (from fakeData.ts)
+ */
+export interface FakeDataShape {
+    id: string;
+    type: 'rectangle' | 'circle' | 'polygon';
+    deviceType: string;
+    points: Array<{ x: number; y: number }>;
+    properties: {
+        name: string;
+        color: string;
+        strokeWidth: number;
+        opacity: number;
+    };
+}
+
+/**
+ * Transform fake data format to Redux Shape format
+ * Converts from points-based format to x/y/width/height format
+ */
+export const transformFakeDataToShape = (fakeShape: FakeDataShape): Shape => {
+    const { id, type, deviceType, points, properties } = fakeShape;
+
+    // Calculate position and dimensions from points
+    const x = points[0].x;
+    const y = points[0].y;
+    const width = type === 'rectangle' ? Math.abs(points[1].x - points[0].x) : undefined;
+    const height = type === 'rectangle' ? Math.abs(points[1].y - points[0].y) : undefined;
+
+    // For circles, calculate radius
+    const radius =
+        type === 'circle'
+            ? Math.sqrt(Math.pow(points[1].x - points[0].x, 2) + Math.pow(points[1].y - points[0].y, 2))
+            : undefined;
+
+    return {
+        id,
+        type,
+        deviceType,
+        x,
+        y,
+        width,
+        height,
+        radius,
+        points: type === 'polygon' ? points : undefined,
+        name: properties.name,
+        fill: properties.color,
+        stroke: properties.color,
+        strokeWidth: properties.strokeWidth,
+        opacity: properties.opacity,
+        draggable: true,
+    };
+};
+
+/**
+ * Transform array of fake data shapes to Redux Shapes
+ */
+export const transformFakeDataArrayToShapes = (fakeShapes: FakeDataShape[]): Shape[] => {
+    return fakeShapes.map(transformFakeDataToShape);
+};

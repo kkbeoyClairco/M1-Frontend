@@ -134,3 +134,31 @@ export const getAllFloorPlans = async (floorId: string): Promise<FloorPlanAPIRes
         throw error;
     }
 };
+
+/**
+ * Upload floor plan image
+ * Sends cropped/resized image as JPG to backend
+ */
+export const uploadFloorImage = async (
+    floorId: string,
+    imageBlob: Blob,
+    metadata: {
+        originalFileName: string;
+        dimensions: { width: number; height: number };
+        uploadedAt: string;
+        fileSize: number;
+    }
+): Promise<{ success: boolean; imageUrl: string; message?: string }> => {
+    try {
+        const formData = new FormData();
+        formData.append('image', imageBlob, 'floor-image.jpg');
+        formData.append('floorId', floorId);
+        formData.append('metadata', JSON.stringify(metadata));
+
+        const response = await api.createWithFile('/api/floor-plans/image', formData);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to upload floor image:', error);
+        throw error;
+    }
+};
