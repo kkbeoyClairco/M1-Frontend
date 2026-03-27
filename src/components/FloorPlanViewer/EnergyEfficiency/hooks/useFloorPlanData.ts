@@ -27,6 +27,7 @@ export interface FloorPlanApiResponse {
     deviceType: string;
     shapes: ApiShape[];
     floorPlanImage: string;
+    imageDimensions?: { width: number; height: number };
 }
 
 /** Normalised floor plan info used internally by the viewer */
@@ -34,9 +35,9 @@ export interface ViewerFloorPlan {
     floorId: string;
     imageUrl: string;
     /**
-     * Original image dimensions are not included in the current API response.
-     * Defaults to { width: 0, height: 0 }; `useStageSize` falls back to
-     * 800 × 600 and adapts the stage width via ResizeObserver automatically.
+     * The canonical stage size used by the editor when normalizing shape
+     * coordinates to [0–1]. Comes from the API response (`imageDimensions`).
+     * Falls back to 800 × 600 for floor plans saved before this field existed.
      */
     originalImageDimensions: { width: number; height: number };
 }
@@ -77,7 +78,14 @@ function mapApiResponse(data: FloorPlanApiResponse): {
     const viewerFloorPlan: ViewerFloorPlan = {
         floorId: data.floorId,
         imageUrl: data.floorPlanImage,
-        originalImageDimensions: { width: 0, height: 0 },
+        // originalImageDimensions: {
+        //     width: data.imageDimensions?.width ?? 800,
+        //     height: data.imageDimensions?.height ?? 600,
+        // },
+        originalImageDimensions: {
+            width: data.imageDimensions?.width ?? 1132, //hardcoded since the image diamensions are not added to the api
+            height: data.imageDimensions?.height ?? 463,
+        },
     };
 
     const persistedShapes: PersistedShape[] = data.shapes.map((s) => apiShapeToPersistedShape(s, data.deviceType));

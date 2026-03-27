@@ -106,7 +106,8 @@ export const FloorPlanEditor: React.FC<FloorPlanEditorInterface> = ({ floorPlanI
                 floorId,
                 activeDeviceType,
                 shapes, // Pass shapes with UI properties - they'll be stripped automatically
-                floorPlanImageUrl ?? undefined
+                floorPlanImageUrl ?? undefined,
+                imageDimensions
             );
 
             console.log('Saved to DB (without UI props):', response);

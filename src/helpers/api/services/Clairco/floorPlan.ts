@@ -11,6 +11,7 @@ export interface FloorPlanAPIPayload {
     deviceType: string;
     shapes: PersistedShape[];
     floorPlanImage?: string;
+    imageDimensions?: { width: number; height: number };
     metadata?: Record<string, any>;
 }
 
@@ -19,6 +20,7 @@ export interface FloorPlanAPIResponse {
     deviceType: string;
     shapes: PersistedShape[];
     floorPlanImage?: string;
+    imageDimensions?: { width: number; height: number };
     metadata?: Record<string, any>;
     createdAt?: string;
     updatedAt?: string;
@@ -33,6 +35,7 @@ export const saveFloorPlan = async (
     deviceType: string,
     shapes: any[], // Can accept Shape[] with UI properties
     floorPlanImage?: string,
+    imageDimensions?: { width: number; height: number },
     metadata?: Record<string, any>
 ): Promise<FloorPlanAPIResponse> => {
     // Serialize shapes (remove UI properties)
@@ -43,6 +46,7 @@ export const saveFloorPlan = async (
         deviceType,
         shapes: persistedShapes,
         floorPlanImage,
+        imageDimensions,
         metadata,
     };
     console.log('Floor Plan data str', payload);
@@ -63,6 +67,7 @@ export const updateFloorPlan = async (
     deviceType: string,
     shapes: any[],
     floorPlanImage?: string,
+    imageDimensions?: { width: number; height: number },
     metadata?: Record<string, any>
 ): Promise<FloorPlanAPIResponse> => {
     const persistedShapes = serializeShapesForAPI(shapes);
@@ -72,6 +77,7 @@ export const updateFloorPlan = async (
         deviceType,
         shapes: persistedShapes,
         floorPlanImage,
+        imageDimensions,
         metadata,
     };
 

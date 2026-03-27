@@ -24,7 +24,7 @@ export function useStageSize(originalWidth: number, originalHeight: number): Use
         if (!originalWidth || !originalHeight || containerWidth <= 0) {
             return { width: originalWidth || 800, height: originalHeight || 600 };
         }
-        const newWidth = Math.min(containerWidth, 1200);
+        const newWidth = Math.min(containerWidth, originalWidth);
         const newHeight = Math.round(newWidth * (originalHeight / originalWidth));
         return { width: newWidth, height: newHeight };
     };
