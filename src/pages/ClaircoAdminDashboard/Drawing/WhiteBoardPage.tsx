@@ -12,8 +12,8 @@ import ImageUploadCropModal from 'components/ClaircoModals/AddNew/ImageUploadCro
 import { ToastContext } from 'context/ToastContext';
 import { useAppDispatch } from 'redux/hooks';
 import { loadFloorPlan, setFloorPlanImage } from 'redux/floorPlan/floorPlanSlice';
-import { data123 } from 'components/ClaircoWhiteBoard/fakeData';
-import { transformFakeDataArrayToShapes } from 'utils/floorPlan/shapeTransform';
+import { normData1 } from 'components/ClaircoWhiteBoard/fakeData';
+import { deserializeShapesFromAPI } from 'utils/floorPlan/shapeTransform';
 
 const WhiteBoardPage = () => {
     const [siteData, setSiteData] = useState<{
@@ -49,7 +49,7 @@ const WhiteBoardPage = () => {
     const handleFloorPlanLoading = () => {
         try {
             const floorImageUrl = siteData?.floor?.layout ?? '';
-            console.log('Site data', floorImageUrl);
+            // console.log('Site data', floorImageUrl);
 
             // Update local state for image
             setFloorImage(floorImageUrl);
@@ -60,7 +60,11 @@ const WhiteBoardPage = () => {
             }
 
             // ✅ Load shapes into Redux (without floorPlanImage to avoid conflicts)
-            const transformedShapes = transformFakeDataArrayToShapes(data123);
+            // normData1.shapes are already in PersistedShape format with normalized [0–1] coords.
+            // Map top-level deviceType onto each shape since the fake data stores it on the wrapper.
+            const transformedShapes = deserializeShapesFromAPI(
+                normData1.shapes.map((s: any) => ({ deviceType: normData1.deviceType, ...s }))
+            );
             dispatch(
                 loadFloorPlan({
                     deviceType: 'VRV/VRF',

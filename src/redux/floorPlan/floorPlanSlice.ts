@@ -60,6 +60,7 @@ const initialState: FloorPlanState = {
     floorPlanImage: null,
     scale: 1,
     offset: { x: 0, y: 0 },
+    imageDimensions: { width: 800, height: 600 },
     // shapeData: {},
 };
 
@@ -217,6 +218,11 @@ const floorPlanSlice = createSlice({
             state.floorPlanImage = action.payload;
         },
 
+        // Image dimensions (pixel size of the rendered stage)
+        setImageDimensions: (state, action: PayloadAction<{ width: number; height: number }>) => {
+            state.imageDimensions = action.payload;
+        },
+
         // View management
         setScale: (state, action: PayloadAction<number>) => {
             state.scale = Math.max(0.1, Math.min(5, action.payload)); // Limit scale between 0.1 and 5
@@ -321,6 +327,7 @@ export const {
     setDrawingTool,
     setIsDrawing,
     setFloorPlanImage,
+    setImageDimensions,
     setScale,
     setOffset,
     // updateShapeData,
@@ -370,6 +377,7 @@ export const selectIsDrawing = (state: { floorPlan: FloorPlanState }) => state.f
 export const selectFloorPlanImage = (state: { floorPlan: FloorPlanState }) => state.floorPlan.floorPlanImage;
 export const selectScale = (state: { floorPlan: FloorPlanState }) => state.floorPlan.scale;
 export const selectOffset = (state: { floorPlan: FloorPlanState }) => state.floorPlan.offset;
+export const selectImageDimensions = (state: { floorPlan: FloorPlanState }) => state.floorPlan.imageDimensions;
 
 // export const selectShapeData = (state: { floorPlan: FloorPlanState }, shapeId: string) =>
 //     state.floorPlan.shapeData[shapeId];

@@ -5,6 +5,7 @@ import Konva from 'konva';
 import Select, { SingleValue } from 'react-select';
 import { selectTagType } from 'types/selectTagType';
 import { Shape } from 'types/whiteBoard/shapes';
+import { normalizeShape, denormalizeShape } from 'utils/floorPlan/shapeTransform';
 
 // Redux Toolkit imports
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -16,6 +17,7 @@ import {
     setDrawingTool,
     setIsDrawing,
     setFloorPlanImage,
+    setImageDimensions,
     setActiveDeviceType,
     undo,
     redo,
@@ -107,10 +109,13 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
                 // Auto-resize stage to image dimensions
                 const newWidth = Math.min(img.width || 800, 1200);
                 const newHeight = Math.min(img.height || 600, 800);
-                setStageSize({
-                    width: newWidth > 0 ? newWidth : 800,
-                    height: newHeight > 0 ? newHeight : 600,
-                });
+                const resolvedWidth = newWidth > 0 ? newWidth : 800;
+                const resolvedHeight = newHeight > 0 ? newHeight : 600;
+                console.log('Height and width', resolvedHeight, resolvedWidth, img.height, img.width);
+                setStageSize({ width: resolvedWidth, height: resolvedHeight });
+                // Store dimensions in Redux so other components can convert
+                // normalized [0–1] coords back to pixel values for display.
+                dispatch(setImageDimensions({ width: resolvedWidth, height: resolvedHeight }));
             };
             img.onerror = () => {
                 console.error('Failed to load floor plan image');
@@ -277,15 +282,17 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
 
         dispatch(setIsDrawing(false));
 
-        // Only add valid shapes for rectangle and circle
+        // Only add valid shapes for rectangle and circle.
+        // Minimum size check uses raw pixel values (currentShape is in absolute pixels).
+        // Shape is normalized to [0–1] before being stored in Redux.
         if (currentShape.type === 'rectangle' && currentShape.width! > 5 && currentShape.height! > 5) {
-            dispatch(addShape(currentShape as Shape));
+            dispatch(addShape(normalizeShape(currentShape as Shape, stageSize.width, stageSize.height)));
         } else if (currentShape.type === 'circle' && currentShape.radius! > 5) {
-            dispatch(addShape(currentShape as Shape));
+            dispatch(addShape(normalizeShape(currentShape as Shape, stageSize.width, stageSize.height)));
         }
 
         setCurrentShape(null);
-    }, [isDrawing, currentShape, dispatch]);
+    }, [isDrawing, currentShape, dispatch, stageSize]);
 
     // Handle shape selection
     const handleShapeClick = useCallback(
@@ -342,12 +349,11 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
                 points: relativePolygon.points,
             } as Shape;
             dispatch(setIsDrawing(false));
-            dispatch(addShape(finalShape));
-
-            // dispatch(addShape(currentShape as Shape));
+            // Normalize origin + relative points to [0–1] before storing in Redux
+            dispatch(addShape(normalizeShape(finalShape, stageSize.width, stageSize.height)));
             setCurrentShape(null);
         }
-    }, [isDrawing, currentShape, dispatch, createPolygonWithRelativePoints]); // Helper function to create polygon with relative points
+    }, [isDrawing, currentShape, dispatch, createPolygonWithRelativePoints, stageSize]); // Helper function to create polygon with relative points
 
     // Update transformer when selection changes
 
@@ -380,16 +386,16 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
         }
     }, []);
     // Render individual shape
+    // Shape coords in Redux are normalized [0–1]. Denormalize to absolute pixels for Konva.
     const renderShape = (shape: Shape) => {
         const isSelected = selectedShapeId === shape.id;
+        const ds = denormalizeShape(shape, stageSize.width, stageSize.height);
 
         const commonProps = {
             id: shape.id,
             key: shape.id,
-            x: shape.x,
-            y: shape.y,
-            // fill: shape.fill,
-            // stroke: isSelected ? '#ff6b6b' : shape.stroke,
+            x: ds.x,
+            y: ds.y,
             fill: isSelected ? `${shape.fill}CC` : shape.fill, // Add transparency suffix
             stroke: isSelected ? '#ff6b6b' : shape.stroke,
             strokeWidth: isSelected ? 4 : shape.strokeWidth,
@@ -397,13 +403,15 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
             shadowColor: isSelected ? '#ff6b6b' : undefined,
             shadowBlur: isSelected ? 10 : 0,
             shadowOpacity: isSelected ? 0.6 : 0,
-            // strokeWidth: shape.strokeWidth,
-            // opacity: shape.opacity,
             draggable: shape.draggable,
             onDblClick: () => handleShapeDoubleClick(),
             onClick: () => handleShapeClick(shape.id),
             onDragEnd: (e: Konva.KonvaEventObject<DragEvent>) => {
-                handleShapeDragEnd(shape.id, { x: e.target.x(), y: e.target.y() });
+                // Konva gives absolute pixel position — normalize before storing
+                handleShapeDragEnd(shape.id, {
+                    x: e.target.x() / stageSize.width,
+                    y: e.target.y() / stageSize.height,
+                });
             },
             onTransformEnd: (e: Konva.KonvaEventObject<Event>) => {
                 const node = e.target;
@@ -413,22 +421,23 @@ export const KonvaLayerRedux: React.FC<KonvaLayerReduxProps> = ({
                 node.scaleX(1);
                 node.scaleY(1);
 
+                // Normalize pixel values back to [0–1] before storing
                 handleShapeTransform(shape.id, {
-                    x: node.x(),
-                    y: node.y(),
-                    width: Math.max(5, node.width() * scaleX),
-                    height: Math.max(5, node.height() * scaleY),
+                    x: node.x() / stageSize.width,
+                    y: node.y() / stageSize.height,
+                    width: Math.max(5, node.width() * scaleX) / stageSize.width,
+                    height: Math.max(5, node.height() * scaleY) / stageSize.height,
                 });
             },
         };
 
         if (shape.type === 'rectangle') {
-            return <Rect {...commonProps} width={shape.width} height={shape.height} />;
+            return <Rect {...commonProps} width={ds.width} height={ds.height} />;
         } else if (shape.type === 'circle') {
-            return <Circle {...commonProps} radius={shape.radius} />;
-        } else if (shape.type === 'polygon' && shape.points) {
-            // Convert Point[] to flat number array for Konva
-            const flatPoints = shape.points.flatMap((point) => [point.x, point.y]);
+            return <Circle {...commonProps} radius={ds.radius} />;
+        } else if (shape.type === 'polygon' && ds.points) {
+            // Convert denormalized Point[] to flat number array for Konva
+            const flatPoints = ds.points.flatMap((point) => [point.x, point.y]);
 
             return <Line {...commonProps} points={flatPoints} closed={true} tension={0} />;
         }

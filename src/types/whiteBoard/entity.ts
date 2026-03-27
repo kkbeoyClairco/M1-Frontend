@@ -42,4 +42,7 @@ export interface FloorPlanState {
     floorPlanImage: string | null;
     scale: number;
     offset: { x: number; y: number };
+    /** Dimensions of the floor plan image as rendered on the Konva stage.
+     *  Used to convert normalized [0–1] shape coordinates into pixel values for display. */
+    imageDimensions: { width: number; height: number };
 }

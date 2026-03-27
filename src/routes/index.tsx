@@ -139,7 +139,9 @@ const ThemopileDevicePage = React.lazy(
     () => import('pages/ClaircoAdminDashboard/Thermopile/ThermopileDevice/ThermopileDevicePage')
 );
 
+//Admin side
 const WhiteBoardPage = React.lazy(() => import('pages/ClaircoAdminDashboard/Drawing/WhiteBoardPage'));
+const FloorPlanViewer = React.lazy(() => import('pages/ClaircoCustomerDashboard/FloorPlanViewer/FloorPlanViewer'));
 // //UV
 
 const Uvbuilding = React.lazy(() => import('pages/ClaircoAdminDashboard/UV Devices/Uvbuilding'));
@@ -432,7 +434,7 @@ const AllRoutes = () => {
 
                 {
                     path: 'test',
-                    element: <LoadComponent component={GrowingTree} />,
+                    element: <LoadComponent component={FloorPlanViewer} />,
                 },
             ],
         },

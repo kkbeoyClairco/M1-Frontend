@@ -1,0 +1,192 @@
+Read [](file:///c%3A/Bejoy%20K%20K/Work/Clairco%20M1%20Frontend/src/components/ClaircoWhiteBoard/fakeData.ts#1-1), lines 1 to 60
+
+Read [](file:///c%3A/Bejoy%20K%20K/Work/Clairco%20M1%20Frontend/src/helpers/api/services/Clairco/floorPlan.ts#1-1), lines 1 to 100
+
+Now I have everything needed. Here is the full context document for the AI agent on the customer side:
+
+---
+
+## Context: Floor Plan Zone Visualization — Customer Side
+
+### Purpose
+This context describes the data contract for rendering floor plan zones/shapes drawn by the admin on a building floor image. The customer-side app only needs to **visualize** these shapes — no drawing tools required.
+
+---
+
+### API Response Shape
+
+The API endpoint is:
+```
+GET /api/floor-plans/{floorId}/{deviceType}
+```
+
+Response structure:
+```json
+{
+  "floorId": "floor-123",
+  "deviceType": "VRV/VRF",
+  "floorPlanImage": "https://cdn.example.com/floor-plan.png",
+  "shapes": [ /* array of PersistedShape */ ],
+  "metadata": { ... }
+}
+```
+
+---
+
+### Shape Data Model (`PersistedShape`)
+
+```ts
+interface PersistedShape {
+  id: string;
+  type: 'rectangle' | 'circle' | 'polygon';
+
+  // All coordinates are NORMALIZED [0.0 – 1.0] relative to the rendered image size
+  x: number;       // left edge (rectangle) | center (circle) | polygon origin
+  y: number;       // top edge (rectangle) | center (circle) | polygon origin
+
+  width?: number;  // rectangle only — as fraction of image width
+  height?: number; // rectangle only — as fraction of image height
+  radius?: number; // circle only — as fraction of Math.min(imageWidth, imageHeight)
+
+  // polygon only — points are relative offsets from (x, y), also normalized
+  points?: { x: number; y: number }[];
+
+  name?: string;       // zone display name, e.g. "rectangle 5"
+  deviceId?: string;   // device identifier
+  sensorType?: string; // e.g. "VRV/VRF", "AHU", "Occupancy"
+  deviceType: string;  // same as sensorType in current data
+  metadata?: Record<string, any>;
+}
+```
+
+**Real example from the database:**
+```json
+{
+  "id": "shape_1774438360337_0wc6mqao8",
+  "type": "circle",
+  "x": 0.198,
+  "y": 0.490,
+  "width": 0,
+  "height": 0,
+  "radius": 0.114,
+  "name": "circle 1",
+  "deviceId": "VRV/VRF",
+  "sensorType": "VRV/VRF",
+  "deviceType": "VRV/VRF"
+},
+{
+  "id": "shape_1774438363161_mbzj9wi3p",
+  "type": "rectangle",
+  "x": 0.296,
+  "y": 0.259,
+  "width": 0.064,
+  "height": 0.127,
+  "name": "rectangle 2",
+  "deviceId": "VRV/VRF",
+  "sensorType": "VRV/VRF",
+  "deviceType": "VRV/VRF"
+}
+```
+
+---
+
+### Coordinate System — How to Denormalize
+
+All coordinate values are fractions of the rendered image dimensions. Before drawing:
+
+```ts
+function denormalize(shape, imageWidth, imageHeight) {
+  const minDim = Math.min(imageWidth, imageHeight);
+  return {
+    ...shape,
+    x: shape.x * imageWidth,
+    y: shape.y * imageHeight,
+    width:  shape.width  != null ? shape.width  * imageWidth  : undefined,
+    height: shape.height != null ? shape.height * imageHeight : undefined,
+    radius: shape.radius != null ? shape.radius * minDim      : undefined,
+    points: shape.points?.map(p => ({
+      x: p.x * imageWidth,
+      y: p.y * imageHeight,
+    })),
+  };
+}
+```
+
+---
+
+### Rendering Rules per Shape Type
+
+| `type` | How to draw |
+|---|---|
+| `rectangle` | Draw rect at `(x, y)` with `width × height`. `x,y` is the **top-left corner**. |
+| `circle` | Draw circle centered at `(x, y)` with the given `radius`. |
+| `polygon` | Translate to `(x, y)`, then draw a closed polygon through `points[]`. Points are **relative offsets** from `(x, y)`, so absolute vertex = `(x + point.x, y + point.y)`. |
+
+---
+
+### Implementation Options
+
+**Canvas (recommended for overlays):**
+```ts
+const imageWidth = canvasEl.width;
+const imageHeight = canvasEl.height;
+shapes.forEach(shape => {
+  const s = denormalize(shape, imageWidth, imageHeight);
+  ctx.beginPath();
+  if (s.type === 'rectangle') {
+    ctx.rect(s.x, s.y, s.width, s.height);
+  } else if (s.type === 'circle') {
+    ctx.arc(s.x, s.y, s.radius, 0, 2 * Math.PI);
+  } else if (s.type === 'polygon' && s.points) {
+    ctx.moveTo(s.x + s.points[0].x, s.y + s.points[0].y);
+    s.points.slice(1).forEach(p => ctx.lineTo(s.x + p.x, s.y + p.y));
+    ctx.closePath();
+  }
+  ctx.stroke();
+});
+```
+
+**SVG (good for React/interactive tooltips):**
+```tsx
+// imageWidth / imageHeight = rendered <img> dimensions
+{shapes.map(shape => {
+  const s = denormalize(shape, imageWidth, imageHeight);
+  if (s.type === 'rectangle')
+    return <rect key={s.id} x={s.x} y={s.y} width={s.width} height={s.height} />;
+  if (s.type === 'circle')
+    return <circle key={s.id} cx={s.x} cy={s.y} r={s.radius} />;
+  if (s.type === 'polygon' && s.points)
+    return <polygon key={s.id}
+      points={s.points.map(p => `${s.x + p.x},${s.y + p.y}`).join(' ')} />;
+})}
+```
+
+**CSS positioning (simplest, rectangles only):**
+```tsx
+// Place div over the image using percentage values — no denormalize needed
+<div style={{ position: 'relative', display: 'inline-block' }}>
+  <img src={floorPlanImage} style={{ display: 'block', width: '100%' }} />
+  {shapes.filter(s => s.type === 'rectangle').map(s => (
+    <div key={s.id} style={{
+      position: 'absolute',
+      left:   `${s.x * 100}%`,
+      top:    `${s.y * 100}%`,
+      width:  `${s.width * 100}%`,
+      height: `${s.height * 100}%`,
+      border: '2px solid #007bff',
+      backgroundColor: 'rgba(0,123,255,0.2)',
+    }} />
+  ))}
+</div>
+```
+
+---
+
+### Key Constraints for the Agent
+
+1. **Always use the rendered image pixel size** (not the natural/intrinsic image size) when denormalizing. If the image renders at 800×600, use 800 and 600.
+2. **`imageDimensions.width` and `imageDimensions.height`** must be measured after the image has loaded and been laid out.
+3. **Responsive**: since coords are normalized, shapes automatically stay correct if the container resizes — but you must re-denormalize when `imageWidth`/`imageHeight` change.
+4. **Multiple device types**: one floor can have multiple `deviceType` groups (`VRV/VRF`, `AHU`, `Occupancy`). Fetch them separately by deviceType or offer a filter/toggle.
+5. **No drawing/editing tools needed** — this is read-only visualization.
+6. **Polygon points are relative deltas**, not absolute coordinates. Absolute vertex = `(shape.x + point.x, shape.y + point.y)` after denormalization.

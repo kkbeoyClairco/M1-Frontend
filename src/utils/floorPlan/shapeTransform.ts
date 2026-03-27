@@ -141,3 +141,34 @@ export const transformFakeDataToShape = (fakeShape: FakeDataShape): Shape => {
 export const transformFakeDataArrayToShapes = (fakeShapes: FakeDataShape[]): Shape[] => {
     return fakeShapes.map(transformFakeDataToShape);
 };
+
+/**
+ * Normalize a shape from absolute Konva pixel coordinates to [0.0–1.0] relative values.
+ * - x, y, width, height are divided by stageW / stageH respectively.
+ * - radius is divided by Math.min(stageW, stageH) so circles remain proportional.
+ * - polygon points (relative offsets from origin) are also normalized.
+ * Use this before every dispatch(addShape/updateShape) call in KonvaLayerRedux.
+ */
+export const normalizeShape = (shape: Shape, stageW: number, stageH: number): Shape => ({
+    ...shape,
+    x: shape.x / stageW,
+    y: shape.y / stageH,
+    width: shape.width != null ? shape.width / stageW : undefined,
+    height: shape.height != null ? shape.height / stageH : undefined,
+    radius: shape.radius != null ? shape.radius / Math.min(stageW, stageH) : undefined,
+    points: shape.points?.map((p) => ({ x: p.x / stageW, y: p.y / stageH })),
+});
+
+/**
+ * Denormalize a shape from [0.0–1.0] relative values back to absolute Konva pixel coordinates.
+ * Use this inside renderShape() before passing values to Konva elements.
+ */
+export const denormalizeShape = (shape: Shape, stageW: number, stageH: number): Shape => ({
+    ...shape,
+    x: shape.x * stageW,
+    y: shape.y * stageH,
+    width: shape.width != null ? shape.width * stageW : undefined,
+    height: shape.height != null ? shape.height * stageH : undefined,
+    radius: shape.radius != null ? shape.radius * Math.min(stageW, stageH) : undefined,
+    points: shape.points?.map((p) => ({ x: p.x * stageW, y: p.y * stageH })),
+});

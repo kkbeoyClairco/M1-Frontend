@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from 'redux/hooks';
 import {
     selectShapes,
     selectActiveDeviceType,
-    selectFloorPlanImage,
+    selectImageDimensions,
     loadFloorPlan,
 } from 'redux/floorPlan/floorPlanSlice';
 // Types for the system
@@ -93,7 +93,7 @@ export const FloorPlanEditor: React.FC<FloorPlanEditorInterface> = ({ floorPlanI
     const dispatch = useAppDispatch();
     const shapes = useAppSelector(selectShapes);
     const activeDeviceType = useAppSelector(selectActiveDeviceType);
-    // const floorPlanImage = useAppSelector(selectFloorPlanImage);
+    const imageDimensions = useAppSelector(selectImageDimensions);
 
     // Save floor plan to backend
     const handleSaveFloorPlan = async () => {
@@ -264,10 +264,18 @@ export const FloorPlanEditor: React.FC<FloorPlanEditorInterface> = ({ floorPlanI
                                                 </small>{' '}
                                                 &nbsp;&nbsp;&nbsp;&nbsp;
                                                 <small className="text-muted">
-                                                    X: {shape?.x ? roundToOneDecimal(shape?.x) : 'N/A'}&nbsp;
+                                                    X:{' '}
+                                                    {shape?.x != null
+                                                        ? roundToOneDecimal(shape.x * imageDimensions.width)
+                                                        : 'N/A'}
+                                                    &nbsp;
                                                 </small>
                                                 <small className="text-muted">
-                                                    Y: {shape?.y ? roundToOneDecimal(shape?.y) : 'N/A'}&nbsp;
+                                                    Y:{' '}
+                                                    {shape?.y != null
+                                                        ? roundToOneDecimal(shape.y * imageDimensions.height)
+                                                        : 'N/A'}
+                                                    &nbsp;
                                                 </small>
                                                 {/* <small className="text-muted">Type: {shape.type}</small>
                                                 <small className="text-muted">Type: {shape.type}</small>
